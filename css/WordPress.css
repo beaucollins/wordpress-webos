@@ -102,3 +102,63 @@ img {
   background-position: left bottom;
   background-image:url(../images/source-list-command-menu.png);
 }
+
+.enyo-nouveau.enyo-footer {
+  background-position: left bottom;
+  background-image:url(../images/command-menu-gloss.png);
+}
+
+
+.comment-item {
+  border-top: 1px solid #FFF;
+  border-bottom:1px solid #EEE;
+  padding-left:0;
+}
+
+.comment-author {
+  font-size: 14px;
+  font-weight: bold;
+  color:#000;
+}
+
+.comment-list-avatar {
+  -webkit-border-radius:5px;
+  -webkit-box-shadow:0 0 2px rgba(0,0,0,0.5);
+  border:1px solid #FFF;
+}
+
+.comment-content {
+  font-size:14px;
+  color:#333;
+  line-height:1.1;
+  margin:5px 0;
+  padding-left: 50px;
+  background:url(../images/icons/quotes-tiny.png) no-repeat 20px top;
+}
+
+.comment-subject {
+  font-size:14px;
+  color:#666;
+  white-space: nowrap;
+  overflow:hidden;
+  text-overflow: ellipsis; 
+  margin:5px 0;
+  padding-left: 50px;
+  background:url(../images/icons/post-tiny.png) no-repeat 20px top;
+}
+
+.comment-timestamp {
+  font-size: 14px;
+  font-weight:bold;
+  color:#999;
+}
+
+.comment-left-col {
+  text-align:center;
+  width:50px;
+}
+
+.comment-item.active-selection, .enyo-held.comment-item {
+  background-image:url(../images/active-selection.png);
+  -webkit-background-size: 100% 100%;
+}

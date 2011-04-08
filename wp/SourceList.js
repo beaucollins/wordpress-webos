@@ -69,7 +69,7 @@ enyo.kind({
       }
     }, this);
     
-    this.doAccountAction(action, account);
+    this.doSelectAccountAction(action, account);
     
   },
   // As done by com.palm.app.enyo-email
@@ -86,46 +86,4 @@ enyo.kind({
   }
 });
 
-enyo.kind({
-  name:'wp.ReadCountListItem',
-  kind:'enyo.Item',
-  layoutKind: 'HFlexLayout',
-  className:'source-item',
-  published: {
-    label:'Label',
-    icon:'./images/icons/default.png',
-    unreadCount:0
-  },
-  components:[
-    { name:'icon', kind:'Image' },
-    { name:'content', flex:1, style:'margin-left:5px;' },
-    { name:'unreadCount', className:'unread-count' }
-  ],
-  create:function(){
-    this.inherited(arguments);
-    this.labelChanged();
-    this.iconChanged();
-    this.unreadCountChanged();
-  },
-  ready:function(){
-    if(this.unreadCount > 0) this.interval = setInterval(enyo.bind(this, function(){
-      this.setUnreadCount(this.unreadCount - 1);
-      if(this.unreadCount == 0) clearInterval(this.interval);
-    }), 1000);
-  },
-  labelChanged:function(){
-    this.$.content.setContent(this.label);
-  },
-  iconChanged:function(){
-    this.$.icon.setSrc(this.icon);
-  },
-  unreadCountChanged:function(){
-    this.$.unreadCount.setContent(this.unreadCount);
-    if (this.unreadCount > 0) {
-      this.$.unreadCount.show();
-    }else{
-      this.$.unreadCount.hide();
-    }
-  }
-});
 

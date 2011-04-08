@@ -4,6 +4,7 @@ enyo.depends(
 	"wp/SourceList.js",
 	"wp/AccountListItem.js",
 	"wp/GlobalListItem.js",
+	"wp/CommentList.js",
 	"css/WordPress.css",
 	"lib/md5.js",
 	"lib/XMLRPCService.js",

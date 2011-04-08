@@ -12,14 +12,23 @@ enyo.kind({
       flex: 1,
       multiViewMinWidth:500,
       components: [
-        { name:'left', width:'250px', components:[
+        { name:'left', width:'225px', components:[
           { kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction' }
         ] },
-        { name:'middle', width:'250px', peekWidth:42 },
-        { name:'detail', peekWidth:84, flex:1, onResize: "slidingResize" }
+        { name:'middle', width:'350px', peekWidth:42, components:[
+          { kind:'wp.CommentList' }
+        ] },
+        { name:'detail', peekWidth:92, flex:1, onResize: "slidingResize", components:[
+          { kind:'Control', flex:1 },
+          { kind: 'enyo.nouveau.CommandMenu', components:[
+            {name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle"}
+          ] }
+        ] }
       ]
     }
   ],
+  ready:function(){
+  },
   resizeHandler: function(){
     this.$.panes.resize();
   },
@@ -52,13 +61,13 @@ enyo.mixin(enyo.application, {
       return false;
     }   
   },
-  makeGravatar:function(email, options){
-    enyo.mixin({
+  makeGravatar:function(email, settings){
+    var options = {
       size: '50',
       missing: '404'
-    }, options || {} );
+    }
+    enyo.mixin(options, settings);
 
-    Mojo.Log.info("makeGravatar: %o %j", email, options)
     if (typeof email == 'string') {
       return "http://gravatar.com/avatar/" + hex_md5(email.trim().toLowerCase()) + '?d=' + options.missing + '&s=' + options.size;
     }else{
