@@ -13,7 +13,7 @@ enyo.kind({
       multiViewMinWidth:500,
       components: [
         { name:'left', width:'250px', components:[
-          { kind:'wp.SourceList', flex:1 }
+          { kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction' }
         ] },
         { name:'middle', width:'250px', peekWidth:42 },
         { name:'detail', peekWidth:84, flex:1, onResize: "slidingResize" }
@@ -22,6 +22,8 @@ enyo.kind({
   ],
   resizeHandler: function(){
     this.$.panes.resize();
+  },
+  performAccountAction: function(){
   }
 });
 

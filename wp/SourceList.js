@@ -1,11 +1,16 @@
 enyo.kind({
   name: 'wp.SourceList',
   kind: 'VFlexBox',
+  events: {
+    onSelectAccountAction:"",
+    onSelectAction:""
+  },
   components: [
     { kind:'enyo.Scroller', flex:1, components:[
       { name:'list', kind:'enyo.Repeater', onGetItem:'getAccountItem' }
     ]},
-    { kind:'enyo.nouveau.CommandMenu', className:'source-list-command' }
+    { kind:'enyo.nouveau.CommandMenu', className:'source-list-command' },
+    { kind:'Selection', onChange:'selectionChanged' }
   ],
   create:function(){
     this.inherited(arguments);
@@ -16,7 +21,7 @@ enyo.kind({
   getAccountItem: function(inSender, inIndex){
     var item = this.accounts[inIndex];
     if (item && item.alias) {
-      return [{kind:item.alias, onclick:'selectItem'}];
+      return [{kind:item.alias, name:item.name, onclick:'selectItem'}];
     }else if(item){
       return [{kind:'wp.AccountListItem', account:item, onSelect:"selectAccountAction"}];
     }
@@ -41,8 +46,8 @@ enyo.kind({
     ];
     
     // Prepend the Comments and Drafts items
-    this.accounts.unshift({ alias:'wp.DraftsListItem'} );
-    this.accounts.unshift({ alias:'wp.CommentsListItem' });
+    this.accounts.unshift({ alias:'wp.DraftsListItem', name:'drafts' } );
+    this.accounts.unshift({ alias:'wp.CommentsListItem', name:'comments' });
     
     // render the repeater
     this.$.list.build();
@@ -51,12 +56,7 @@ enyo.kind({
     }
   },
   selectItem: function(inSender, inEvent){
-    console.log("Selected", inSender);
-    if (this.selected != inSender) {
-      // if(this.selected) this.selected.addRemoveClass('active-selection', false)
-      this.selected = inSender;
-      this.selected.addRemoveClass("active-selection", true);
-    };
+    this.$.selection.select(inSender.id);
   },
   selectAccountAction: function(inSender, inEvent){
     var account = inSender.account;
@@ -72,18 +72,25 @@ enyo.kind({
       }
     }, this);
     
+    this.doAccountAction(action, account);
+    
+  },
+  selectionChanged: function(){
+    this.forEachAccountControl(function(accountControl){
+      if(accountControl.account) accountControl.clearSelection();
+    }, this);
   },
   // As done by com.palm.app.enyo-email
   forEachAccountControl: function(callBack, context){
     var wrappers = this.$.list.getControls();
-		wrappers.forEach(function (wrapper, index, objBeingTraversed) {
-			//having to do .getControls()[0] here is a hack to work around the fact that the Repeater creates an extra level of div for us
-			//if it didn't do that, the foldersObjWrapper would be the foldersObj
-			var accountControl = wrapper.getControls()[0];
-			
-			callBack.call(context, accountControl, index, objBeingTraversed);
-		}, context);
-		
+    wrappers.forEach(function (wrapper, index, objBeingTraversed) {
+      //having to do .getControls()[0] here is a hack to work around the fact that the Repeater creates an extra level of div for us
+      //if it didn't do that, the foldersObjWrapper would be the foldersObj
+      var accountControl = wrapper.getControls()[0];
+      
+      callBack.call(context, accountControl, index, objBeingTraversed);
+    }, context);
+    
   }
 });
 
@@ -107,6 +114,12 @@ enyo.kind({
     this.labelChanged();
     this.iconChanged();
     this.unreadCountChanged();
+  },
+  ready:function(){
+    if(this.unreadCount > 0) this.interval = setInterval(enyo.bind(this, function(){
+      this.setUnreadCount(this.unreadCount - 1);
+      if(this.unreadCount == 0) clearInterval(this.interval);
+    }), 1000);
   },
   labelChanged:function(){
     this.$.content.setContent(this.label);
