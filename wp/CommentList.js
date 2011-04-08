@@ -54,6 +54,7 @@ enyo.kind({
     this.setComments(response['comments'] || []);
   },
   commentsChanged:function(){
+    this.$.list.refresh();
   },
   imageLoadError:function(sender){
     sender.setSrc('images/icons/default-avatar.png');
