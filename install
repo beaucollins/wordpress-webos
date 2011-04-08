@@ -1,0 +1,4 @@
+#!/bin/bash
+palm-package .
+palm-install org.wordpress.webos*.ipk
+palm-launch org.wordpress.webos
