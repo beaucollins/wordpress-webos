@@ -16,7 +16,7 @@ enyo.kind({
     { kind:'Selection', onChange:'selectionChanged' }
   ],
   items: [
-    { label:'Comments', icon:'./images/icons/comments-icon.png' },
+    { label:'Comments', icon:'./images/icons/comments-icon.png', unreadCount:5 },
     { label:'Posts', icon:'./images/icons/posts-icon.png' },
     { label:'Pages', icon:'./images/icons/pages-icon.png'}
   ],

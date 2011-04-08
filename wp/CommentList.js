@@ -11,6 +11,9 @@ enyo.kind({
     account: null,
     comments: []
   },
+  events: {
+    onSelectComment:""
+  },
   components:[
     { kind:'Selection', onChange:'selectionChanged' },
     { name:'service', kind: 'enyo.WebService', url:href, onFailure:'noWorky', onSuccess:'gotComments', handleAs:'json' },
@@ -59,6 +62,7 @@ enyo.kind({
     var comment = this.comments[item.rowIndex];
     this.$.selection.select(comment.comment_id);
     this.$.item.addClass('active-selection');
+    this.doSelectComment(comment);
   },
   selectionChanged:function(){
     this.$.list.refresh();

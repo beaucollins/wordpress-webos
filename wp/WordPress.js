@@ -16,9 +16,9 @@ enyo.kind({
           { kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction' }
         ] },
         { name:'middle', width:'350px', peekWidth:42, components:[
-          { kind:'wp.CommentList' }
+          { kind:'wp.CommentList', onSelectComment:"selectComment" }
         ] },
-        { name:'detail', peekWidth:92, flex:1, onResize: "slidingResize", components:[
+        { name:'detail', peekWidth:92, flex:2, onResize: "slidingResize", components:[
           { kind:'Control', flex:1 },
           { kind: 'enyo.nouveau.CommandMenu', components:[
             {name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle"}
@@ -32,7 +32,18 @@ enyo.kind({
   resizeHandler: function(){
     this.$.panes.resize();
   },
-  performAccountAction: function(){
+  performAccountAction: function(sender, action, account){
+    if (!this.$.panes.multiView) {
+      this.$.panes.selectView(this.$.middle);
+    };
+  },
+  selectComment:function(sender, comment){
+    if(!this.$.panes.multiView){
+      this.$.panes.selectView(this.$.detail);
+    }
+  },
+  backHandler: function(sender, e){
+    this.$.panes.back(e);
   }
 });
 
