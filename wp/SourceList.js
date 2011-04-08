@@ -9,8 +9,7 @@ enyo.kind({
     { kind:'enyo.Scroller', flex:1, components:[
       { name:'list', kind:'enyo.Repeater', onGetItem:'getAccountItem' }
     ]},
-    { kind:'enyo.nouveau.CommandMenu', className:'source-list-command' },
-    { kind:'Selection', onChange:'selectionChanged' }
+    { kind:'enyo.nouveau.CommandMenu', className:'source-list-command' }
   ],
   create:function(){
     this.inherited(arguments);
@@ -20,8 +19,8 @@ enyo.kind({
   },
   getAccountItem: function(inSender, inIndex){
     var item = this.accounts[inIndex];
-    if (item && item.alias) {
-      return [{kind:item.alias, name:item.name, onclick:'selectItem'}];
+    if (item && item.global) {
+      return [{kind:'wp.GlobalListItem', onSelect:'selectAccountAction', name:'global'}];
     }else if(item){
       return [{kind:'wp.AccountListItem', account:item, onSelect:"selectAccountAction"}];
     }
@@ -45,18 +44,16 @@ enyo.kind({
       }
     ];
     
-    // Prepend the Comments and Drafts items
-    this.accounts.unshift({ alias:'wp.DraftsListItem', name:'drafts' } );
-    this.accounts.unshift({ alias:'wp.CommentsListItem', name:'comments' });
+    this.accounts.unshift({
+      'global':'yeah'
+    });
+    
     
     // render the repeater
     this.$.list.build();
     if(this.$.list.hasNode()){
       this.$.list.render();
     }
-  },
-  selectItem: function(inSender, inEvent){
-    this.$.selection.select(inSender.id);
   },
   selectAccountAction: function(inSender, inEvent){
     var account = inSender.account;
@@ -67,18 +64,13 @@ enyo.kind({
     };
     // turn of the account list items that aren't this account
     this.forEachAccountControl(function(accountControl){
-      if(accountControl.account && accountControl.account != account){
+      if(accountControl.account != account){
         accountControl.clearSelection();
       }
     }, this);
     
     this.doAccountAction(action, account);
     
-  },
-  selectionChanged: function(){
-    this.forEachAccountControl(function(accountControl){
-      if(accountControl.account) accountControl.clearSelection();
-    }, this);
   },
   // As done by com.palm.app.enyo-email
   forEachAccountControl: function(callBack, context){
@@ -135,19 +127,5 @@ enyo.kind({
       this.$.unreadCount.hide();
     }
   }
-});
-
-enyo.kind({
-  name:'wp.CommentsListItem',
-  kind:'wp.ReadCountListItem',
-  label: 'Comments',
-  unreadCount:100
-});
-enyo.kind({
-  name:'wp.DraftsListItem',
-  kind:'wp.ReadCountListItem',
-  label: 'Drafts',
-  icon: './images/icons/drafts-icon.png',
-  unreadCount:2
 });
 

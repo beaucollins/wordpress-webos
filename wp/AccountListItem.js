@@ -40,6 +40,7 @@ enyo.kind({
     this.$.list.render();
   },
   accountChanged:function(){
+    if(!this.account) return;
     this.$.header.setCaption(this.account.blogName);
     
     // attempt to setup the blavatar if there is a valid one

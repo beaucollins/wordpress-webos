@@ -3,6 +3,7 @@ enyo.depends(
 	"wp/WordPress.js",
 	"wp/SourceList.js",
 	"wp/AccountListItem.js",
+	"wp/GlobalListItem.js",
 	"css/WordPress.css",
 	"lib/md5.js",
 	"lib/XMLRPCService.js",
