@@ -6,6 +6,9 @@ enyo.kind({
     onSelectBlogs:'',
     onCancel:''
   },
+  published:{
+    cancelable:false
+  },
   components:[
     // a place for the WordPress Logo
     {kind: "Scrim", layoutKind: "VFlexLayout", align: "center", pack: "center", components: [
@@ -19,19 +22,21 @@ enyo.kind({
       { name: 'blogTypeChooser', className:'blog-setup-buttons', components:[
         { kind: 'enyo.Button', onclick:"createNewBlog", caption: 'Start a new blog on WordPress.com' },
         { kind: 'enyo.Button', onclick:"setupHostedBlog", caption: 'Setup a WordPress.com hosted blog' },
-        { kind: 'enyo.Button', onclick:"setupBlog", caption: 'Setup a self hosted WordPress blog'}
+        { kind: 'enyo.Button', onclick:"setupBlog", caption: 'Setup a self hosted WordPress blog'},
+        { name:'cancel', kind: 'enyo.Button', onclick:'doCancel', caption: 'Cancel' }
       ]},
       { name:'setupForm', kind:'wp.AccountCredentials', onCancel:'cancelSetup', onSetup:'performSetup', selfHosted:false },
       { name:'blogList', kind:'wp.BlogSetupList', lazy:true, onSelectBlogs:'notifySelected', onCancel:'cancelSetup' }
     ]}
   ],
   create:function(){
-    this.inherited(arguments)
+    this.inherited(arguments);
+    this.cancelableChanged();
   },
   reset:function(){
     this.$.pane.selectView(this.$.blogTypeChooser);
     this.$.setupForm.reset();
-    this.$.blogList.reset();
+    if (this.$.blogList) this.$.blogList.reset();
   },
   createNewBlog:function(){
     //we're launching a browser window instead of staying in app
@@ -76,6 +81,13 @@ enyo.kind({
   apiFailure:function(sender, response, success){
     this.log('API Failure', response);
     this.$.scrim.hide();
+  },
+  cancelableChanged:function(){
+    if (this.cancelable) {
+      this.$.cancel.show();
+    }else{
+      this.$.cancel.hide();
+    }
   }
   
 })

@@ -34,7 +34,7 @@ enyo.kind({
         ] }
       ]
     },
-    { name: 'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs' }
+    { name: 'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
   ],
   create:function(){
     this.inherited(arguments);
@@ -57,7 +57,6 @@ enyo.kind({
     this.accountsChanged();
   },
   loadAccounts:function(sender, response){
-    this.log("Loaded accounts " + JSON.stringify(response))
     this.setAccounts(response.results);
   },
   newKey:function(sender, response){
@@ -73,7 +72,6 @@ enyo.kind({
     this.log("Response for accounts: " + JSON.stringify(response));
   },
   resizeHandler: function(){
-    this.log("Resized?");
     this.$.panes.resize();
   },
   performAccountAction: function(sender, action, account){
@@ -107,11 +105,13 @@ enyo.kind({
     if (this.accounts.length == 0) {
       // we don't have any accounts, force the welcome screen
       this.setTransitionKind('enyo.transitions.Simple');
+      this.$.setup.setCancelable(false);
       this.selectView(this.$.setup);
       this.setTransitionKind('enyo.transitions.Fade');
     }
   },
   addNewBlog:function(sender){
+    if (this.accounts.length > 0) this.$.setup.setCancelable(true);
     this.$.setup.reset();
     this.selectView(this.$.setup);
   },
@@ -120,6 +120,9 @@ enyo.kind({
       this.accounts.push(enyo.mixin(blog, { username:username, password:password }));
     }, this);
     this.accountsChanged();
+    this.selectView(this.$.panes);
+  },
+  showPanes:function(){
     this.selectView(this.$.panes);
   },
   gotComments:function(sender, response, request){
