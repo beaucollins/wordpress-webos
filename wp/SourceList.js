@@ -6,13 +6,16 @@ enyo.kind({
   },
   events: {
     onSelectAccountAction:"",
-    onSelectAction:""
+    onSelectAction:"",
+    onAddBlog:""
   },
   components: [
     { kind:'enyo.Scroller', flex:1, components:[
       { name:'list', kind:'enyo.Repeater', onGetItem:'getAccountItem' }
     ]},
-    { kind:'enyo.nouveau.CommandMenu', className:'source-list-command' }
+    { kind:'enyo.nouveau.CommandMenu', className:'source-list-command', components:[
+      { caption:'Add Blog', onclick:'doAddBlog' }
+    ] }
   ],
   create:function(){
     this.inherited(arguments);
@@ -20,38 +23,27 @@ enyo.kind({
     this.accountsChanged = enyo.bind(this, this.accountsChanged);
     this.accountsChanged();
   },
+  hasMultipleAccounts:function(){
+    return this.accounts.length > 1;
+  },
   getAccountItem: function(inSender, inIndex){
     var item = this.accounts[inIndex];
     if (item && item.global) {
       return [{kind:'wp.GlobalListItem', onSelect:'selectAccountAction', name:'global'}];
-    }else if(item){
+    }else if(item && this.hasMultipleAccounts()){
       return [{kind:'wp.AccountListItem', account:item, onSelect:"selectAccountAction"}];
+    }else if(item){
+      return [{kind:'wp.SingleAccountListItem', account:item, onSelect:'selectAccountAction'}];
     }
   },
   accountsChanged: function(){
-    // this is the hook for loading in the account data. right now we're going to mock it
-    // this.accounts = [
-    //   {
-    //     "isAdmin": true,
-    //     "url": "http://beaucollins.wordpress.com/",
-    //     "blogid": "2825",
-    //     "blogName": "beaucollins's Blog",
-    //     "xmlrpc": "http://beaucollins.wordpress.com/xmlrpc.php"
-    //   },
-    //   {
-    //     "isAdmin": true,
-    //     "url": "http://dev.webos.wordpress.org/",
-    //     "blogid": "21491930",
-    //     "blogName": "WordPress rocking webOS",
-    //     "xmlrpc": "http://wpwebosdev.wordpress.com/xmlrpc.php"
-    //   }
-    // ];
     if(!this.accounts || this.accounts.length == 0) return;
-    
-    this.accounts.unshift({
-      'global':'yeah'
-    });
-    
+    if (this.accounts.length > 1 && !this.globalMenu) {
+      this.globalMenu = true;
+      this.accounts.unshift({
+        'global':'yeah'
+      });
+    };
     
     // render the repeater
     this.$.list.build();

@@ -1,5 +1,5 @@
-var href = "mock/comments.json";
-if (document.location.protocol != 'http:') href = document.location.href.replace(/\/[^\/]+?$/, '/'+ href );
+// var href = "mock/comments.json";
+// if (document.location.protocol != 'http:') href = document.location.href.replace(/\/[^\/]+?$/, '/'+ href );
 
 
 
@@ -16,7 +16,7 @@ enyo.kind({
   },
   components:[
     { kind:'Selection', onChange:'selectionChanged' },
-    { name:'service', kind: 'enyo.WebService', url:href, onFailure:'noWorky', onSuccess:'gotComments', handleAs:'json' },
+    { name:'service', kind:'XMLRPCService', onSuccess:'gotComments' },
     { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', components: [
       { name:'item', tapHighlight:true, onclick:'selectComment', kind:'Item', className:'comment-item', layoutKind:'VFlexLayout', components:[
         { name:'header', kind:'HFlexBox', components: [
@@ -32,9 +32,6 @@ enyo.kind({
       {name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle"}
     ] }
   ],
-  ready:function(){
-    this.$.service.call({});
-  },
   setupComment:function(inSender, inIndex){
     var comment = this.comments[inIndex];
     if(comment){
@@ -47,14 +44,23 @@ enyo.kind({
       return true;
     }
   },
-  gotComments:function(sender, response){
-    this.setComments(response['comments'] || []);
+  gotComments:function(sender, response, request){
+    this.setComments(response);
   },
   noWorky:function(sender, response, request){
     this.setComments(response['comments'] || []);
   },
   commentsChanged:function(){
     this.$.list.refresh();
+  },
+  accountChanged:function(){
+    this.comments = [];
+    this.$.list.punt();
+    this.$.service.callMethod({
+      methodName:'wp.getComments',
+      methodParams: [this.account.blogid, this.account.username, this.account.password]
+    }, { url:this.account.xmlrpc })
+    
   },
   imageLoadError:function(sender){
     sender.setSrc('images/icons/default-avatar.png');
@@ -63,7 +69,7 @@ enyo.kind({
     var comment = this.comments[item.rowIndex];
     this.$.selection.select(comment.comment_id);
     this.$.item.addClass('active-selection');
-    this.doSelectComment(comment);
+    this.doSelectComment(comment, this.account);
   },
   selectionChanged:function(){
     this.$.list.refresh();

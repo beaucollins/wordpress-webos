@@ -5,9 +5,10 @@ enyo.kind({
   name: 'wp.WordPress',
   kind: 'Pane',
   published: {
-    accounts:null
+    accounts:[]
   },
   components: [
+    { name: 'xmlrpc_client', kind:'XMLRPCService' },
     // Key Manager System Service
     { name: 'keystore', kind:'PalmService', service:'palm://com.palm.keymanager/', onFailure:'failedKeystore', components: [ { name:'store', method:'store', onSuccess:'newKey' }] },
     // Db8 Account Store
@@ -23,23 +24,17 @@ enyo.kind({
       multiViewMinWidth:500,
       components: [
         { name:'left', width:'225px', components:[
-          { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction' }
+          { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', onAddBlog:'addNewBlog' }
         ] },
         { name:'middle', width:'350px', peekWidth:42, components:[
           { kind:'wp.CommentList', onSelectComment:"selectComment" }
         ] },
         { name:'detail', peekWidth:92, flex:2, onResize: "slidingResize", components:[
-          { kind:'Control', flex:1, components:[{kind:'Canvas', width:'100%', height:'300px'}] },
-          { kind: 'enyo.nouveau.CommandMenu', components:[
-            {name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle"}
-          ] }
+          { kind:'wp.CommentView', flex:1 }
         ] }
       ]
     },
-    {
-      name: 'setup',
-      kind: 'wp.AccountSetup'
-    }
+    { name: 'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs' }
   ],
   create:function(){
     this.inherited(arguments);
@@ -58,9 +53,8 @@ enyo.kind({
     
     // should this only be done when needed or can it be called whenever?
     this.$.putAccountKind.call({ owner:'org.wordpress.webos' });
-    this.$.findAccounts.call();
-    
-    
+    this.accounts = enyo.json.from(enyo.getCookie('accounts')) || [];
+    this.accountsChanged();
   },
   loadAccounts:function(sender, response){
     this.log("Loaded accounts " + JSON.stringify(response))
@@ -83,11 +77,16 @@ enyo.kind({
     this.$.panes.resize();
   },
   performAccountAction: function(sender, action, account){
+    if (action == 'Comments') {
+      this.$.commentList.setAccount(account);
+    };
     if (!this.$.panes.multiView) {
       this.$.panes.selectView(this.$.middle);
     };
   },
-  selectComment:function(sender, comment){
+  selectComment:function(sender, comment, account){
+    this.$.commentView.setAccount(account);
+    this.$.commentView.setComment(comment);
     if(!this.$.panes.multiView){
       this.$.panes.selectView(this.$.detail);
     }
@@ -102,13 +101,28 @@ enyo.kind({
     return key;
   },
   accountsChanged:function(){
+    // save the accounts
+    enyo.setCookie('accounts', enyo.json.to(this.accounts), { expires:100 });
     this.$.sourceList.setAccounts(this.accounts);
     if (this.accounts.length == 0) {
       // we don't have any accounts, force the welcome screen
       this.setTransitionKind('enyo.transitions.Simple');
       this.selectView(this.$.setup);
       this.setTransitionKind('enyo.transitions.Fade');
-    };
+    }
+  },
+  addNewBlog:function(sender){
+    this.$.setup.reset();
+    this.selectView(this.$.setup);
+  },
+  setupBlogs:function(sender, blogs, username, password){
+    enyo.map(blogs, function(blog, index, blogs){
+      this.accounts.push(enyo.mixin(blog, { username:username, password:password }));
+    }, this);
+    this.accountsChanged();
+    this.selectView(this.$.panes);
+  },
+  gotComments:function(sender, response, request){
   }
 });
 

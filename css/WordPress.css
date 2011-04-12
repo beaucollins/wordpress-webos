@@ -165,17 +165,60 @@ img {
 }
 
 
+/* Comment Detail View */
+
+.avatar-large {
+  border-radius:10px;
+  border:1px solid #EEE;
+  margin: 0 10px 0 5px;
+}
+
+#wordPress_commentView_header {
+  font-size:16px;
+  color:#666;
+}
+
+#wordPress_commentView_authorName {
+  color:#333;
+  font-size:22px;
+}
+
+#wordPress_commentView_body {
+  font-size:18px;
+  padding:20px;
+}
+
+#wordPress_commentView_conversationHeader {
+  color: #2C6C93;
+  font-size: 16px;
+}
+
+.row-label {
+  color: #2C6C93;
+  text-align:right;
+  padding-right:10px;
+  -webkit-box-sizing: border-box;
+  font-size:16px;
+  width:70px;
+}
+
+#wordPress_commentView_subject {
+  font-size:16px;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+
 /* Setup Screen */
 
 #wordPress_setup_header {
   background:url(../images/wordpress.png) no-repeat center center, url(../images/setup_shadow.png) no-repeat center bottom, url(../images/header_setup.png);
 }
 
-.blog-setup-buttons {
+.blog-setup-buttons, .setup-screen {
   padding:10px;
+  -webkit-box-sizing: border-box;
+  max-width:400px;
+  margin:0 auto;
 }
 
-.blog-setup-buttons .enyo-button {
-  margin: 5px auto;
-  max-width:400px;
-}

@@ -16,7 +16,7 @@ enyo.kind({
     { kind:'Selection', onChange:'selectionChanged' }
   ],
   items: [
-    { label:'Comments', icon:'./images/icons/comments-icon.png', unreadCount:5 },
+    { label:'Comments', icon:'./images/icons/comments-icon.png' },
     { label:'Posts', icon:'./images/icons/posts-icon.png' },
     { label:'Pages', icon:'./images/icons/pages-icon.png'}
   ],
@@ -52,7 +52,7 @@ enyo.kind({
     blavatar.src = enyo.application.makeBlavatar(this.account.xmlrpc, {
       size:30
     });
-    
+
   },
   selectionChanged:function(){
     
@@ -64,8 +64,22 @@ enyo.kind({
     if(this.$.selection.isSelected(item.label)) return;
 
     this.$.selection.select(item.label);
-    this.doSelect(item.label);
+    this.doSelect(item.label, this.account);
     return true;
+  }
+});
+
+enyo.kind({
+  name:'wp.SingleAccountListItem',
+  kind:'wp.AccountListItem',
+  items: [
+    { label:'Comments', icon:'./images/icons/comments-icon.png', unreadCount:0 },
+    { label:'Posts', icon:'./images/icons/posts-icon.png' },
+    { label:'Pages', icon:'./images/icons/pages-icon.png'},
+    { label:'Drafts', icon:'./images/icons/drafts-icon.png', unreadCount:0 }
+  ],
+  create:function(){
+    this.inherited(arguments);
   }
 });
 
