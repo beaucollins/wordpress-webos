@@ -1,6 +1,9 @@
 enyo.kind({
   name: 'wp.SourceList',
   kind: 'VFlexBox',
+  published: {
+    accounts:null
+  },
   events: {
     onSelectAccountAction:"",
     onSelectAction:""
@@ -27,22 +30,23 @@ enyo.kind({
   },
   accountsChanged: function(){
     // this is the hook for loading in the account data. right now we're going to mock it
-    this.accounts = [
-      {
-        "isAdmin": true,
-        "url": "http://beaucollins.wordpress.com/",
-        "blogid": "2825",
-        "blogName": "beaucollins's Blog",
-        "xmlrpc": "http://beaucollins.wordpress.com/xmlrpc.php"
-      },
-      {
-        "isAdmin": true,
-        "url": "http://dev.webos.wordpress.org/",
-        "blogid": "21491930",
-        "blogName": "WordPress rocking webOS",
-        "xmlrpc": "http://wpwebosdev.wordpress.com/xmlrpc.php"
-      }
-    ];
+    // this.accounts = [
+    //   {
+    //     "isAdmin": true,
+    //     "url": "http://beaucollins.wordpress.com/",
+    //     "blogid": "2825",
+    //     "blogName": "beaucollins's Blog",
+    //     "xmlrpc": "http://beaucollins.wordpress.com/xmlrpc.php"
+    //   },
+    //   {
+    //     "isAdmin": true,
+    //     "url": "http://dev.webos.wordpress.org/",
+    //     "blogid": "21491930",
+    //     "blogName": "WordPress rocking webOS",
+    //     "xmlrpc": "http://wpwebosdev.wordpress.com/xmlrpc.php"
+    //   }
+    // ];
+    if(!this.accounts || this.accounts.length == 0) return;
     
     this.accounts.unshift({
       'global':'yeah'

@@ -5,6 +5,8 @@ enyo.depends(
 	"wp/AccountListItem.js",
 	"wp/GlobalListItem.js",
 	"wp/CommentList.js",
+	"wp/AccountSetup.js",
+	'wp/Accounts.js',
 	"css/WordPress.css",
 	"lib/md5.js",
 	"lib/XMLRPCService.js",
@@ -12,5 +14,7 @@ enyo.depends(
 	"lib/SimpleHtmlParser.js",
 	"ui/AccountList.js",
 	"ui/AccountSetup.js",
-	"ui/AccountTabs.js"
+	"ui/AccountTabs.js",
+	"wp/BlogDiscover.js",
+	"Canvas.js"
 );

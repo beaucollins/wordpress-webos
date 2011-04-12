@@ -123,7 +123,8 @@ img {
 
 .comment-list-avatar {
   -webkit-border-radius:5px;
-  -webkit-box-shadow:0 0 2px rgba(0,0,0,0.5);
+  -webkit-box-shadow:0 0 2px rgba(0,0,0,1);
+  box-shadow: 0 0 2px rgba(0,0,0,1);
   border:1px solid #FFF;
 }
 
@@ -161,4 +162,20 @@ img {
 .comment-item.active-selection, .enyo-held.comment-item {
   background-image:url(../images/active-selection.png);
   -webkit-background-size: 100% 100%;
+}
+
+
+/* Setup Screen */
+
+#wordPress_setup_header {
+  background:url(../images/wordpress.png) no-repeat center center, url(../images/setup_shadow.png) no-repeat center bottom, url(../images/header_setup.png);
+}
+
+.blog-setup-buttons {
+  padding:10px;
+}
+
+.blog-setup-buttons .enyo-button {
+  margin: 5px auto;
+  max-width:400px;
 }
