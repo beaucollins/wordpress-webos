@@ -222,3 +222,21 @@ img {
   margin:0 auto;
 }
 
+/* PopUp Animation */
+
+.transitioner {
+  -webkit-transform: scale(2);
+  opacity:0;
+  -webkit-transition-property: opacity, -webkit-transform;
+  -webkit-transition-duration: 0.3s;
+}
+
+.scaleFadeIn {
+  -webkit-transform: scale(1);
+  opacity: 1;
+}
+
+.fastAnimate {
+  -webkit-transform-style: preserve-3d;
+}
+

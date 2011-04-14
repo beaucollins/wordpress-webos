@@ -10,22 +10,24 @@ enyo.kind({
     cancelable:false
   },
   components:[
-    // a place for the WordPress Logo
-    {kind: "Scrim", layoutKind: "VFlexLayout", align: "center", pack: "center", components: [
-			{kind: "SpinnerLarge"}
-		]},
+    //     {kind: "Scrim", layoutKind: "VFlexLayout", align: "center", pack: "center", components: [
+    //  {kind: "SpinnerLarge"}
+    // ]},
     
     { kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
     { name:'blogFinder', kind:'wp.BlogDiscover', onSuccess:'showBlogList', onFailure:'apiFailure', onBadURL:'badURL' },
+    // a place for the WordPress Logo
     { name:'header', height:'77px' },
     { kind:'Pane', flex:1, components:[
       { name: 'blogTypeChooser', className:'blog-setup-buttons', components:[
-        { kind: 'enyo.Button', onclick:"createNewBlog", caption: 'Start a new blog on WordPress.com' },
-        { kind: 'enyo.Button', onclick:"setupHostedBlog", caption: 'Setup a WordPress.com hosted blog' },
-        { kind: 'enyo.Button', onclick:"setupBlog", caption: 'Setup a self hosted WordPress blog'},
-        { name:'cancel', kind: 'enyo.Button', onclick:'doCancel', caption: 'Cancel' }
+        { kind: 'enyo.gemstone.Button', onclick:"createNewBlog", caption: 'Start a new blog on WordPress.com' },
+        { kind: 'enyo.gemstone.Button', onclick:"setupHostedBlog", caption: 'Setup a WordPress.com hosted blog' },
+        { kind: 'enyo.gemstone.Button', onclick:"setupBlog", caption: 'Setup a self hosted WordPress blog'},
+        { name:'cancel', kind: 'enyo.gemstone.Button', onclick:'doCancel', caption: 'Cancel' }
       ]},
       { name:'setupForm', kind:'wp.AccountCredentials', onCancel:'cancelSetup', onSetup:'performSetup', selfHosted:false },
+    ]},
+    { kind:'enyo.gemstone.Popup', showHideMode:'transition', className:'transitioner fastAnimate', openClassName:'scaleFadeIn', modal:true, scrim:true, components:[
       { name:'blogList', kind:'wp.BlogSetupList', flex:1, lazy:true, onSelectBlogs:'notifySelected', onCancel:'cancelSetup' }
     ]}
   ],
@@ -53,6 +55,7 @@ enyo.kind({
   cancelSetup:function(){
     this.$.pane.selectView(this.$.blogTypeChooser);
     this.$.setupForm.reset();
+    this.$.popup.close();
   },
   performSetup:function(sender){
     // this.$.scrim.show();
@@ -67,9 +70,9 @@ enyo.kind({
     if (blogs.length == 1) {
       this.doSelectBlogs(blogs, this.$.setupForm.username, this.$.setupForm.password);
     }else{
-      this.$.scrim.hide();
-      this.$.pane.selectViewByName('blogList');
+      // this.$.scrim.hide();
       this.$.blogList.setBlogs(blogs);
+      this.$.popup.openAtCenter();//selectViewByName('blogList');
     }
   },
   notifySelected:function(sender, blogs){
@@ -77,11 +80,11 @@ enyo.kind({
   },
   badURL:function(sender){
     this.log("Bad URL message");
-    this.$.scrim.hide();
+    // this.$.scrim.hide();
   },
   apiFailure:function(sender, response, success){
     this.log('API Failure', response);
-    this.$.scrim.hide();
+    // this.$.scrim.hide();
   },
   cancelableChanged:function(){
     if (this.cancelable) {
@@ -105,7 +108,7 @@ enyo.kind({
   },
   components:[
     { name:'selection', kind:'wp.utils.SelectionList', onChange:'selectionChanged' },
-    { kind:'VFlexBox', flex:1, className:'setup-screen', components:[
+    { kind:'VFlexBox', className:'setup-screen', width:'320px', height:'500px', components:[
       { name:'scroller', kind:'enyo.Scroller', flex:1, components:[
         { name:'blogs', kind:'VirtualRepeater', onGetItem:'setupBlogRow', components:[
           { kind:'Item', layoutKind:'HFlexLayout', components:[
@@ -114,10 +117,8 @@ enyo.kind({
           ]}
         ]},
       ]},
-      { name:'Control', flex:1, components:[
-        { name:'setup_selected', kind:'Button', caption:'Set Up', onclick:'setupSelected' },
-        { name:'cancel', kind:'Button', caption:'Cancel', onclick:'doCancel' }
-      ]}
+      { name:'setup_selected', kind:'enyo.gemstone.Button', caption:'Set Up', onclick:'setupSelected' },
+      { name:'cancel', kind:'enyo.gemstone.Button', caption:'Cancel', onclick:'doCancel' }
     ]}
   ],
   create:function(){
@@ -236,8 +237,8 @@ enyo.kind({
         { name:'username', kind:'FancyInput', autoCapitalize:false, hint:'Username', changeOnKeypress:true, onchange:'updateUsername' },
         { name:'password', kind:'FancyInput', hint:'Password', changeOnKeypress:true, onchange:'updatePassword', inputType:'password' }
       ]},
-      { name:'signup', kind:'ActivityButton', caption:'Sign Up', onclick:'setupClicked', disabled:true },
-      { name:'cancel', kind:'Button', caption:'Cancel', onclick:'cleanup' }
+      { name:'signup', kind:'enyo.ActivityButton', className:'enyo-gemstone', caption:'Sign Up', onclick:'setupClicked', disabled:true },
+      { name:'cancel', kind:'enyo.gemstone.Button', caption:'Cancel', onclick:'cleanup' }
     ]}
   ],
   create:function(){
