@@ -26,7 +26,7 @@ enyo.kind({
         { name:'cancel', kind: 'enyo.Button', onclick:'doCancel', caption: 'Cancel' }
       ]},
       { name:'setupForm', kind:'wp.AccountCredentials', onCancel:'cancelSetup', onSetup:'performSetup', selfHosted:false },
-      { name:'blogList', kind:'wp.BlogSetupList', lazy:true, onSelectBlogs:'notifySelected', onCancel:'cancelSetup' }
+      { name:'blogList', kind:'wp.BlogSetupList', flex:1, lazy:true, onSelectBlogs:'notifySelected', onCancel:'cancelSetup' }
     ]}
   ],
   create:function(){
@@ -52,9 +52,10 @@ enyo.kind({
   },
   cancelSetup:function(){
     this.$.pane.selectView(this.$.blogTypeChooser);
+    this.$.setupForm.reset();
   },
   performSetup:function(sender){
-    this.$.scrim.show();
+    // this.$.scrim.show();
     self.username = sender.username;
     self.password = sender.password;
     this.$.blogFinder.discoverBlogs(sender.url, sender.username, sender.password);
@@ -94,7 +95,7 @@ enyo.kind({
 
 enyo.kind({
   name:'wp.BlogSetupList',
-  kind:'Control',
+  kind:'VFlexBox',
   published: {
     blogs:[]
   },
@@ -103,16 +104,20 @@ enyo.kind({
     onSelectBlogs:''
   },
   components:[
-    { kind:'Control', className:'setup-screen', components:[
-      { name:'selection', kind:'wp.utils.SelectionList', multi:true, onChange:'selectionChanged' },
-      { kind:'VirtualRepeater', onGetItem:'setupBlogRow', components:[
-        { kind:'Item', layoutKind:'HFlexLayout', components:[
-          { name:'blogName', flex:1 },
-          { kind:'CheckBox', checked:true, onclick:'blogToggled' }
-        ]}
+    { name:'selection', kind:'wp.utils.SelectionList', onChange:'selectionChanged' },
+    { kind:'VFlexBox', flex:1, className:'setup-screen', components:[
+      { name:'scroller', kind:'enyo.Scroller', flex:1, components:[
+        { name:'blogs', kind:'VirtualRepeater', onGetItem:'setupBlogRow', components:[
+          { kind:'Item', layoutKind:'HFlexLayout', components:[
+            { name:'blogName', flex:1 },
+            { kind:'CheckBox', checked:false, onclick:'blogToggled' }
+          ]}
+        ]},
       ]},
-      { name:'setup_selected', kind:'Button', caption:'Set Up', onclick:'setupSelected' },
-      { name:'cancel', kind:'Button', caption:'Cancel', onclick:'doCancel' }
+      { name:'Control', flex:1, components:[
+        { name:'setup_selected', kind:'Button', caption:'Set Up', onclick:'setupSelected' },
+        { name:'cancel', kind:'Button', caption:'Cancel', onclick:'doCancel' }
+      ]}
     ]}
   ],
   create:function(){
@@ -124,10 +129,12 @@ enyo.kind({
   },
   setupBlogRow:function(sender, index){
     var blog;
+    // index = index % this.blogs.length;
     if (blog = this.blogs[index]) {
+      this.count ++;
       this.$.blogName.setContent(blog.blogName);
-      return true;
-    };
+      return true; //this.count < 50 ? true : false;
+    }
   },
   blogToggled:function(sender, event){
     if (sender.checked) {
@@ -137,10 +144,9 @@ enyo.kind({
     }
   },
   blogsChanged:function(){
-    enyo.forEach(this.blogs, function(blog, index){
-      this.$.selection.select(index);
-    }, this);
-    this.$.virtualRepeater.render();
+    this.count = 0;
+    this.$.blogs.render();
+    this.$.selection.clear();
   },
   setupSelected:function(){
     // filter to only selected blogs
@@ -224,13 +230,13 @@ enyo.kind({
   components: [
     { kind:'Control', className:'setup-screen', components:[
       { name:'site', kind:'RowGroup', caption:'Site', components: [
-        { name:'url', kind:'FancyInput', hint:'URL', changeOnKeypress:true, onchange:'updateUrl' }
+        { name:'url', kind:'FancyInput', autoCapitalize:false, hint:'URL', changeOnKeypress:true, onchange:'updateUrl' }
       ] },
       { kind:'RowGroup', caption:'Account', components: [
-        { name:'username', kind:'FancyInput', hint:'Username', changeOnKeypress:true, onchange:'updateUsername' },
+        { name:'username', kind:'FancyInput', autoCapitalize:false, hint:'Username', changeOnKeypress:true, onchange:'updateUsername' },
         { name:'password', kind:'FancyInput', hint:'Password', changeOnKeypress:true, onchange:'updatePassword', inputType:'password' }
       ]},
-      { name:'signup', kind:'Button', caption:'Sign Up', onclick:'doSetup', disabled:true },
+      { name:'signup', kind:'ActivityButton', caption:'Sign Up', onclick:'setupClicked', disabled:true },
       { name:'cancel', kind:'Button', caption:'Cancel', onclick:'cleanup' }
     ]}
   ],
@@ -247,6 +253,11 @@ enyo.kind({
     this.setUrl('');
     this.setUsername('');
     this.setPassword('');
+    this.$.signup.setActive(false);
+  },
+  setupClicked:function(){
+    this.$.signup.setActive(true);
+    this.doSetup();
   },
   checkValid:function(){
     var invalid = this.isEmpty(this.$.url.getValue()) ||
