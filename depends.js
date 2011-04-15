@@ -5,6 +5,7 @@ enyo.depends(
 	"wp/AccountListItem.js",
 	"wp/GlobalListItem.js",
 	"wp/CommentList.js",
+	"wp/PostList.js",
 	"wp/CommentView.js",
 	"wp/AccountSetup.js",
 	'wp/Accounts.js',

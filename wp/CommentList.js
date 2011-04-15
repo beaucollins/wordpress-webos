@@ -1,23 +1,62 @@
 // var href = "mock/comments.json";
 // if (document.location.protocol != 'http:') href = document.location.href.replace(/\/[^\/]+?$/, '/'+ href );
 
-
+enyo.kind({
+  name:'wp.DataPage',
+  kind:'Component',
+  published: {
+    pageSize:10
+  },
+  create:function(){
+    this.inherited(arguments);
+    this.pages = {};
+  },
+  destroy:function(){
+    this.pages = null;
+  },
+  storePage:function(page, itemArray){
+    this.pages[page] = enyo.clone(itemArray);
+  },
+  itemAtIndex:function(index){
+    var pagesize = this.pageSize;
+    var page = Math.floor(index/pagesize);
+    var offset = index % pagesize;
+    var items, item;
+    if(!(items = this.pages[page])){
+      return;
+    }
+    if (item = items[offset]) {
+      return item;
+    };
+  },
+  clear:function(){
+    this.pages = {};
+  },
+  missingPage:function(page){
+    console.log("are we missing the fucking page", page);
+    if(page < 0) return false;
+    return !this.havePage(page);
+  },
+  havePage:function(page){
+    return this.pages[page];
+  }
+  
+});
 
 enyo.kind({
   name:'wp.CommentList',
   kind:'VFlexBox',
-  flex:1,
   published: {
-    account: null,
-    comments: []
+    account: null
   },
   events: {
     onSelectComment:""
   },
   components:[
     { kind:'Selection', onChange:'selectionChanged' },
+    { kind:'wp.DataPage' },
     { name:'service', kind:'XMLRPCService', onSuccess:'gotComments' },
-    { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', components: [
+    { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', onAcquirePage:'acquireCommentPage', components: [
       { name:'item', tapHighlight:true, onclick:'selectComment', kind:'Item', className:'comment-item', layoutKind:'VFlexLayout', components:[
         { name:'header', kind:'HFlexBox', components: [
           { kind:'Control', className:'comment-left-col', components:[{ name:'avatar', width:'30px', height:'30px', kind:'Image', onerror:'imageLoadError', className:'comment-list-avatar', src:'images/icons/default-avatar.png' }] },
@@ -33,8 +72,8 @@ enyo.kind({
     ] }
   ],
   setupComment:function(inSender, inIndex){
-    var comment = this.comments[inIndex];
-    if(comment){
+    console.log("Setup Row", inIndex);
+    if(comment = this.$.dataPage.itemAtIndex(inIndex)){
       this.$.avatar.setSrc(enyo.application.makeGravatar(comment.author_email, {size:30}));
       this.$.author.setContent(comment.author);
       this.$.timestamp.setContent(TimeAgo(comment.date_created_gmt));
@@ -44,29 +83,41 @@ enyo.kind({
       return true;
     }
   },
+  acquireCommentPage:function(sender, page){
+    var index = (page + 1) * sender.pageSize;
+    if (this.$.dataPage.missingPage(page) && this.account) {
+      // look for additional comments
+      
+      // status
+      // post_id
+      // offset
+      // number
+      this.$.service.callMethod({
+        methodName:'wp.getComments',
+        methodParams: [this.account.blogid, this.account.username, this.account.password, {
+          number: sender.pageSize,
+          offset: page * sender.pageSize
+        }]
+      }, { url:this.account.xmlrpc, page:page })
+    };
+  },
   gotComments:function(sender, response, request){
-    this.setComments(response);
-  },
-  noWorky:function(sender, response, request){
-    this.setComments(response['comments'] || []);
-  },
-  commentsChanged:function(){
+    this.$.dataPage.storePage(request.page, response);
     this.$.list.refresh();
   },
   accountChanged:function(){
-    this.comments = [];
     this.$.list.punt();
-    this.$.service.callMethod({
-      methodName:'wp.getComments',
-      methodParams: [this.account.blogid, this.account.username, this.account.password]
-    }, { url:this.account.xmlrpc })
-    
+    this.$.dataPage.clear();
+    if (this.account == null) {
+      return;
+    };
+    this.$.list.reset();
   },
   imageLoadError:function(sender){
     sender.setSrc('images/icons/default-avatar.png');
   },
   selectComment:function(sender, item){
-    var comment = this.comments[item.rowIndex];
+    var comment = this.$.dataPage.itemAtIndex(item.rowIndex);
     this.$.selection.select(comment.comment_id);
     this.$.item.addClass('active-selection');
     this.doSelectComment(comment, this.account);

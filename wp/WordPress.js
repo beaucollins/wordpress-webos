@@ -27,9 +27,14 @@ enyo.kind({
           { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', onAddBlog:'addNewBlog' }
         ] },
         { name:'middle', width:'350px', peekWidth:42, components:[
-          { kind:'wp.CommentList', onSelectComment:"selectComment" }
+          { name:'middlePane', kind:'Pane', flex:1, components:[
+            { kind:'Control', name:'blank' },
+            { kind:'wp.CommentList', onSelectComment:"selectComment" },
+            { kind:'wp.PostList', onSelectPost:'selectPost' },
+            { name:'pageList', kind:'wp.PostList', onSelectPost:'selectPost', methodName:'wp.getPages' }
+          ]}
         ] },
-        { name:'detail', peekWidth:92, flex:2, onResize: "slidingResize", components:[
+        { name:'detail', peekWidth:92, flex:3, onResize: "slidingResize", components:[
           { kind:'wp.CommentView', flex:1 }
         ] }
       ]
@@ -55,6 +60,7 @@ enyo.kind({
     this.$.putAccountKind.call({ owner:'org.wordpress.webos' });
     this.accounts = enyo.json.from(enyo.getCookie('accounts')) || [];
     this.accountsChanged();
+    
   },
   loadAccounts:function(sender, response){
     this.setAccounts(response.results);
@@ -75,12 +81,32 @@ enyo.kind({
     this.$.panes.resize();
   },
   performAccountAction: function(sender, action, account){
-    if (action == 'Comments') {
-      this.$.commentList.setAccount(account);
-    };
+    this.$.commentView.setComment(null);
     if (!this.$.panes.multiView) {
       this.$.panes.selectView(this.$.middle);
     };
+    if (action == 'Comments') {
+      this.$.middlePane.selectView(this.$.commentList);
+      this.$.commentList.setAccount(account);
+    }else{
+      this.$.commentList.setAccount(null);
+    }
+    
+    if (action == 'Posts') {
+      this.$.middlePane.selectView(this.$.postList);
+      this.$.postList.setAccount(account);
+    }else{
+      this.$.postList.setAccount(null);
+    }
+    
+    if (action == 'Pages') {
+      console.log("Set the page list!");
+      this.$.middlePane.selectView(this.$.pageList);
+      this.$.pageList.setAccount(account);
+    }else{
+      this.$.pageList.setAccount(null);
+    }
+    
   },
   selectComment:function(sender, comment, account){
     this.$.commentView.setAccount(account);

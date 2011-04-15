@@ -77,6 +77,7 @@ enyo.kind({
   },
   notifySelected:function(sender, blogs){
     this.doSelectBlogs(blogs, this.$.setupForm.username, this.$.setupForm.password);
+    this.$.popup.close();
   },
   badURL:function(sender){
     this.log("Bad URL message");
@@ -108,7 +109,7 @@ enyo.kind({
   },
   components:[
     { name:'selection', kind:'wp.utils.SelectionList', onChange:'selectionChanged' },
-    { kind:'VFlexBox', className:'setup-screen', width:'320px', height:'500px', components:[
+    { kind:'VFlexBox', className:'setup-screen', width:'320px', height:'300px', components:[
       { name:'scroller', kind:'enyo.Scroller', flex:1, components:[
         { name:'blogs', kind:'VirtualRepeater', onGetItem:'setupBlogRow', components:[
           { kind:'Item', layoutKind:'HFlexLayout', components:[
