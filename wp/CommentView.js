@@ -7,7 +7,15 @@ enyo.kind({
     replies:[]
   },
   components:[
+    { kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
     { name:'xmlrpc_client', kind: 'XMLRPCService', onSuccess:'appendConversation' },
+    { kind:'enyo.gemstone.Popup', showHideMode:'transition', className:'transitioner fastAnimate', onOpen:'focusReply', openClassName:'scaleFadeIn', scrim:true, components:[
+      { name:'reply', kind: 'enyo.RichText', width:'300px', height:'300px' },
+      { kind: 'HFlexBox', components:[
+        { kind:'enyo.gemstone.Button', flex:1, caption:'Cancel', onclick:'cancelReply' },
+        { kind:'enyo.gemstone.Button', flex:1, caption:'Submit', onclick:'publishReply' }
+      ] }
+    ]},
     { kind:'Pane', flex:1, components:[
       { name:'empty'},
       { name:'comment', kind:'VFlexBox', components:[
@@ -41,10 +49,9 @@ enyo.kind({
         ] },
         { kind: 'enyo.nouveau.CommandMenu', components:[
           { name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle" },
-          { caption: 'Approve' },
-          { caption: 'Delete' },
-          { caption: 'View'}
-        ] }
+          { caption: 'Reply', onclick:'showReplyWindow' },
+          { caption: 'View', onclick:'launchBrowser'}
+        ] } 
       ] }
     ]}
   ],
@@ -61,7 +68,6 @@ enyo.kind({
     this.$.conversation.render();
     if (this.comment == null) {
       this.$.pane.selectView(this.$.empty);
-      this.$.scroller.hide();
       return;
     };
     
@@ -105,9 +111,39 @@ enyo.kind({
       return true;
     }
   },
-  
+  showReplyWindow:function(){
+    this.$.popup.openAtCenter();
+  },
   hasConversation:function(){
     return this.comment.parent != "0";
+  },
+  // open up a browser window with the comment's URL
+  launchBrowser:function(){
+    this.$.palmService.call({target:this.comment.link}); 
+  },
+  focusReply:function(){
+    this.$.reply.forceFocus();
+  },
+  publishReply:function(){
+    var reply = this.$.reply.value;
+    this.$.popup.close();
+    
+    //     [commentParams setObject:feedback.text forKey:@"content"];
+    // [commentParams setObject:@"153" forKey:@"post_id"];
+    // [commentParams setObject:@"approve" forKey:@"status"];
+    // [commentParams setObject:email.text forKey:@"author_email"];
+    // [commentParams setObject:name.text forKey:@"author"];
+		
+    this.$.xmlrpc_client.callMethod({ methodName:'wp.newComment', methodParams:[this.account.blogid, this.account.username, this.account.password, this.comment.post_id, {
+      post_id: this.comment.post_id,
+      content: reply,
+      comment_parent: this.comment.comment_id, //
+      status: 'approve'
+    }]});
+    
+  },
+  cancelReply:function(){
+    this.$.popup.close();
   }
   
 })
