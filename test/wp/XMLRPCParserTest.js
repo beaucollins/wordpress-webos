@@ -13,7 +13,6 @@ enyo.kind({
     }
     this.assertEqual(response.faultCode, good.faultCode);
     this.assertEqual(response.faultString, good.faultString);
-
   },
   
   
@@ -33,6 +32,14 @@ enyo.kind({
     
   },
   
+  
+  testMalFormedResponse2:function(){
+	    
+	    var response = XMLRPCParser.parse(malFormed2);
+	    var description = "This is just <br> a test.";
+	    this.assertEqual(response[0].description, description);
+	    
+	  },
   
   // adding some assertion methods
   assertEqual:function(a, b, msg){
@@ -94,3 +101,22 @@ var malFormed = "\
     </param>\
   </params>\
 </methodResponse>";
+
+var malFormed2 = "\
+	<?xml version=\"1.0\"?>\
+	i'm-not-here<methodResponse>\
+	  <params>\
+	    <param>\
+	      <value>\
+	      <array><data>\
+	  <value><struct>\
+	  <member><name>dateCreated</name><value><dateTime.iso8601>20110415T16:11:04</dateTime.iso8601></value></member>\
+	  <member><name>userid</name><value><string>2832</string></value></member>\
+	  <member><name>postid</name><value><string>7</string></value></member>\
+	  <member><name>description</name><value><string>This is just <br> a test.</string></value></member>\
+	  </struct></value>\
+	</data></array>\
+	      </value>\
+	    </param>\
+	  </params>\
+	</methodResponse>";
