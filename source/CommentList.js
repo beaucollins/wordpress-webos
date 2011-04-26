@@ -65,7 +65,7 @@ enyo.kind({
       { caption:'Trash', checked:false },
       { caption:'Spam', checked:false }
     ] },
-    { kind:'enyo.Header', layoutKind:'HFlexLayout', components:[
+    { name:'listHeader', kind:'enyo.Header', layoutKind:'HFlexLayout', components:[
       { name:'filterButton', kind:'enyo.Button', caption:'All Comments', onclick:'showFilterOptions' }
     ] },
     { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', onAcquirePage:'acquireCommentPage', onDiscardPage:'discardCommentPage', components: [

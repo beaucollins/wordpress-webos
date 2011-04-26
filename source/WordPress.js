@@ -4,6 +4,7 @@
 enyo.kind({
   name: 'wp.WordPress',
   kind: 'Pane',
+  className: 'enyo-bg',
   published: {
     accounts:[]
   },
@@ -43,7 +44,11 @@ enyo.kind({
         ] }
       ]
     },
-    { name: 'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
+    { name: 'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' },
+    { kind:'AppMenu', components:[
+      {name: "edit", kind: "EditMenu"},
+      {name: 'setupMenuItem', caption: 'Setup Blog', onclick:'addNewBlog' }
+    ]}
   ],
   create:function(){
     this.inherited(arguments);
@@ -178,7 +183,14 @@ enyo.kind({
     enyo.mixin(params, options);
     var composeLabel = Math.round(Math.random() * 100); // just for fun
     enyo.windows.activate("compose-" + composeLabel, "./compose/index.html", params);
+  },
+  openAppMenuHandler: function() {
+      this.$.appMenu.open();
+  },
+  closeAppMenuHandler: function() {
+      this.$.appMenu.close();
   }
+  
 });
 
 
