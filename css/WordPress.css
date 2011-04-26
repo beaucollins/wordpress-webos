@@ -148,18 +148,24 @@ img {
   background:url(../images/icons/post-tiny.png) no-repeat 20px top;
 }
 
-.comment-timestamp {
+.wp-list-status {
+  font-size: 14px;
+}
+
+.wp-list-timestamp, .comment-timestamp {
   font-size: 14px;
   font-weight:bold;
   color:#999;
+  text-align:right;
 }
+
 
 .comment-left-col {
   text-align:center;
   width:50px;
 }
 
-.comment-item.active-selection, .enyo-held.comment-item {
+.post-item.active-selection, .comment-item.active-selection, .enyo-held.comment-item {
   background-image:url(../images/active-selection.png);
   -webkit-background-size: 100% 100%;
 }
@@ -204,6 +210,9 @@ img {
 
 #wordPress_commentView_subject {
   font-size:16px;
+}
+
+.wp-truncate, #wordPress_commentView_subject {
   white-space:nowrap;
   text-overflow:ellipsis;
   overflow:hidden;

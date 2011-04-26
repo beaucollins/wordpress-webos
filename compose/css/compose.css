@@ -1,0 +1,17 @@
+.desktop {
+  background:url(../images/white-wood.jpg);
+  position:absolute; top:0; right:0; left:0; bottom:0
+}
+
+.composer {
+  position:absolute;
+  top:0;right:10%;left:10%;bottom:0;
+  background:#FFF;
+  -webkit-transition: 200ms ease-in-out;
+  -webkit-transition-property: left right;
+}
+
+.composer.expanded-mode {
+  right:0;
+  left:0;
+}

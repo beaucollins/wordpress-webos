@@ -24,18 +24,22 @@ enyo.kind({
       multiViewMinWidth:500,
       components: [
         { name:'left', width:'225px', components:[
-          { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', onAddBlog:'addNewBlog' }
+          { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', onCreateDraft:'composeDraft', onAddBlog:'addNewBlog' }
         ] },
         { name:'middle', width:'350px', peekWidth:42, components:[
-          { name:'middlePane', kind:'Pane', flex:1, components:[
-            { kind:'Control', name:'blank' },
+          { name:'middlePane', kind:'Pane', flex:1, onSelectView:'listViewChanged', components:[
+            { name:'blank', kind:'Control'},
             { kind:'wp.CommentList', onSelectComment:"selectComment" },
             { kind:'wp.PostList', onSelectPost:'selectPost' },
             { name:'pageList', kind:'wp.PostList', onSelectPost:'selectPost', methodName:'wp.getPages' }
           ]}
         ] },
         { name:'detail', peekWidth:92, flex:3, onResize: "slidingResize", components:[
-          { kind:'wp.CommentView', flex:1 }
+          { name:'detailPane', kind:'Pane', style:'min-width:440px', flex:1, components:[
+            { name:'blankDetail', kind:'Control'},
+            { kind:'wp.CommentView', flex:1 },
+            { kind:'wp.PostView', flex:1 }
+          ]}
         ] }
       ]
     },
@@ -80,14 +84,19 @@ enyo.kind({
   resizeHandler: function(){
     this.$.panes.resize();
   },
+  listViewChanged:function(sender, view){
+    view.setAccount(this.activeAccount)
+  },
   performAccountAction: function(sender, action, account){
+    this.$.detailPane.selectView(this.$.blankDetail);
+    this.activeAccount = account;
     this.$.commentView.setComment(null);
     if (!this.$.panes.multiView) {
       this.$.panes.selectView(this.$.middle);
     };
     if (action == 'Comments') {
       this.$.middlePane.selectView(this.$.commentList);
-      this.$.commentList.setAccount(account);
+      // this.$.commentList.setAccount(account);
     }else{
       this.$.commentList.setAccount(null);
     }
@@ -111,9 +120,18 @@ enyo.kind({
   selectComment:function(sender, comment, account){
     this.$.commentView.setAccount(account);
     this.$.commentView.setComment(comment);
+    this.$.detailPane.selectView(this.$.commentView);
     if(!this.$.panes.multiView){
       this.$.panes.selectView(this.$.detail);
     }
+  },
+  selectPost:function(sender, post, account){
+    this.$.postView.setAccount(account);
+    this.$.postView.setPost(post);
+    this.$.detailPane.selectView(this.$.postView);
+    if (!this.$.panes.multiView) {
+      this.$.panes.selectView(this.$.detail);
+    };
   },
   backHandler: function(sender, e){
     this.$.panes.back(e);
@@ -151,7 +169,15 @@ enyo.kind({
   showPanes:function(){
     this.selectView(this.$.panes);
   },
-  gotComments:function(sender, response, request){
+  // if given a post, then creating a draft based on that post
+  // the sender should have an associated account that we will
+  // link up by xmlrpc url for now
+  composeDraft:function(sender, post, options){
+    //launches a new window with the compose view
+    params = {}
+    enyo.mixin(params, options);
+    var composeLabel = Math.round(Math.random() * 100); // just for fun
+    enyo.windows.activate("compose-" + composeLabel, "./compose/index.html", params);
   }
 });
 

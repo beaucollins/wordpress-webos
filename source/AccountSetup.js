@@ -20,14 +20,14 @@ enyo.kind({
     { name:'header', height:'77px' },
     { kind:'Pane', flex:1, components:[
       { name: 'blogTypeChooser', className:'blog-setup-buttons', components:[
-        { kind: 'enyo.gemstone.Button', onclick:"createNewBlog", caption: 'Start a new blog on WordPress.com' },
-        { kind: 'enyo.gemstone.Button', onclick:"setupHostedBlog", caption: 'Setup a WordPress.com hosted blog' },
-        { kind: 'enyo.gemstone.Button', onclick:"setupBlog", caption: 'Setup a self hosted WordPress blog'},
-        { name:'cancel', kind: 'enyo.gemstone.Button', onclick:'doCancel', caption: 'Cancel' }
+        { kind: 'enyo.Button', onclick:"createNewBlog", caption: 'Start a new blog on WordPress.com' },
+        { kind: 'enyo.Button', onclick:"setupHostedBlog", caption: 'Setup a WordPress.com hosted blog' },
+        { kind: 'enyo.Button', onclick:"setupBlog", caption: 'Setup a self hosted WordPress blog'},
+        { name:'cancel', kind: 'enyo.Button', onclick:'doCancel', caption: 'Cancel' }
       ]},
       { name:'setupForm', kind:'wp.AccountCredentials', onCancel:'cancelSetup', onSetup:'performSetup', selfHosted:false },
     ]},
-    { kind:'enyo.gemstone.Popup', showHideMode:'transition', className:'transitioner fastAnimate', openClassName:'scaleFadeIn', modal:true, scrim:true, components:[
+    { kind:'enyo.Popup', showHideMode:'transition', className:'transitioner fastAnimate', openClassName:'scaleFadeIn', modal:true, scrim:true, components:[
       { name:'blogList', kind:'wp.BlogSetupList', flex:1, lazy:true, onSelectBlogs:'notifySelected', onCancel:'cancelSetup' }
     ]}
   ],
@@ -118,8 +118,8 @@ enyo.kind({
           ]}
         ]},
       ]},
-      { name:'setup_selected', kind:'enyo.gemstone.Button', caption:'Set Up', onclick:'setupSelected' },
-      { name:'cancel', kind:'enyo.gemstone.Button', caption:'Cancel', onclick:'doCancel' }
+      { name:'setup_selected', kind:'enyo.Button', caption:'Set Up', onclick:'setupSelected' },
+      { name:'cancel', kind:'enyo.Button', caption:'Cancel', onclick:'doCancel' }
     ]}
   ],
   create:function(){
@@ -232,14 +232,14 @@ enyo.kind({
   components: [
     { kind:'Control', className:'setup-screen', components:[
       { name:'site', kind:'RowGroup', caption:'Site', components: [
-        { name:'url', kind:'FancyInput', autoCapitalize:false, hint:'URL', changeOnKeypress:true, onchange:'updateUrl' }
+        { name:'url', kind:'Input', autoCapitalize:false, hint:'URL', changeOnKeypress:true, onchange:'updateUrl' }
       ] },
       { kind:'RowGroup', caption:'Account', components: [
-        { name:'username', kind:'FancyInput', autoCapitalize:false, hint:'Username', changeOnKeypress:true, onchange:'updateUsername' },
-        { name:'password', kind:'FancyInput', hint:'Password', changeOnKeypress:true, onchange:'updatePassword', inputType:'password' }
+        { name:'username', kind:'Input', autoCapitalize:false, hint:'Username', changeOnKeypress:true, onchange:'updateUsername' },
+        { name:'password', kind:'Input', hint:'Password', changeOnKeypress:true, onchange:'updatePassword', inputType:'password' }
       ]},
       { name:'signup', kind:'enyo.ActivityButton', className:'enyo-gemstone', caption:'Sign Up', onclick:'setupClicked', disabled:true },
-      { name:'cancel', kind:'enyo.gemstone.Button', caption:'Cancel', onclick:'cleanup' }
+      { name:'cancel', kind:'enyo.Button', caption:'Cancel', onclick:'cleanup' }
     ]}
   ],
   create:function(){

@@ -17,6 +17,9 @@ enyo.kind({
   storePage:function(page, itemArray){
     this.pages[page] = enyo.clone(itemArray);
   },
+  clearPage:function(page){
+    this.pages[page] = null;
+  },
   itemAtIndex:function(index){
     var pagesize = this.pageSize;
     var page = Math.floor(index/pagesize);
@@ -33,7 +36,6 @@ enyo.kind({
     this.pages = {};
   },
   missingPage:function(page){
-    console.log("are we missing the fucking page", page);
     if(page < 0) return false;
     return !this.havePage(page);
   },
@@ -47,17 +49,27 @@ enyo.kind({
   name:'wp.CommentList',
   kind:'VFlexBox',
   published: {
-    account: null
+    account: null,
+    filterItem:null
   },
   events: {
     onSelectComment:""
   },
   components:[
-    { kind:'Selection', onChange:'selectionChanged' },
     { kind:'wp.DataPage' },
     { name:'service', kind:'XMLRPCService', onSuccess:'gotComments' },
-    { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', onAcquirePage:'acquireCommentPage', components: [
-      { name:'item', tapHighlight:true, onclick:'selectComment', kind:'Item', className:'comment-item', layoutKind:'VFlexLayout', components:[
+    { name:'filterMenu', scrim:false, kind:'Menu', defaultKind:'MenuCheckItem', components:[
+      { name:'allFilter', caption:'All', checked:true },
+      { caption:'Pending', checked:false },
+      { caption:'Approved', checked:false },
+      { caption:'Trash', checked:false },
+      { caption:'Spam', checked:false }
+    ] },
+    { kind:'enyo.Header', layoutKind:'HFlexLayout', components:[
+      { name:'filterButton', kind:'enyo.Button', caption:'All Comments', onclick:'showFilterOptions' }
+    ] },
+    { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', onAcquirePage:'acquireCommentPage', onDiscardPage:'discardCommentPage', components: [
+      { name:'item', kind:'Item', tapHighlight:true, onclick:'selectComment', className:'comment-item', layoutKind:'VFlexLayout', components:[
         { name:'header', kind:'HFlexBox', components: [
           { kind:'Control', className:'comment-left-col', components:[{ name:'avatar', width:'30px', height:'30px', kind:'Image', onerror:'imageLoadError', className:'comment-list-avatar', src:'images/icons/default-avatar.png' }] },
           { name:'author', flex:1, className:'comment-author' },
@@ -67,21 +79,28 @@ enyo.kind({
         { name:'commentSubject', className: 'comment-subject' }
       ]}
     ] },
-    { kind: 'enyo.nouveau.CommandMenu', components:[
+    { kind: 'enyo.Toolbar', components:[
       {name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle"}
     ] }
   ],
+  create:function(){
+    this.inherited(arguments);
+    this.filterItem = this.$.allFilter;
+    // this.filterItemChanged();
+  },
   setupComment:function(inSender, inIndex){
-    console.log("Setup Row", inIndex);
     if(comment = this.$.dataPage.itemAtIndex(inIndex)){
       this.$.avatar.setSrc(enyo.application.makeGravatar(comment.author_email, {size:30}));
       this.$.author.setContent(comment.author);
       this.$.timestamp.setContent(TimeAgo(comment.date_created_gmt));
-      this.$.commentContent.setContent(TruncateText(comment.content));
+      this.$.commentContent.setContent(TruncateText(StripHTML(comment.content)));
       this.$.commentSubject.setContent(comment.post_title);
-      this.$.item.addRemoveClass('active-selection', this.$.selection.isSelected(comment.comment_id))
+      this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(inIndex))
       return true;
     }
+  },
+  discardCommentPage:function(sender, page){
+    this.$.dataPage.clearPage(page);
   },
   acquireCommentPage:function(sender, page){
     var index = (page + 1) * sender.pageSize;
@@ -92,12 +111,17 @@ enyo.kind({
       // post_id
       // offset
       // number
+      var filter;
+      var options = {
+        number: sender.pageSize,
+        offset: page * sender.pageSize,
+      }
+      if (filter = this.getStatusFilter()) {
+        options['status'] = filter;
+      };
       this.$.service.callMethod({
         methodName:'wp.getComments',
-        methodParams: [this.account.blogid, this.account.username, this.account.password, {
-          number: sender.pageSize,
-          offset: page * sender.pageSize
-        }]
+        methodParams: [this.account.blogid, this.account.username, this.account.password, options]
       }, { url:this.account.xmlrpc, page:page })
     };
   },
@@ -118,12 +142,43 @@ enyo.kind({
   },
   selectComment:function(sender, item){
     var comment = this.$.dataPage.itemAtIndex(item.rowIndex);
-    this.$.selection.select(comment.comment_id);
+    this.$.list.select(item.rowIndex);
     this.$.item.addClass('active-selection');
     this.doSelectComment(comment, this.account);
   },
   selectionChanged:function(){
     this.$.list.refresh();
+  },
+  showFilterOptions:function(sender){
+    this.$.filterMenu.openAtControl(sender);
+  },
+  menuItemClick:function(item, mouseEvent){
+    // based on which kind is checked we change the call for which kind of comment we want
+    // should it be a multi thing?, nope the API doesn't support that, we can think about
+    // it once we have our own datastore
+    if (this.filterItem != item) {
+      this.filterItem.setChecked(false);
+      item.setChecked(true);
+      // this.filterItem.setChecked();
+      this.setFilterItem(item);
+    };
+    
+  },
+  filterItemChanged:function(){
+    this.$.list.punt();
+    this.$.dataPage.clear();
+    this.$.list.reset();
+    this.$.filterButton.setCaption(this.filterItem.caption + ' Comments');
+  },
+  getStatusFilter:function(){
+    //  hold, approve, spam, trash
+    
+    return {
+      'Pending' : 'hold',
+      'Approved' : 'approve',
+      'Trash' : 'trash',
+      'Spam' : 'spam'
+    }[this.filterItem.caption];
   }
 });
 
@@ -158,4 +213,8 @@ function TruncateText(t){
     return t.slice(0,120) + "&hellip;";
   };
   return t;
+}
+
+function StripHTML(string){
+  return string.replace(/<\/?[^>]+>/gi,'');
 }
