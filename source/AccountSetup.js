@@ -20,9 +20,9 @@ enyo.kind({
     { name:'header', height:'77px' },
     { kind:'Pane', flex:1, components:[
       { name: 'blogTypeChooser', className:'blog-setup-buttons', components:[
-        { kind: 'enyo.Button', onclick:"createNewBlog", caption: 'Start a new blog on WordPress.com' },
-        { kind: 'enyo.Button', onclick:"setupHostedBlog", caption: 'Setup a WordPress.com hosted blog' },
-        { kind: 'enyo.Button', onclick:"setupBlog", caption: 'Setup a self hosted WordPress blog'},
+        { kind: 'enyo.Button', onclick:"createNewBlog", caption: 'Start a new blog at WordPress.com' },
+        { kind: 'enyo.Button', onclick:"setupHostedBlog", caption: 'Add blog hosted at WordPress.com' },
+        { kind: 'enyo.Button', onclick:"setupBlog", caption: 'Add self-hosted WordPress blog'},
         { name:'cancel', kind: 'enyo.Button', onclick:'doCancel', caption: 'Cancel' }
       ]},
       { name:'setupForm', kind:'wp.AccountCredentials', onCancel:'cancelSetup', onSetup:'performSetup', selfHosted:false },
@@ -226,7 +226,7 @@ enyo.kind({
     username:null,
     password:null,
     cancelLabel: 'Cancel',
-    confirmLabel: 'Sign Up',
+    confirmLabel: 'Sign In',
     selfHosted:false
   },
   components: [
