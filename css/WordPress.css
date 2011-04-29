@@ -68,7 +68,7 @@ img {
 
 .account-drawer > .enyo-hflexbox {
   border-bottom:1px solid rgba(255,255,255,0.1);
-  padding:4px 0;
+  padding:0 0;
 }
 
 .account-list {
@@ -78,6 +78,10 @@ img {
 
 .enyo-divider-right-cap, .enyo-divider-left-cap {
 	display: none;
+}
+
+.enyo-collapsible-arrow {
+  background-image:url(../images/divider-arrow.png);
 }
 
 .enyo-collapsible-arrow {
