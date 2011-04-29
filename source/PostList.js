@@ -8,13 +8,18 @@ enyo.kind({
     account:null,
     methodName:'metaWeblog.getRecentPosts'
   },
+  kPostStatus: {
+    'publish' : 'Published',
+    'draft' : 'Draft',
+    'private' : 'Private'
+  },
   components: [
     { name:'xmlrpc_client', kind:'XMLRPCService', methodName:'metaWeblog.getRecentPosts', onSuccess:'gotPosts'},
     { kind:'wp.DataPage' },
     // setting lookAhead to 1 for XMLRPC api performance reasons, because we can't get paged results
     { name:'list', kind:'VirtualList', lookAhead:1, flex:1, onSetupRow:'setupPost', onAcquirePage:'acquirePostPage', components:[
       { name:'item', kind:'Item', onclick:'selectPost', className:'post-item', components:[
-        { name:'title', content:'Hi', className:'post-list-title wp-truncate' },
+        { name:'title', className:'post-list-title wp-truncate' },
         { kind:'HFlexBox', components:[
           { name:'postDate', flex:1, content:'Date', className:'post-list-timestamp' },
           { name:'postStatus', content:'Status', className:'status-badge' }
@@ -46,7 +51,16 @@ enyo.kind({
   setupPost:function(sender, index){
     var post;
     if (post = this.$.dataPage.itemAtIndex(index)) {
-      this.$.title.setContent(post.title);
+      if (post.title.trim() == '') {
+        this.$.title.addClass('untitled');
+        this.$.title.setContent("Untitled");
+      }else{
+        this.$.title.removeClass('untitled');
+        this.$.title.setContent(post.title);
+      };
+      console.log(post);
+      var status = post.post_status || post.page_status;
+      this.$.postStatus.setContent($L(this.kPostStatus[status]));
       this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(index))
       this.$.postDate.setContent(TimeAgo(post.date_created_gmt));
       return true;

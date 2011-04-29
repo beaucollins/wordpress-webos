@@ -32,7 +32,6 @@ enyo.kind({
       return;
     }
     console.log(this.post);
-    console.log(this.post.description);
     this.$.title.setContent(this.post.title);
     this.$.content.setContent(this.post.description);
     this.$.scroller.setScrollPositionDirect(0,0);
