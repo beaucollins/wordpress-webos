@@ -232,10 +232,10 @@ enyo.kind({
   components: [
     { kind:'Control', className:'setup-screen', components:[
       { name:'site', kind:'RowGroup', caption:'Site', components: [
-        { name:'url', kind:'Input', autoCapitalize:false, hint:'URL', changeOnKeypress:true, onchange:'updateUrl' }
+        { name:'url', kind:'Input', autoCapitalize:'lowercase', hint:'URL', changeOnKeypress:true, onchange:'updateUrl' }
       ] },
       { kind:'RowGroup', caption:'Account', components: [
-        { name:'username', kind:'Input', autoCapitalize:false, hint:'Username', changeOnKeypress:true, onchange:'updateUsername' },
+        { name:'username', kind:'Input', autoCapitalize:'lowercase', hint:'Username', changeOnKeypress:true, onchange:'updateUsername' },
         { name:'password', kind:'Input', hint:'Password', changeOnKeypress:true, onchange:'updatePassword', inputType:'password' }
       ]},
       { name:'signup', kind:'enyo.ActivityButton', className:'enyo-gemstone', caption:'Sign Up', onclick:'setupClicked', disabled:true },
