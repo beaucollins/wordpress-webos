@@ -90,29 +90,19 @@ img {
   width:36px;
 }
 
-.enyo-button-switched.enyo-collapsible-arrow.enyo-button-down {
-  background-position: center -32px;
-}
-
 .enyo-divider-icon {
   border-radius:5px;
 }
-
-.enyo-nouveau.enyo-footer.source-list-command {
-  background-position: left bottom;
-  background-image:url(../images/source-list-command-menu.png);
-}
-
-.enyo-nouveau.enyo-footer {
-  background-position: left bottom;
-  background-image:url(../images/command-menu-gloss.png);
-}
-
 
 .comment-item {
   border-top: 1px solid #FFF;
   border-bottom:1px solid #EEE;
   padding-left:0;
+  background:#FFF;
+}
+
+.post-item {
+  background:#FFF;
 }
 
 .comment-author {
@@ -148,6 +138,21 @@ img {
   background:url(../images/icons/post-tiny.png) no-repeat 20px top;
 }
 
+.comment-status-badge, .status-badge {
+  font-size:12px;
+  color:#FFF;
+  padding:1px 10px;
+  background:#CCC;
+  -webkit-border-radius:1em;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
+  opacity:0.8;
+}
+
+.comment-status-badge.status-hold {
+  background:#999;
+  opacity:1;
+}
+
 .wp-list-status {
   font-size: 14px;
 }
@@ -159,13 +164,31 @@ img {
   text-align:right;
 }
 
+.post-list-timestamp {
+  font-size: 14px;
+  font-weight:bold;
+  color:#999;
+}
+
+.post-list-title {
+  font-size:18px;
+}
+
+.comment-item.status-hold {
+  background:-webkit-gradient(linear, left top, left bottom, from(#FCFEF2), to(#F6F9C6));
+}
+
 
 .comment-left-col {
   text-align:center;
   width:50px;
 }
 
-.post-item.active-selection, .comment-item.active-selection, .enyo-held.comment-item {
+.comment-item.enyo-held, .comment-item.active-selection {
+  background:-webkit-gradient(linear, left top, left bottom, from(#DDE7F3), to(#B4D6F3));
+}
+
+.post-item.active-selection {
   background-image:url(../images/active-selection.png);
   -webkit-background-size: 100% 100%;
 }

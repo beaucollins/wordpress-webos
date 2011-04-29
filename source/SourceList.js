@@ -41,12 +41,12 @@ enyo.kind({
   accountsChanged: function(){
     if(!this.accounts || this.accounts.length == 0) return;
     this.accounts = enyo.clone(this.accounts);
-    // if (this.accounts.length > 1 && !this.globalMenu) {
-    //   this.globalMenu = true;
+
+    if (this.accounts.length > 1) {
       this.accounts.unshift({
         'global':'yeah'
       });
-    // };
+    };
     
     // render the repeater
     this.$.list.build();

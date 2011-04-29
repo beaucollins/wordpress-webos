@@ -8,7 +8,9 @@ enyo.kind({
   },
   components:[
     { kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
-    { name:'xmlrpc_client', kind: 'XMLRPCService', onSuccess:'appendConversation' },
+    { name:'xmlrpc_client', kind: 'XMLRPCService', onSuccess:'appendConversation', components:[
+      { name:'comment_edit', methodName:'wp.editComment', onSuccess:'updatedComment' }
+    ]},
     { kind:'enyo.Popup', showHideMode:'transition', className:'transitioner fastAnimate', onOpen:'focusReply', openClassName:'scaleFadeIn', scrim:true, components:[
       { name:'reply', kind: 'enyo.RichText', width:'300px', height:'300px' },
       { kind: 'HFlexBox', components:[
@@ -23,8 +25,11 @@ enyo.kind({
             { name:'avatar', kind:'Image', className:'avatar-large', src:'./images/icons/avatar-large.png' },
             { kind:'VFlexBox', flex:1, components:[
               { name:'authorName' },
-              { name:'authorEmail' },
-              { name:'authorURL' }
+              { kind:'HFlexBox', components:[
+                { name:'authorEmail', caption:'Email', kind:'Button', onclick:'openEmailToAuthor' },
+                { name:'authorURL', caption:'Web Page', kind:'Button', onclick:'openBrowserToAuthor' },
+                { flex:1 }
+              ]}
             ]}
           ] }
         ]},
@@ -33,20 +38,24 @@ enyo.kind({
           { content:'On:', className:'row-label' },
           { name:'subject', flex:1}
         ]},
-        { name:'conversationHeader', className:'enyo-item', content:'Conversation:' },
-        { name:'conversation', kind:'VirtualRepeater', onGetItem:'getReply', components:[
-          { name:'item', className: 'enyo-item', components:[
-            { name:'reployHeader', kind:'HFlexBox', components: [
-              { kind:'Control', className:'comment-left-col', components:[{ name:'replyAvatar', width:'30px', height:'30px', kind:'Image', onerror:'imageLoadError', className:'comment-list-avatar', src:'images/icons/default-avatar.png' }] },
-              { name:'replyAuthor', flex:1, className:'comment-author' },
-              { name:'replyTimestamp', className:'comment-timestamp' }
-            ] },
-            { name:'replyContent', className: 'comment-content' }
-          ]}
-        ]}
+        // { name:'conversationHeader', className:'enyo-item', content:'Conversation:' },
+        // { name:'conversation', kind:'VirtualRepeater', onGetItem:'getReply', components:[
+        //   { name:'item', className: 'enyo-item', components:[
+        //     { name:'reployHeader', kind:'HFlexBox', components: [
+        //       { kind:'Control', className:'comment-left-col', components:[{ name:'replyAvatar', width:'30px', height:'30px', kind:'Image', onerror:'imageLoadError', className:'comment-list-avatar', src:'images/icons/default-avatar.png' }] },
+        //       { name:'replyAuthor', flex:1, className:'comment-author' },
+        //       { name:'replyTimestamp', className:'comment-timestamp' }
+        //     ] },
+        //     { name:'replyContent', className: 'comment-content' }
+        //   ]}
+        // ]}
       ] },
       { kind: 'enyo.Toolbar', components:[
         { name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle" },
+        { name:'approve', caption: 'Approve', onclick:'markComment' },
+        { name:'trash', caption: 'Trash', onclick:'markComment' },
+        { name:'spam', caption: 'Spam', onclick:'markComment' },
+        { flex:1 },
         { caption: 'Reply', onclick:'showReplyWindow' },
         { caption: 'View', onclick:'launchBrowser'}
       ] } 
@@ -57,19 +66,50 @@ enyo.kind({
     this.commentChanged();
   },
   accountChanged:function(){
-    if(this.account) this.$.xmlrpc_client.setUrl(this.account.xmlrpc);
+    if(this.account){
+      this.$.xmlrpc_client.setUrl(this.account.xmlrpc);
+      this.$.comment_edit.setUrl(this.account.xmlrpc)
+    }
   },
   commentChanged:function(){
     this.replies = [];
-    this.$.conversationHeader.hide();
-    this.$.conversation.render();
+    // this.$.conversationHeader.hide();
+    // this.$.conversation.render();
     if (this.comment == null) {
       return;
     };
         
     this.$.authorName.setContent(this.comment.author);
-    this.$.authorEmail.setContent(this.comment.author_email);
-    this.$.authorURL.setContent(this.comment.author_url);
+    if (this.hasEmail()) {
+      this.$.authorEmail.show();
+    }else{
+      this.$.authorEmail.hide();
+    }
+    if (this.hasURL()) {
+      this.$.authorURL.show();
+    }else{
+      this.$.authorURL.hide();
+    }
+    
+    if (this.comment.status == 'approve') {
+      this.$.approve.hide();
+    }else{
+      this.$.approve.show();
+    }
+    
+    if (this.comment.status == 'trash') {
+      this.$.trash.hide();
+    }else{
+      this.$.trash.show();
+    }
+    
+    if (this.comment.status == 'spam') {
+      this.$.spam.hide();
+    }else{
+      this.$.spam.show();
+    }
+
+    // this.$.authorURL.setContent(this.comment.author_url);
     this.$.subject.setContent(this.comment.post_title);
     this.$.scroller.setScrollPositionDirect(0,0);
     
@@ -80,22 +120,23 @@ enyo.kind({
     avatar.src = enyo.application.makeGravatar(this.comment.author_email, {
       size:50
     });
+    
 
     this.$.body.setContent(this.comment.content);
-    if(this.hasConversation()){
-      this.$.conversationHeader.show();
-      this.$.xmlrpc_client.callMethod({ methodName:'wp.getComment', methodParams:[this.account.blogid, this.account.username, this.account.password, this.comment.parent] })
-    }
+    // if(this.hasConversation()){
+    //   this.$.conversationHeader.show();
+    //   this.$.xmlrpc_client.callMethod({ methodName:'wp.getComment', methodParams:[this.account.blogid, this.account.username, this.account.password, this.comment.parent] })
+    // }
     
   },
-  appendConversation:function(sender, response, request){
-    this.replies.push(response);
-    // render the repeater
-    this.$.conversation.render();
-    if (response.parent != "0") {
-      this.$.xmlrpc_client.callMethod({ methodName:'wp.getComment', methodParams:[this.account.blogid, this.account.username, this.account.password, response.parent] })
-    };
-  },
+  // appendConversation:function(sender, response, request){
+  //   this.replies.push(response);
+  //   // render the repeater
+  //   this.$.conversation.render();
+  //   if (response.parent != "0") {
+  //     this.$.xmlrpc_client.callMethod({ methodName:'wp.getComment', methodParams:[this.account.blogid, this.account.username, this.account.password, response.parent] })
+  //   };
+  // },
   getReply:function(sender, index){
     var comment = this.replies[index];
     if(comment){
@@ -112,6 +153,12 @@ enyo.kind({
   hasConversation:function(){
     return this.comment.parent != "0";
   },
+  hasEmail:function(){
+    return this.comment.author_email && this.comment.author_email != '';
+  },
+  hasURL:function(){
+    return this.comment.author_url && this.comment.author_url != '';
+  },
   // open up a browser window with the comment's URL
   launchBrowser:function(){
     this.$.palmService.call({target:this.comment.link}); 
@@ -120,7 +167,7 @@ enyo.kind({
     this.$.reply.forceFocus();
   },
   publishReply:function(){
-    var reply = this.$.reply.value;
+    var reply = this.$.reply.getValue();
     this.$.popup.close();
     		
     this.$.xmlrpc_client.callMethod({ methodName:'wp.newComment', methodParams:[this.account.blogid, this.account.username, this.account.password, this.comment.post_id, {
@@ -133,6 +180,32 @@ enyo.kind({
   },
   cancelReply:function(){
     this.$.popup.close();
+  },
+  openEmailToAuthor:function(){
+    var query = {
+      'subject' : this.comment.post_title, 
+      'body' : "Comment Link: " + this.comment.link
+    }
+    var target = "mailto:"+this.comment.author_email + "?" + enyo.objectToQuery(query);
+    this.$.palmService.call({target:target}); 
+  },
+  openBrowserToAuthor:function(){
+    this.$.palmService.call({target:this.comment.author_url}); 
+  },
+  markComment:function(sender){
+    var params = [this.account.blogid, this.account.username, this.account.password, this.comment.comment_id];
+    if (sender.name == 'trash') {
+      this.$.comment_edit.callMethod({ methodParams:params, methodName:'wp.deleteComment' });
+    }else{
+      params.push({
+        'status' : sender.name
+      });
+      this.$.comment_edit.callMethod({ methodParams:params })
+      
+    }
+  },
+  updatedComment:function(sender, response, request){
+    enyo.windows.addBannerMessage("Comment updated", "{}");
   }
   
 })

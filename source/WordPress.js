@@ -26,24 +26,18 @@ enyo.kind({
       components: [
         { name:'left', width:'225px', components:[
           { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', onCreateDraft:'composeDraft', onAddBlog:'addNewBlog' }
-        ] },
-        { name:'middle', width:'350px', peekWidth:42, components:[
-          { name:'middlePane', kind:'Pane', flex:1, onSelectView:'listViewChanged', components:[
-            { name:'blank', kind:'Control'},
-            { kind:'wp.CommentList', onSelectComment:"selectComment" },
-            { kind:'wp.PostList', onSelectPost:'selectPost' },
-            { name:'pageList', kind:'wp.PostList', onSelectPost:'selectPost', methodName:'wp.getPages' }
-          ]}
-        ] },
-        { name:'detail', peekWidth:92, flex:3, onResize: "slidingResize", components:[
-          { name:'detailPane', kind:'Pane', style:'min-width:440px', flex:1, components:[
-            { name:'blankDetail', kind:'Control'},
-            { kind:'wp.CommentView', flex:1 },
-            { kind:'wp.PostView', flex:1 }
-          ]}
-        ] }
-      ]
-    },
+        ]},
+        // column for showing what is selected from the source list
+        { name:'main', flex:1, onResize:'resizeSubviews', peekWidth:42, components:[
+            { name:'content', flex:1, kind:'Pane', onSelectView:'setupSubView', components:[
+              { name:'blank', kind:'Control', flex:1 },
+              { name:'comments', kind: 'wp.Comments', flex:1, lazy:true },
+              { name:'posts', kind: 'wp.Posts', flex:1, lazy:true },
+              { name:'pages', kind: 'wp.Posts', methodName:'wp.getPages', flex:1, lazy:true },
+              { name:'drafts', kind: 'Control', flex:1, lazy:true, style:'background:-webkit-gradient(linear, left top, left bottom, from(#000), to(#FFF));'},
+            ]}
+        ]}
+    ]},
     { name: 'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' },
     { kind:'AppMenu', components:[
       {name: "edit", kind: "EditMenu"},
@@ -71,6 +65,29 @@ enyo.kind({
     this.accountsChanged();
     
   },
+  performAccountAction: function(sender, action, account){
+    this.activeAccount = account;
+    if (action == 'Comments') {
+      this.$.content.selectViewByName('comments');      
+    };
+    if (action == 'Posts') {
+      this.$.content.selectViewByName('posts');
+    };
+    if (action == 'Pages') {
+      this.$.content.selectViewByName('pages');
+    };
+    if (action == 'Drafts') {
+      this.$.content.selectViewByName('drafts');
+    };
+    if (!this.$.panes.multiView) {
+      this.$.panes.selectView(this.$.main);
+    };
+  },
+  setupSubView:function(sender, view){
+    if (view.name == 'comments' || view.name == 'posts' || view.name == 'pages') {
+      view.setAccount(this.activeAccount);
+    };
+  },
   loadAccounts:function(sender, response){
     this.setAccounts(response.results);
   },
@@ -89,54 +106,9 @@ enyo.kind({
   resizeHandler: function(){
     this.$.panes.resize();
   },
-  listViewChanged:function(sender, view){
-    view.setAccount(this.activeAccount)
-  },
-  performAccountAction: function(sender, action, account){
-    this.$.detailPane.selectView(this.$.blankDetail);
-    this.activeAccount = account;
-    this.$.commentView.setComment(null);
-    if (!this.$.panes.multiView) {
-      this.$.panes.selectView(this.$.middle);
-    };
-    if (action == 'Comments') {
-      this.$.middlePane.selectView(this.$.commentList);
-      // this.$.commentList.setAccount(account);
-    }else{
-      this.$.commentList.setAccount(null);
-    }
-    
-    if (action == 'Posts') {
-      this.$.middlePane.selectView(this.$.postList);
-      this.$.postList.setAccount(account);
-    }else{
-      this.$.postList.setAccount(null);
-    }
-    
-    if (action == 'Pages') {
-      console.log("Set the page list!");
-      this.$.middlePane.selectView(this.$.pageList);
-      this.$.pageList.setAccount(account);
-    }else{
-      this.$.pageList.setAccount(null);
-    }
-    
-  },
-  selectComment:function(sender, comment, account){
-    this.$.commentView.setAccount(account);
-    this.$.commentView.setComment(comment);
-    this.$.detailPane.selectView(this.$.commentView);
-    if(!this.$.panes.multiView){
-      this.$.panes.selectView(this.$.detail);
-    }
-  },
-  selectPost:function(sender, post, account){
-    this.$.postView.setAccount(account);
-    this.$.postView.setPost(post);
-    this.$.detailPane.selectView(this.$.postView);
-    if (!this.$.panes.multiView) {
-      this.$.panes.selectView(this.$.detail);
-    };
+  resizeSubviews: function(){
+    if (this.$.comments) this.$.comments.resize();
+    if (this.$.posts) this.$.posts.resize();
   },
   backHandler: function(sender, e){
     this.$.panes.back(e);

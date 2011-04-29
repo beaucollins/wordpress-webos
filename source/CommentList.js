@@ -55,6 +55,12 @@ enyo.kind({
   events: {
     onSelectComment:""
   },
+  kStatusNames: {
+    'hold':'Pending',
+    'approve':'Approved',
+    'spam':'Spam',
+    'trash':'Trash'
+  },
   components:[
     { kind:'wp.DataPage' },
     { name:'service', kind:'XMLRPCService', onSuccess:'gotComments' },
@@ -72,9 +78,17 @@ enyo.kind({
       { name:'item', kind:'Item', tapHighlight:true, onclick:'selectComment', className:'comment-item', layoutKind:'VFlexLayout', components:[
         { name:'header', kind:'HFlexBox', components: [
           { kind:'Control', className:'comment-left-col', components:[{ name:'avatar', width:'30px', height:'30px', kind:'Image', onerror:'imageLoadError', className:'comment-list-avatar', src:'images/icons/default-avatar.png' }] },
-          { name:'author', flex:1, className:'comment-author' },
-          { name:'timestamp', className:'comment-timestamp' }
-        ] },
+          { kind:'VFlexBox', flex:1, components:[
+            { kind:'HFlexBox', components:[
+              { name:'author', flex:1, className:'comment-author' },
+              { name:'timestamp', className:'comment-timestamp' }
+            ]},
+            { kind:'HFlexBox', components:[
+              { flex:1, kind:"Control" },
+              { name:'status', className:'comment-status-badge', content:"Status" }
+            ]}
+          ]}
+        ]},
         { name:'commentContent', className: 'comment-content' },
         { name:'commentSubject', className: 'comment-subject' }
       ]}
@@ -89,13 +103,16 @@ enyo.kind({
     // this.filterItemChanged();
   },
   setupComment:function(inSender, inIndex){
-    if(comment = this.$.dataPage.itemAtIndex(inIndex)){
+    if(comment = this.$.dataPage.itemAtIndex(inIndex)){      
       this.$.avatar.setSrc(enyo.application.makeGravatar(comment.author_email, {size:30}));
       this.$.author.setContent(comment.author);
       this.$.timestamp.setContent(TimeAgo(comment.date_created_gmt));
       this.$.commentContent.setContent(TruncateText(StripHTML(comment.content)));
       this.$.commentSubject.setContent(comment.post_title);
       this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(inIndex))
+      this.$.item.addClass("status-"+comment.status);
+      this.$.status.addClass("status-"+comment.status);
+      this.$.status.setContent($L(this.kStatusNames[comment.status]));
       return true;
     }
   },
@@ -136,6 +153,7 @@ enyo.kind({
       return;
     };
     this.$.list.reset();
+    this.$.list.refresh();
   },
   imageLoadError:function(sender){
     sender.setSrc('images/icons/default-avatar.png');
@@ -179,6 +197,9 @@ enyo.kind({
       'Trash' : 'trash',
       'Spam' : 'spam'
     }[this.filterItem.caption];
+  },
+  resize:function(){
+    this.$.list.resizeHandler();
   }
 });
 
@@ -205,7 +226,8 @@ function TimeAgo(date){
     time = time / units[unit];
   };
   
-  return 'long ago';
+  var formatter = new enyo.g11n.DateFmt({ format:'short' });
+  return formatter.format(date);
 }
 
 function TruncateText(t){

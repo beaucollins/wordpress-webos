@@ -99,7 +99,6 @@ enyo.kind({
     }
   },
   parseEditURI:function(html){
-    // console.log("Parsing html", html);
     var edit_url;
     var parser = new SimpleHtmlParser
     var handler = (function(){
