@@ -35,11 +35,19 @@ enyo.kind({
   
   testMalFormedResponse2:function(){
 	    
-	    var response = XMLRPCParser.parse(malFormed2);
-	    var description = "This is just <br> a test.";
-	    this.assertEqual(response[0].description, description);
+    var response = XMLRPCParser.parse(malFormed2);
+    var description = "This is just <br> a test.";
+    this.assertEqual(response[0].description, description);
 	    
-	  },
+	},
+
+  testHorriblyMalFormedResponse:function(){
+
+    var response = XMLRPCParser.parse(horriblyMalformed);
+    var description = "This is just <br> a test.";
+    this.assertEqual(response[0].description, description);
+
+	},
   
   // adding some assertion methods
   assertEqual:function(a, b, msg){
@@ -120,3 +128,22 @@ var malFormed2 = "\
 	    </param>\
 	  </params>\
 	</methodResponse>";
+	
+var horriblyMalformed = "\
+  	<?xml version=\"1.0\"?>\
+  	i'm-not-here<methodResponse>\
+  	  <params>nor here\
+  	    <param>or here\
+  	      <value>or here\
+  	      <array>or here<data>\
+  	  <value>asdfdsafasdfdas><<struct>\
+  	  <member><name>dateCreated</name><value>hi<dateTime.iso8601>20110415T16:11:04</dateTime.iso8601></value></member>\
+  	  <member><name>userid</name><value><string>2832</string></value></member>\
+  	  <member><name>postid</name><value><string>7</string></value></member>\
+  	  <member><name>description</name><value><string>This is just <br> a test.</string></value></member>\
+  	  </struct></value>\
+  	</data></array>\
+  	      abcdefasdfsd</value>\
+  	    </param>\
+  	  </params>\
+  	</methodResponse>";
