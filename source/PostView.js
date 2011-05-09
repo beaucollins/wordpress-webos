@@ -9,7 +9,6 @@ enyo.kind({
     
   },
   components: [
-    { kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
     { name:"xmlrpc_client", kind:"XMLRPCService" },
     { name:"header", components:[
       { name:'title', content:"Title", className:'enyo-item first' },
@@ -24,11 +23,10 @@ enyo.kind({
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
       { caption: 'Edit' },
-      { caption: 'Open', onclick:'openPostURL' }
+      { caption: 'Preview', onclick:'openPostURL' }
     ]}
   ],
   postChanged:function(){
-    
     if (!this.post) {
       return;
     }
@@ -36,11 +34,12 @@ enyo.kind({
     this.$.title.setContent(this.post.title);
     this.$.content.setContent(this.post.description);
     this.$.scroller.setScrollPositionDirect(0,0);
-    
   },
   openPostURL:function(sender){
-    
-    if (this.post.permaLink && this.post.permaLink.trim() != "" ) this.$.palmService.call({ target: this.post.permaLink });
-    
+	  //launches a new window with the preview view
+	  params = {'account': this.account, 'post': this.post};
+	  options = {};
+	  enyo.mixin(params, options);
+	  enyo.windows.activate("Post Preview", "./postPreview.html", params);
   }
 });

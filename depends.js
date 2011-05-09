@@ -10,6 +10,7 @@ enyo.depends(
   "source/Posts.js",
   "source/PostList.js",
   "source/PostView.js",
+  "source/PostPreviewView.js",
   "source/AccountSetup.js",
   'source/Accounts.js',
   "css/WordPress.css",
