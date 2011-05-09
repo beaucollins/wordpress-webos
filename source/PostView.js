@@ -21,7 +21,8 @@ enyo.kind({
       { name:'content' }
     ] },
     { kind:'enyo.Toolbar', components:[
-      { name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle" },
+      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
+      { flex:1 },
       { caption: 'Edit' },
       { caption: 'Open', onclick:'openPostURL' }
     ]}

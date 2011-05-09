@@ -27,7 +27,7 @@ enyo.kind({
       ] }
     ] },
     { kind:'enyo.Toolbar', components:[
-      { name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle"}
+      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'}
     ] }
   ],
   create:function(){

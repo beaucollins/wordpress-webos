@@ -51,7 +51,8 @@ enyo.kind({
         // ]}
       ] },
       { kind: 'enyo.Toolbar', components:[
-        { name: "slidingDrag", slidingHandler: true, kind: "Control", className: "enyo-command-menu-draghandle" },
+        { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
+        { flex:1 },
         { name:'approve', caption: 'Approve', onclick:'markComment' },
         { name:'trash', caption: 'Trash', onclick:'markComment' },
         { name:'spam', caption: 'Spam', onclick:'markComment' },
