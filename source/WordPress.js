@@ -174,7 +174,7 @@ enyo.kind({
       }
       console.log('Sending info to Stats API: ' + this.$.stats_api.url);
       // console.log('data => ' + enyo.json.stringify(statsParams));
-      this.$.stats_api.call({});
+      this.$.stats_api.call(statsParams);
   }
   
 });
