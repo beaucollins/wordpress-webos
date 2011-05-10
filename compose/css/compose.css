@@ -6,12 +6,71 @@
 .composer {
   position:absolute;
   top:0;right:10%;left:10%;bottom:0;
-  background:#FFF;
+  background:#F9F9F9;
   -webkit-transition: 200ms ease-in-out;
   -webkit-transition-property: left right;
+  -webkit-box-shadow: 0 0 7px 5px #555;
 }
 
 .composer.expanded-mode {
   right:0;
   left:0;
+}
+
+.wp-formatBtn {
+	display: inline;
+	width: 100px;
+}
+
+#compose_contentWrapper {
+/*	background-image: -webkit-linear-gradient(black, white);  */
+	background-color: #E4E4E4;
+	border-color: #DFDFDF;
+	border-radius: 6px;
+	border-style: solid;
+	border-width: 1px;
+	height: 50px;
+	margin: 2px 10px 10px 10px;
+	padding-bottom: 10px;
+}
+
+#compose_richTextButtons {
+	padding: 10px 6px;
+}
+
+#compose_titleField {
+	background-color: #FFFFFF;
+	border-radius: 6px 6px 6px 6px;
+	border-color: #DFDFDF;
+	border-style: solid;
+	border-width: 1px;
+    line-height: 100%;
+    outline: medium none;
+	margin: 10px;
+}
+
+#compose_contentField {
+	background-color: #FFFFFF;
+	border-radius: 6px 6px 6px 6px;
+	border-color: #DFDFDF;
+	border-style: solid;
+	border-width: 1px;
+    line-height: 100%;
+    outline: medium none;
+	margin-top: 4px;
+}
+
+#compose_contentField_input {
+	margin: 10px;
+	padding-right: 20px;
+}
+
+#compose_advanced {
+	margin: 10px 0 0 10px;
+	width: 100px;
+}
+
+#compose_postButton {
+	background-color: #21759b;
+	color: #FFFFFF;
 }
