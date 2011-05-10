@@ -13,8 +13,9 @@ enyo.kind({
   components: [
     //{ kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
 	{name: "postPreviewService", kind: "WebService",
-	    url: "",
         method: "POST",
+        handleAs: "text",
+        contentType: 'application/x-www-form-urlencoded',
         onSuccess: "onPreviewSuccess",
         onFailure: "onPreviewFailure"},
       {name: "postPreviewResponse", kind: "HtmlContent"}
@@ -23,24 +24,22 @@ enyo.kind({
 	  if (this.post.permaLink && this.post.permaLink.trim() != "" ) {
 		  console.log(this.account);
 		  console.log(this.post);
-		  var redirectURL = this.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
+		  var loginURL = this.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
 		  var postdata='log='+this.account.username+'&pwd='+this.account.password+'&redirect_to='+this.post.permaLink;
-		  console.log(this.post.permaLink+" "+ redirectURL);
-		  console.log(postdata);
-		  this.$.postPreviewService.url = redirectURL;
+		  console.log("post permalink: "+ this.post.permaLink+"  login URL: "+ loginURL);
+		  console.log("login info: " +postdata);
+		  this.$.postPreviewService.url = loginURL;
 		  this.$.postPreviewService.call({
-			  handleAs: "text",
-			  postBody: postdata, 
-			  contentType: 'application/x-www-form-urlencoded'
+			  postBody: postdata
 		  });
 	  }
   },
   loadlocalPreview:function(alert_msg, title, content, tags, categories){
 	  var content = '<div class="preview_page"><h5 id="preview_alert">'+alert_msg+'</h5>'+
 	  '<h1>'+ title + '</h1>'+
-	  '<div class="preview_content">' +
+	  '<div id="preview_content">' +
 	  '<p>'+ content +'</p>' + 
-	  '</div> <div class="meta"><p id="preview_tags">'+tags+'</p>' +
+	  '</div> <div id="preview_meta"><p id="preview_tags">'+tags+'</p>' +
 	  '<p id="preview_categories">'+categories+'</p>' +
 	  '</div></div>';
 	  this.$.postPreviewResponse.setContent(content);
