@@ -17,6 +17,7 @@ enyo.kind({
       { name:'findAccounts', method:'find', onSuccess:'loadAccounts'},
       { name:'putAccountKind', method:'putKind'  }
     ]},
+    { name: 'stats_api', kind: 'WebService', method: 'POST', url: 'https://api.wordpress.org/webosapp/update-check/1.0/' },
     // main sliding pane interface
     {
       name: 'panes',
@@ -64,6 +65,7 @@ enyo.kind({
     this.accounts = enyo.json.from(enyo.getCookie('accounts')) || [];
     this.accountsChanged();
     
+    this.runStats();
   },
   performAccountAction: function(sender, action, account){
     this.activeAccount = account;
@@ -161,6 +163,18 @@ enyo.kind({
   },
   closeAppMenuHandler: function() {
       this.$.appMenu.close();
+  },
+  runStats: function() {
+      var statsParams = {
+          appVersion: enyo.fetchAppInfo().version,
+      };
+      var deviceInfo = enyo.fetchDeviceInfo();
+      if (deviceInfo) {
+          statsParams.deviceInfo = deviceInfo;
+      }
+      console.log('Sending info to Stats API: ' + this.$.stats_api.url);
+      // console.log('data => ' + enyo.json.stringify(statsParams));
+      this.$.stats_api.call({});
   }
   
 });
