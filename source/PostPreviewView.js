@@ -1,12 +1,11 @@
 enyo.kind({
   name:'wp.PostPreviewView',
-  kind:'VFlexBox',
+  kind:'enyo.Scroller',
   published: {
-    account:null,
-    post:null
+    //account:null,
+    //post:null
   },
-  events: {
-    
+  events: { 
   },
   create:function(){
 	 this.inherited(arguments);
@@ -18,9 +17,7 @@ enyo.kind({
         method: "POST",
         onSuccess: "onPreviewSuccess",
         onFailure: "onPreviewFailure"},
-    { kind:'Scroller', flex:1, components:[
       {name: "postPreviewResponse", kind: "HtmlContent"}
-    ] }
   ],
   openPostURL:function(){
 	  if (this.post.permaLink && this.post.permaLink.trim() != "" ) {
@@ -38,18 +35,57 @@ enyo.kind({
 		  });
 	  }
   },
+  loadlocalPreview:function(alert_msg, title, content, tags, categories){
+	  var content = '<div class="preview_page"><h5 id="preview_alert">'+alert_msg+'</h5>'+
+	  '<h1>'+ title + '</h1>'+
+	  '<div class="preview_content">' +
+	  '<p>'+ content +'</p>' + 
+	  '</div> <div class="meta"><p id="preview_tags">'+tags+'</p>' +
+	  '<p id="preview_categories">'+categories+'</p>' +
+	  '</div></div>';
+	  this.$.postPreviewResponse.setContent(content);
+  },
   onPreviewSuccess: function(inSender, inResponse) {
 	  this.$.postPreviewResponse.setContent(inResponse);
 	  console.log("success response = " + inResponse);
   },
   onPreviewFailure: function(inSender, inResponse) {
-	  this.$.postPreviewResponse.setContent(inResponse);
 	  console.log("failure response = " + inResponse);
+	  //fallback to  local preview	  
+	  
+	  var title = this.post.title;
+	  if (typeof(title) == "undefined" || enyo.string.trim(title) =="")
+		  title = "(no title)";		  
+	  
+	  var content = this.post.description;
+	  if (typeof(content) == "undefined" || enyo.string.trim(content) == "")
+		  content = "No Description available for this Post";
+	  
+	  var tags = this.post.mt_keywords;
+	  var categories = this.post.categories;
+	  var alert_msg = "Sorry, no connection to host. A simple preview is shown below.";
+	  
+	  this.loadlocalPreview(alert_msg, title,content, tags, categories); 
   },
   windowParamsChangeHandler: function() {
-	  this.$.postPreviewResponse.setContent("<h1>Loading Preview...</h1>");
-	  this.account = enyo.windowParams.account;
-	  this.post = enyo.windowParams.post;
-	  this.openPostURL();
-   }
+	  if(typeof(enyo.windowParams.account) == "undefined") {
+		  //load local preview	  
+		  var title = enyo.windowParams.title;
+		  if (typeof(title) == "undefined" || enyo.string.trim(title) =="")
+			  title = "(no title)";		  
+		  var content = enyo.windowParams.content;
+		  if (typeof(content) == "undefined" || enyo.string.trim(content) == "")
+			  content = "No Description available for this Post";
+		  var tags = "";
+		  var categories = "";
+		  var alert_msg = "Sorry, the post has changed, or it is not published. A simple preview is shown below.";
+		  this.loadlocalPreview(alert_msg, title,content, tags, categories);
+	  } else {
+		  //load remote preview
+		  this.$.postPreviewResponse.setContent("<h1>Loading Preview...</h1>");
+		  this.account = enyo.windowParams.account;
+		  this.post = enyo.windowParams.post;
+		  this.openPostURL();
+	  }
+  }
 });
