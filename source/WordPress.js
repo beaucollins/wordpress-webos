@@ -165,16 +165,26 @@ enyo.kind({
       this.$.appMenu.close();
   },
   runStats: function() {
-      var statsParams = {
-          appVersion: enyo.fetchAppInfo().version,
-      };
-      var deviceInfo = enyo.fetchDeviceInfo();
-      if (deviceInfo) {
-          statsParams.deviceInfo = deviceInfo;
+      var lastRun = Date.parse(enyo.getCookie('statsLastRun'));
+      var now = new Date();
+      var daysSinceLastRun = 100;
+      if (lastRun) {
+          console.log('Last time we sent stats: ' + lastRun);
+          daysSinceLastRun = (now.getTime() - lastRun) / (1000 * 86400);
       }
-      console.log('Sending info to Stats API: ' + this.$.stats_api.url);
-      // console.log('data => ' + enyo.json.stringify(statsParams));
-      this.$.stats_api.call(statsParams);
+      if (daysSinceLastRun >= 7) {
+          var statsParams = {
+              appVersion: enyo.fetchAppInfo().version,
+          };
+          var deviceInfo = enyo.fetchDeviceInfo();
+          if (deviceInfo) {
+              statsParams.deviceInfo = deviceInfo;
+          }
+          console.log('Sending info to Stats API: ' + this.$.stats_api.url);
+          // console.log('data => ' + enyo.json.stringify(statsParams));
+          this.$.stats_api.call(statsParams);
+          enyo.setCookie('statsLastRun', new Date());          
+      }
   }
   
 });
