@@ -153,7 +153,7 @@ enyo.kind({
   // link up by xmlrpc url for now
   composeDraft:function(sender, post, options){
     //launches a new window with the compose view
-    params = {}
+	params = {'account': this.activeAccount};
     enyo.mixin(params, options);
     var composeLabel = Math.round(Math.random() * 100); // just for fun
     enyo.windows.activate("compose-" + composeLabel, "./compose/index.html", params);
