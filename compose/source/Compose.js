@@ -114,9 +114,10 @@ enyo.kind({
 			  handleAs: "text"	
 	  	}
 	  );
-  },
+  }, 
   //success & failure callbacks for our web service
-  onLoadMediaFileSuccess: function(inSender, inResponse) {
+//  onLoadMediaFileSuccess: function(inSender, inResponse) {
+  onLoadMediaFileSuccess: function(inSender, inResponse, inRequest) {
 	  console.log("Image Loaded");
 	  var ff = [];
 	   var mx = inResponse.length;   
@@ -128,7 +129,7 @@ enyo.kind({
 	   console.log("data prepared to be encoded using Base64");
 	   var base64Encoder = new Base64(b);
 	   var base64EncodedString = base64Encoder.encode();
-	   console.log("data encoded using Base64: "+ base64EncodedString);
+	 //  console.log("data encoded using Base64: "+ base64EncodedString);
 	   var postdata = "<?xml version=\"1.0\"?>"
 		+ "<methodCall><methodName>metaWeblog.newMediaObject</methodName>"
 		+ "<params><param><value><string>1</string></value></param>"
@@ -140,7 +141,7 @@ enyo.kind({
 		+ "<member><name>bits</name><value><base64>"
 	    + base64EncodedString
 	    + "</base64></value></member></struct></value></param></params></methodCall>";
-	   console.log("the xml-rpc request = " + postdata);
+	  // console.log("the xml-rpc request = " + postdata);
 	   this.$.uploadMediaFile.url =  this.account.xmlrpc;
 	   this.$.uploadMediaFile.call({},postdata);
   },
