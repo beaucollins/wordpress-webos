@@ -6,18 +6,20 @@ enyo.kind({
     account:null
   },
   components:[
-   // { name:'xmlrpc_client', kind:'XMLRPCService', methodName:'metaWeblog.getRecentPosts', onSuccess:'gotPosts'},
-    {name: "loadMediaFileData", kind: "WebService", onSuccess: "onLoadMediaFileSuccess", onFailure: "onLoadMediaFileFailure"},
-	{name: "uploadMediaFile", kind: "WebService", 
-    	method: "POST", 
+	{	name: "uploadMediaFile", 
+		kind: "WebService", 
+		method: "POST", 
     	handleAs:'text',
     	contentType:'text/xml',
-    	onSuccess: "onUploadMediaFileSuccess", onFailure: "onUploadMediaFileFailure"},   
+    	onSuccess: "onUploadMediaFileSuccess", 
+    	onFailure: "onUploadMediaFileFailure"
+    },
+    {name: "canvasUsedToUploadTheImage", kind: "ImgUploadCanvas", onImageLoaded:"sendFile"},	
     { name:'desktop', className:'desktop', components:[
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
           { content:'New Post', flex:1 },
-          { name:'uploadButton', kind:'enyo.Button', caption:'Test Media Upload', onclick:'uploadMedia' },
+          { name:'uploadButton', kind:'enyo.Button', caption:'XMLRPC Media Upload', onclick:'uploadMedia' },
           { name:'previewButton', kind:'enyo.Button', caption:'Preview', onclick:'showPreview' },
 		  { name:'postButton', kind:'enyo.Button', toggling:true, caption:'Publish', onclick:'savePost' }
         ] },		
@@ -101,7 +103,7 @@ enyo.kind({
 	  enyo.windows.activate("Post Preview", "../postPreview.html", params);
   },
   //Handles the download image
-  uploadMedia: function() {
+  uploadMedia: function() {  
 	  if(this.account == null) {
 		  alert("Please select an account on the main view");
 		  return;
@@ -109,27 +111,11 @@ enyo.kind({
 	  //The image attempting to be loaded is already on the device - an image reference returned by the file picker
 	  //the file picker doesn't work on emulator/browser. it works on a real device.
 	  var url = 'http://www.megabri.com/wp-content/uploads/2011/05/oktop.jpg';
-	  this.$.loadMediaFileData.url = url;
-	  this.$.loadMediaFileData.call({
-			  handleAs: "text"	
-	  	}
-	  );
+	  this.$.canvasUsedToUploadTheImage.loadImage(url);
   }, 
-  //success & failure callbacks for our web service
-//  onLoadMediaFileSuccess: function(inSender, inResponse) {
-  onLoadMediaFileSuccess: function(inSender, inResponse, inRequest) {
-	  console.log("Image Loaded");
-	  var ff = [];
-	   var mx = inResponse.length;   
-	   var scc= String.fromCharCode;
-	   for (var z = 0; z < mx; z++) {
-	       ff[z] = scc(inResponse.charCodeAt(z) & 255);
-	   }
-	   var b = ff.join("");
-	   console.log("data prepared to be encoded using Base64");
-	   var base64Encoder = new Base64(b);
-	   var base64EncodedString = base64Encoder.encode();
-	 //  console.log("data encoded using Base64: "+ base64EncodedString);
+  sendFile: function(sender, base64EncodedImg) {
+	  console.log("sendFile");
+	//  console.log("data encoded using Base64: "+ base64EncodedString);
 	   var postdata = "<?xml version=\"1.0\"?>"
 		+ "<methodCall><methodName>metaWeblog.newMediaObject</methodName>"
 		+ "<params><param><value><string>1</string></value></param>"
@@ -139,14 +125,11 @@ enyo.kind({
 		+ "<member><name>type</name><value><string>image/jpg</string></value></member>"
 		+ "<member><name>name</name><value><string>this-is-a-test.jpg</string></value></member>"
 		+ "<member><name>bits</name><value><base64>"
-	    + base64EncodedString
+	    + base64EncodedImg
 	    + "</base64></value></member></struct></value></param></params></methodCall>";
 	  // console.log("the xml-rpc request = " + postdata);
 	   this.$.uploadMediaFile.url =  this.account.xmlrpc;
 	   this.$.uploadMediaFile.call({},postdata);
-  },
-  onLoadMediaFileFailure: function(inSender, inResponse) {
-	  console.log("can't load the image = " + inResponse);
   },
   onUploadMediaFileSuccess: function(inSender, inResponse) {
 	 // this.$.postResponse.setContent(inResponse);
