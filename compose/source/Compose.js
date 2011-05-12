@@ -140,7 +140,17 @@ enyo.kind({
   },
   onUploadMediaFileSuccess: function(inSender, inResponse) {
 	 // this.$.postResponse.setContent(inResponse);
-	  console.log("upload success response = " + inResponse);
+	  console.log("upload success response text= " + inResponse);
+	  var parser = new XMLRPCParser(inResponse);
+	  var response = parser.toObject();
+	  console.log(response);
+	  if(parser.fault) {
+		  console.log("parser error");
+	  
+	  } else {
+		  var mediaHTML = "<br /><a href="+ response.url+"><img src="+ response.url+" class=\"alignnone size-full\" /></a>";
+	  	  this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML);
+	  }
   },
   onUploadMediaFileFailure: function(inSender, inResponse) {
 	  //this.$.postResponse.setContent(inResponse);

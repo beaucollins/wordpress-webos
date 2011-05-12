@@ -40,9 +40,10 @@ enyo.kind({
 			}
 			
 			if((i<j) && (j<k)) {
-				var mimeType = imageData.substring(i+1,j); 				
+				var mimeType = imageData.substring(i+1,j); 
+				console.log("mimeType : " + mimeType);
 				imageData = imageData.substring(k+1); 
-				console.log("img data " +imageData.substring(0,50)); 
+				console.log("img data : " +imageData.substring(0,50)); 
 				
 				//calculate the file name
 				var fileName = "webos.jpg";
@@ -50,7 +51,7 @@ enyo.kind({
 				for (var z = 0; z < mimeType.length && z < 50; z++) {
 					if ( scc(mimeType.charCodeAt(z)) == '/' ) {
 						fileName = myTime.getMilliseconds() + "." + mimeType.substring(z+1);
-						console.log("file name: " + fileName);
+						console.log("file name : " + fileName);
 						break;
 					}
 				}
