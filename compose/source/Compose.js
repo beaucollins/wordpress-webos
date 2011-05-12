@@ -110,11 +110,18 @@ enyo.kind({
 	  }  
 	  //The image attempting to be loaded is already on the device - an image reference returned by the file picker
 	  //the file picker doesn't work on emulator/browser. it works on a real device.
+	  
+	  // The onPickFile event fires with a response from the file picker if/when the user chooses a file. 
+	  //The response object is an array of objects indicating chosen files: [ { fullPath: // Absolute File Path. iconPath: // Absolute File Path with ExtractFS prefix. attachmentType: // File Type (image, document, audio, video) size: // File Size in Bytes. }, { ... }, ... ]
 	  var url = 'http://www.megabri.com/wp-content/uploads/2011/05/oktop.jpg';
 	  this.$.canvasUsedToUploadTheImage.loadImage(url);
   }, 
   sendFile: function(sender, base64EncodedImg) {
 	  console.log("sendFile");
+	  
+	  if(base64EncodedImg.error == true) return; //something went wrong
+	  var mimeType = base64EncodedImg.fileType;
+	  var fileName =  base64EncodedImg.fileName;
 	//  console.log("data encoded using Base64: "+ base64EncodedString);
 	   var postdata = "<?xml version=\"1.0\"?>"
 		+ "<methodCall><methodName>metaWeblog.newMediaObject</methodName>"
@@ -122,10 +129,10 @@ enyo.kind({
 		+ "<param><value><string>"+this.account.username+"</string></value></param>"
 		+ "<param><value><string>"+ this.account.password+"</string></value></param>"
 		+ "<param><value><struct>"
-		+ "<member><name>type</name><value><string>image/jpg</string></value></member>"
-		+ "<member><name>name</name><value><string>this-is-a-test.jpg</string></value></member>"
+		+ "<member><name>type</name><value><string>"+mimeType+"</string></value></member>"
+		+ "<member><name>name</name><value><string>"+fileName+"</string></value></member>"
 		+ "<member><name>bits</name><value><base64>"
-	    + base64EncodedImg
+	    + base64EncodedImg.encodedData
 	    + "</base64></value></member></struct></value></param></params></methodCall>";
 	  // console.log("the xml-rpc request = " + postdata);
 	   this.$.uploadMediaFile.url =  this.account.xmlrpc;
