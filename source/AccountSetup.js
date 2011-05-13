@@ -26,10 +26,22 @@ enyo.kind({
         { name:'cancel', kind: 'enyo.Button', onclick:'doCancel', caption: 'Cancel' }
       ]},
       { name:'setupForm', kind:'wp.AccountCredentials', onCancel:'cancelSetup', onSetup:'performSetup', selfHosted:false },
+      { name: 'helpView', className:'blog-setup-buttons', components:[
+          {content: "Please visit the FAQ to get answers to common questions. If you're still having trouble, post in the forums."},
+	      { kind: 'enyo.Button', onclick:"readTheFAQ", caption: 'Read the FAQ' },
+	      { kind: 'enyo.Button', onclick:"visitTheForum", caption: 'Visit the Forums'},
+	      { kind: 'enyo.Button', onclick:"sendEmail", caption: 'Send Support E-mail'},
+	      { kind: 'enyo.Button', onclick:'cancelSetup', caption: 'Cancel' }
+	  ]},
     ]},
-    { kind:'enyo.Popup', showHideMode:'transition', className:'transitioner fastAnimate', openClassName:'scaleFadeIn', modal:true, scrim:true, components:[
+
+    {name: "blogsPopup", kind:'enyo.Popup', showHideMode:'transition', modal:true, scrim:true, components:[
       { name:'blogList', kind:'wp.BlogSetupList', flex:1, lazy:true, onSelectBlogs:'notifySelected', onCancel:'cancelSetup' }
-    ]}
+    ]},
+	{name: "errorPopup", kind: "Popup", showHideMode: "transition", openClassName: "scaleFadeIn", scrim: true, 
+		 modal: true, className: "fastAnimate transitioner", width: "400px", components: [
+		{name: 'needHelpPane', kind: "wp.NeedHelpPrompt", onNeedHelp: "needHelp", onSubmit: "closePopup"}
+	]},
   ],
   create:function(){
     this.inherited(arguments);
@@ -46,7 +58,7 @@ enyo.kind({
   },
   setupHostedBlog:function(){
     this.$.setupForm.setSelfHosted(false);
-    this.$.pane.selectViewByName('setupForm')
+    this.$.pane.selectViewByName('setupForm');
   },
   setupBlog:function(){
     this.$.setupForm.setSelfHosted(true);
@@ -55,7 +67,7 @@ enyo.kind({
   cancelSetup:function(){
     this.$.pane.selectView(this.$.blogTypeChooser);
     this.$.setupForm.reset();
-    this.$.popup.close();
+    this.$.blogsPopup.close();
   },
   performSetup:function(sender){
     // this.$.scrim.show();
@@ -72,20 +84,40 @@ enyo.kind({
     }else{
       // this.$.scrim.hide();
       this.$.blogList.setBlogs(blogs);
-      this.$.popup.openAtCenter();//selectViewByName('blogList');
+      this.$.blogsPopup.openAtCenter();//selectViewByName('blogList');
     }
   },
   notifySelected:function(sender, blogs){
     this.doSelectBlogs(blogs, this.$.setupForm.username, this.$.setupForm.password);
-    this.$.popup.close();
+    this.$.blogsPopup.close();
   },
   badURL:function(sender){
     this.log("Bad URL message");
     // this.$.scrim.hide();
+    this.$.setupForm.toggleSignUpActivity();
+	var errorTitle = 'Sorry, can\'t log in';
+	var errorMessage = 'Please insert a correct blog URL and try again.';
+	this.$.needHelpPane.setErrorMessage(errorTitle, errorMessage);
+	this.$.errorPopup.openAtCenter();
   },
   apiFailure:function(sender, response, success){
     this.log('API Failure', response);
     // this.$.scrim.hide();
+    this.$.setupForm.toggleSignUpActivity();
+    
+    var errorTitle = 'Error';
+    var errorMessage = 'Something went wrong. Please, try again later';	 
+    if(response.faultString && response.faultString.length > 0) {
+    	errorMessage = response.faultString;
+    }
+    //check the error code
+    if(response.faultCode && response.faultCode == 403) {
+    	 this.$.setupForm.updatePassword(this, null, '');
+    	 errorTitle = 'Sorry, can\'t log in';
+    	 errorMessage = 'Please update your credentials and try again.';
+    }
+    this.$.needHelpPane.setErrorMessage(errorTitle, errorMessage);
+    this.$.errorPopup.openAtCenter();
   },
   cancelableChanged:function(){
     if (this.cancelable) {
@@ -93,9 +125,38 @@ enyo.kind({
     }else{
       this.$.cancel.hide();
     }
-  }
-  
-})
+  },
+  closePopup: function(inSender) {
+	inSender.manager.close();
+  },
+  needHelp: function(inSender) {
+	this.closePopup(inSender);
+	this.$.pane.selectView(this.$.helpView);
+  },
+  readTheFAQ:function(){
+    //we're launching a browser window instead of staying in app
+    this.$.palmService.call({target:'http://ios.wordpress.org/faq/'});
+  },
+  visitTheForum:function(){
+	//we're launching a browser window instead of staying in app
+    this.$.palmService.call({target:'http://ios.forums.wordpress.org/'});
+  },
+  sendEmail:function(){
+    this.$.palmService.call({
+    	id: "com.palm.app.email",
+        params: {
+            summary: "WordPress for webOS Help Request",
+            text: "Hello, \n write here the URL of your blog and the error message.",
+            recipients: [{
+                type:"email",
+                role:1,
+                value:"support@wordpress.com",
+                contactDisplay:"WordPress for webOS app"
+            }]
+        }
+    });
+  },
+});
 
 enyo.kind({
   name:'wp.BlogSetupList',
@@ -265,6 +326,7 @@ enyo.kind({
     var invalid = this.isEmpty(this.$.url.getValue()) ||
                     this.isEmpty(this.$.username.getValue()) ||
                     this.isEmpty(this.$.password.getValue());
+    this.$.signup.setActive(false);
     this.$.signup.setDisabled(invalid);
   },
   updateUrl:function(sender, event, url){
@@ -311,5 +373,31 @@ enyo.kind({
     this.setUsername("");
     this.setPassword("")
     this.doCancel();
-  }
+  },
+  toggleSignUpActivity: function(inSender) {
+	    var a =  this.$.signup.getActive();
+	    this.$.signup.setActive(!a);
+	}
+});
+
+enyo.kind({
+	name: "wp.NeedHelpPrompt",
+	kind: enyo.Control,
+	events: {
+		onSubmit: "",
+		onNeedHelp: ""
+	},
+	components: [
+		{name:'titleHolder', content: "Enter your password:", style: "font-size: 26px; padding: 6px;" },
+		{name:'msgHolder', content: "Some pickers"},
+		{kind: "HFlexBox", style: "padding-top: 6px;", components: [
+			{kind: "Button", flex: 1, caption: "Need Help?", onclick: "doNeedHelp"},
+			{kind: "Spacer"},
+			{kind: "Button", flex: 1, caption: "Ok", onclick: "doSubmit"},
+		]},
+	],
+	setErrorMessage: function(title, msg) {
+		this.$.titleHolder.setContent(title);
+		this.$.msgHolder.setContent(msg);
+	}
 });
