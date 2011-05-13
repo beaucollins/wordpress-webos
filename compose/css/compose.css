@@ -35,7 +35,7 @@
 }
 
 #compose_richTextButtons {
-	padding: 10px 6px;
+	padding: 10px 6px 50px 6px;
 }
 
 #compose_titleField {
@@ -73,4 +73,8 @@
 #compose_postButton {
 	background-color: #21759b;
 	color: #FFFFFF;
+}
+
+#compose_htmlContent {
+	min-height: 500px;
 }
