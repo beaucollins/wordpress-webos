@@ -59,7 +59,7 @@ enyo.kind({
 				var responseObj = {'error': false, 'encodedData': imageData, 'fileType': mimeType, 'fileName':fileName};
 				referenceToTheController.doImageLoaded(responseObj);
 			} else {
-				var responseObj = {'error': true};
+				var responseObj = {'error': true, 'errorMessage': "Something went wrong! Please, try again later."};
 				referenceToTheController.doImageLoaded(responseObj);
 			}
 		}

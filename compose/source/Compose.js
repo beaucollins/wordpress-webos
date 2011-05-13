@@ -19,7 +19,7 @@ enyo.kind({
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
           { content:'New Post', flex:1 },
-          { name:'uploadButton', kind:'enyo.Button', caption:'XMLRPC Media Upload', onclick:'uploadMedia' },
+          { name:'uploadButton', kind:'enyo.ActivityButton', caption:'New Media', onclick:'uploadMedia' },
           { name:'previewButton', kind:'enyo.Button', caption:'Preview', onclick:'showPreview' },
 		  { name:'postButton', kind:'enyo.Button', toggling:true, caption:'Publish', onclick:'savePost' }
         ] },		
@@ -108,6 +108,7 @@ enyo.kind({
 		  alert("Please select an account on the main view");
 		  return;
 	  }  
+	  this.$.uploadButton.setActive(true);
 	  //The image attempting to be loaded is already on the device - an image reference returned by the file picker
 	  //the file picker doesn't work on emulator/browser. it works on a real device.
 	  
@@ -119,7 +120,11 @@ enyo.kind({
   sendFile: function(sender, base64EncodedImg) {
 	  console.log("sendFile");
 	  
-	  if(base64EncodedImg.error == true) return; //something went wrong
+	  if(base64EncodedImg.error == true) {
+		  this.$.uploadButton.setActive(false);
+		  return; //something went wrong
+	  }
+	  
 	  var mimeType = base64EncodedImg.fileType;
 	  var fileName =  base64EncodedImg.fileName;
 	//  console.log("data encoded using Base64: "+ base64EncodedString);
@@ -140,6 +145,7 @@ enyo.kind({
   },
   onUploadMediaFileSuccess: function(inSender, inResponse) {
 	 // this.$.postResponse.setContent(inResponse);
+	  this.$.uploadButton.setActive(false);
 	  console.log("upload success response text= " + inResponse);
 	  var parser = new XMLRPCParser(inResponse);
 	  var response = parser.toObject();
@@ -153,6 +159,7 @@ enyo.kind({
 	  }
   },
   onUploadMediaFileFailure: function(inSender, inResponse) {
+	  this.$.uploadButton.setActive(false);
 	  //this.$.postResponse.setContent(inResponse);
 	  console.log("upload failure response = " + inResponse);
   },
