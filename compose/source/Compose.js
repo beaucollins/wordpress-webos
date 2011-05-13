@@ -16,9 +16,11 @@ enyo.kind({
     },
     {name: "canvasUsedToUploadTheImage", kind: "ImgUploadCanvas", onImageLoaded:"sendFile"},	
     { name:'desktop', className:'desktop', components:[
+      {name:'filePicker', kind: "FilePicker", fileType:["image"], allowMultiSelect:false, onPickFile: "handleResult"},
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
           { content:'New Post', flex:1 },
+         // {kind: "Button", caption: "Show FilePicker", onclick: "showFilePicker"},
           { name:'uploadButton', kind:'enyo.ActivityButton', caption:'New Media', onclick:'uploadMedia' },
           { name:'previewButton', kind:'enyo.Button', caption:'Preview', onclick:'showPreview' },
 		  { name:'postButton', kind:'enyo.Button', toggling:true, caption:'Publish', onclick:'savePost' }
@@ -86,7 +88,7 @@ enyo.kind({
   },
   showPreview:function() {
 	  //launches a new window with the preview view
-	  params = {'title' : this.$.titleField.value, 'content' : this.$.contentField.value};
+	  params = {'title' : this.$.titleField.value, 'content' : tinyMCE.get('txtEntry').getContent()};
 	  options = {};
 	  enyo.mixin(params, options);
 	  enyo.windows.activate("Post Preview", "../postPreview.html", params);
@@ -144,12 +146,21 @@ enyo.kind({
 	  
 	  } else {
 		  var mediaHTML = "<br /><a href="+ response.url+"><img src="+ response.url+" class=\"alignnone size-full\" /></a>";
-	  	  this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML);
+	  	  //this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML);
+		  
+		  tinyMCE.get('txtEntry').setContent( tinyMCE.get('txtEntry').getContent() + mediaHTML );
 	  }
   },
   onUploadMediaFileFailure: function(inSender, inResponse) {
 	  this.$.uploadButton.setActive(false);
 	  //this.$.postResponse.setContent(inResponse);
 	  console.log("upload failure response = " + inResponse);
+  },
+  showFilePicker: function(inSender, inEvent) {
+	  this.$.filePicker.pickFile();
+  },
+
+  handleResult: function(inSender, msg) {
+	  this.$.selectedFiles.setContent("Selected Files : "+enyo.json.stringify(msg));
   },
 });
