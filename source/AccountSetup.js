@@ -35,7 +35,8 @@ enyo.kind({
 	  ]},
     ]},
 
-    {name: "blogsPopup", kind:'enyo.Popup', showHideMode:'transition', modal:true, scrim:true, components:[
+    {name: "blogsPopup", kind:'enyo.Popup', showHideMode: "transition", openClassName: "scaleFadeIn", scrim: true, 
+		 modal: true, className: "fastAnimate transitioner", width: "400px",  components:[
       { name:'blogList', kind:'wp.BlogSetupList', flex:1, lazy:true, onSelectBlogs:'notifySelected', onCancel:'cancelSetup' }
     ]},
 	{name: "errorPopup", kind: "Popup", showHideMode: "transition", openClassName: "scaleFadeIn", scrim: true, 
