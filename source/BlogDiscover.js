@@ -71,7 +71,9 @@ enyo.kind({
     this.$.xmlrpc_service.callMethod({ methodParams:[this.username, this.password] }, { url:endpoint });
   },
   cancel:function() {
+	  this.log("wp.BlogDiscover request cancelled");
 	  this.cancelled = true;
+	  this.$.xmlrpc_service.cancel();
   },
 });
 
