@@ -17,7 +17,7 @@
 
 /* Layout */
 .webosSkin table.mceToolbar, .webosSkin tr.mceFirst .mceToolbar tr td, .webosSkin tr.mceLast .mceToolbar tr td {border:0; margin:0; padding:0}
-.webosSkin table.mceLayout {border:0;}
+.webosSkin table.mceLayout {border:0}
 .webosSkin .mceIframeContainer {}
 .webosSkin .mceStatusbar {
 	display: block;
@@ -29,6 +29,7 @@
 	border-top-width: 1px;
 	border-top-style: solid;
 }
+
 .webosSkin .mceStatusbar div {float:left; padding:2px;}
 .webosSkin .mceStatusbar a.mceResize {
 	display: block;

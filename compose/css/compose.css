@@ -75,6 +75,6 @@
 	color: #FFFFFF;
 }
 
-#compose_htmlContent {
-	min-height: 500px;
+#txtEntry_tbl {
+/*height: 500px !important*/
 }
