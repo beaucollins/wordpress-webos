@@ -1,10 +1,11 @@
-enyo.kind({
+ enyo.kind({
   name:'wp.Compose',
   kind:'Control',
   published:{
     showSettings:false,
     account:null
   },
+  currentMediaFile : null,
   components:[
 	{	name: "uploadMediaFile", 
 		kind: "WebService", 
@@ -12,11 +13,15 @@ enyo.kind({
     	handleAs:'text',
     	contentType:'text/xml',
     	onSuccess: "onUploadMediaFileSuccess", 
-    	onFailure: "onUploadMediaFileFailure"
+    	onFailure: "onUploadMediaFileFailure",
     },
     {name: "canvasUsedToUploadTheImage", kind: "ImgUploadCanvas", onImageLoaded:"sendFile"},	
     { name:'desktop', className:'desktop', components:[
       {name:'filePicker', kind: "FilePicker", fileType:["image"], allowMultiSelect:false, onPickFile: "handleResult"},
+      {name: "errorDialog", kind: "Dialog", components: [
+	     {name:"errorMessage", style: "padding: 12px", content: ""},
+	     {kind: "Button", caption: "Close", onclick: "closeDialog"}
+      ]},
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
           { content:'New Post', flex:1 },
@@ -61,6 +66,7 @@ enyo.kind({
   ],
   create:function(){
     this.inherited(arguments);
+    mediaFiles = new Array();
   },
   windowParamsChangeHandler: function() {
 	 if(typeof(enyo.windowParams.account) != "undefined") {
@@ -100,35 +106,45 @@ enyo.kind({
 		  return;
 	  }  
 	  this.$.uploadButton.setActive(true);
+	  this.$.uploadButton.setDisabled(true);
 	  //The image attempting to be loaded is already on the device - an image reference returned by the file picker
 	  //the file picker doesn't work on emulator/browser. it works on a real device.
 	  
-	  // The onPickFile event fires with a response from the file picker if/when the user chooses a file. 
+	  //The onPickFile event fires with a response from the file picker if/when the user chooses a file. 
 	  //The response object is an array of objects indicating chosen files: [ { fullPath: // Absolute File Path. iconPath: // Absolute File Path with ExtractFS prefix. attachmentType: // File Type (image, document, audio, video) size: // File Size in Bytes. }, { ... }, ... ]
-	  var url = 'http://www.megabri.com/wp-content/uploads/2011/05/oktop.jpg';
-	  this.$.canvasUsedToUploadTheImage.loadImage(url);
+	  var newMediaObj = new MediaObject();
+	  newMediaObj.setLocalURL('http://www.megabri.com/wp-content/uploads/2011/05/oktop.jpg');
+	  currentMediaFile = newMediaObj;
+	  this.$.canvasUsedToUploadTheImage.loadImage(newMediaObj.getLocalURL());
   }, 
-  sendFile: function(sender, base64EncodedImg) {
+  sendFile: function(sender, fileInfo) {
 	  console.log("sendFile");
 	  
-	  if(base64EncodedImg.error == true) {
+	  if(fileInfo.error == true) {
 		  this.$.uploadButton.setActive(false);
-		  return; //something went wrong
+		  this.$.uploadButton.setDisabled(false);
+		  return; //something went wrong while reading and encoding the file from memory
 	  }
 	  
-	  var mimeType = base64EncodedImg.fileType;
-	  var fileName =  base64EncodedImg.fileName;
-	//  console.log("data encoded using Base64: "+ base64EncodedString);
+	  var newMediaObj = currentMediaFile; 
+	  newMediaObj.setHeight(fileInfo.height);
+	  newMediaObj.setWidth(fileInfo.width);
+	  newMediaObj.setFileName(fileInfo.fileName);
+	  newMediaObj.setMimeType(fileInfo.fileType);
+	  console.log("the media obj updated:");
+	  console.log(newMediaObj);
+	 
+	  //  console.log("data encoded using Base64: "+ base64EncodedString);
 	   var postdata = "<?xml version=\"1.0\"?>"
 		+ "<methodCall><methodName>metaWeblog.newMediaObject</methodName>"
 		+ "<params><param><value><string>1</string></value></param>"
 		+ "<param><value><string>"+this.account.username+"</string></value></param>"
 		+ "<param><value><string>"+ this.account.password+"</string></value></param>"
 		+ "<param><value><struct>"
-		+ "<member><name>type</name><value><string>"+mimeType+"</string></value></member>"
-		+ "<member><name>name</name><value><string>"+fileName+"</string></value></member>"
+		+ "<member><name>type</name><value><string>"+newMediaObj.getMimeType()+"</string></value></member>"
+		+ "<member><name>name</name><value><string>"+newMediaObj.getFileName()+"</string></value></member>"
 		+ "<member><name>bits</name><value><base64>"
-	    + base64EncodedImg.encodedData
+	    + fileInfo.encodedData
 	    + "</base64></value></member></struct></value></param></params></methodCall>";
 	  // console.log("the xml-rpc request = " + postdata);
 	   this.$.uploadMediaFile.url =  this.account.xmlrpc;
@@ -137,30 +153,71 @@ enyo.kind({
   onUploadMediaFileSuccess: function(inSender, inResponse) {
 	 // this.$.postResponse.setContent(inResponse);
 	  this.$.uploadButton.setActive(false);
+	  this.$.uploadButton.setDisabled(false);
 	  console.log("upload success response text= " + inResponse);
 	  var parser = new XMLRPCParser(inResponse);
 	  var response = parser.toObject();
 	  console.log(response);
+	  
 	  if(parser.fault) {
 		  console.log("parser error");
-	  
 	  } else {
-		  var mediaHTML = "<br /><a href="+ response.url+"><img src="+ response.url+" class=\"alignnone size-full\" /></a>";
+		  currentMediaFile.setRemoteURL(response.url); //TODO check for shortcode here
+		  var mediaHTML = currentMediaFile.getMediaHTML();
 	  	  //this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML);
-		  
 		  tinyMCE.get('txtEntry').setContent( tinyMCE.get('txtEntry').getContent() + mediaHTML );
 	  }
+	  
+	  this.$.errorMessage.setContent('Img uploaded');
+	  this.$.errorDialog.open();
+	  currentMediaFile = null;
   },
   onUploadMediaFileFailure: function(inSender, inResponse) {
 	  this.$.uploadButton.setActive(false);
+	  this.$.uploadButton.setDisabled(false);
 	  //this.$.postResponse.setContent(inResponse);
 	  console.log("upload failure response = " + inResponse);
+	  this.$.errorMessage.setContent('Something went wrong, please try later!');
+	  this.$.errorDialog.open();
+	  currentMediaFile = null;
   },
   showFilePicker: function(inSender, inEvent) {
 	  this.$.filePicker.pickFile();
   },
-
   handleResult: function(inSender, msg) {
 	  this.$.selectedFiles.setContent("Selected Files : "+enyo.json.stringify(msg));
   },
+	//close the error dialog
+  closeDialog: function() {
+		this.$.errorDialog.close();
+	},
 });
+ 
+ enyo.kind({
+	 name: "MediaObject",
+	 kind: enyo.Object, 
+	 // declare 'published' properties
+	 published: {
+		 remoteURL : null,
+		 localURL  : null, 
+		 shortcode : null,
+		 fileName  : null,
+		 mimeType  : null,
+		 width     : null,
+		 height    : null,
+		 remoteStatusNumber : 0,
+		 progress : 0,
+	 },
+	 getMediaHTML : function() {
+		 return "<br /><a href="+ this.remoteURL+"><img src="+  this.remoteURL+" class=\"alignnone size-full\" /></a>";
+	 },
+	 // these methods will be automatically generated:
+	 //  getMyValue: function() ...
+	 //  setMyValue: function(inValue) ...
+	 /* optional method that is fired whenever setMyValue is called
+	    myValueChanged: function(inOldValue) {
+	        this.delta = this.myValue - inOldValue;
+	    }*/
+ }); 
+
+ 

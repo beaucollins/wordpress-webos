@@ -17,9 +17,9 @@ enyo.kind({
 		var objImage = new Image();
 		objImage.onload = function() {
 			console.log("image loaded");
-			console.log("objImage w,h:" + objImage.width + "-" + objImage.height);
-			canvas.width = objImage.width;
-			canvas.height = objImage.height;
+			console.log("objImage w,h:" + this.width + "-" + this.height);
+			canvas.width = this.width;
+			canvas.height = this.height;
 			console.log("canvas w,h" + canvas.width + "," + canvas.height);
 			// Copy the image contents to the canvas
 			var ctx = canvas.getContext("2d");
@@ -56,7 +56,8 @@ enyo.kind({
 					}
 				}
 				
-				var responseObj = {'error': false, 'encodedData': imageData, 'fileType': mimeType, 'fileName':fileName};
+				var responseObj = {'error': false, 'encodedData': imageData, 'fileType': mimeType, 
+						'fileName':fileName, 'height':canvas.height, 'width':canvas.width };
 				referenceToTheController.doImageLoaded(responseObj);
 			} else {
 				var responseObj = {'error': true, 'errorMessage': "Something went wrong! Please, try again later."};
