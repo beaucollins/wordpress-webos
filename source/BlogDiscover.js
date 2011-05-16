@@ -20,12 +20,14 @@ enyo.kind({
     onFailure:"",
     onBadURL:""
   },
+  cancelled: null, //the request was cancelled
   components:[
-    { name:'xmlrpc_service', kind:'XMLRPCService', methodName:'wp.getUsersBlogs', onSuccess:'gotBlogs', onFault:'apiFault', onFailure:'doBadURL' },
-    { kind:'wp.EndpointDiscover', onSuccess:'foundEndpoint', onFailure:'doBadURL' }
+    { name:'xmlrpc_service', kind:'XMLRPCService', methodName:'wp.getUsersBlogs', onSuccess:'gotBlogs', onFault:'apiFault', onFailure:'_badURL' },
+    { kind:'wp.EndpointDiscover', onSuccess:'foundEndpoint', onFailure:'_badURL' }
   ],
   create:function(){
     this.inherited(arguments);
+    this.cancelled = false;
   },
   discoverBlogs:function(url, username, password){
     //first normalize the url
@@ -33,18 +35,26 @@ enyo.kind({
     this.username = username;
     this.password = password;
     var normalized_url = this.normalizeUrl(url);
+    this.cancelled = false;
     this.$.xmlrpc_service.callMethod({ methodParams:[username, password] }, { url:normalized_url, onFailure:'initialEndpointFailure'});
   },
   // apiFault, either bad username/pass or API disabled, we're done here
   apiFault:function(sender, request, response){
+	if(this.cancelled == true) return;
     this.doFailure(request, response)
   },
+  _badURL:function(sender, request, response){
+	  if(this.cancelled == true) return;
+	  this.doBadURL(request, response)
+  },
   initialEndpointFailure:function(sender, response, request){
+	if(this.cancelled == true) return;
     this.log("Failed first XMLRPC call, attempt endpoint discovery");
     this.$.endpointDiscover.discover(this.url, request.xhr.responseText);
     // basic request for URL and parse out the link rel=EditURI
   },
   gotBlogs:function(sender, response, request){
+	if(this.cancelled == true) return;
     this.doSuccess(response, this.username, this.password);
   },
   normalizeUrl:function(url){
@@ -57,9 +67,12 @@ enyo.kind({
     
   },
   foundEndpoint:function(sender, endpoint){
+	if(this.cancelled == true) return;
     this.$.xmlrpc_service.callMethod({ methodParams:[this.username, this.password] }, { url:endpoint });
-  }
-  
+  },
+  cancel:function() {
+	  this.cancelled = true;
+  },
 });
 
 enyo.kind({

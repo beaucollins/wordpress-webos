@@ -69,6 +69,7 @@ enyo.kind({
     this.$.pane.selectView(this.$.blogTypeChooser);
     this.$.setupForm.reset();
     this.$.blogsPopup.close();
+    this.$.blogFinder.cancel();
   },
   performSetup:function(sender){
     // this.$.scrim.show();
@@ -321,6 +322,7 @@ enyo.kind({
   },
   setupClicked:function(){
     this.$.signup.setActive(true);
+    this.$.signup.setDisabled(true);
     this.doSetup();
   },
   checkValid:function(){
@@ -378,6 +380,7 @@ enyo.kind({
   toggleSignUpActivity: function(inSender) {
 	    var a =  this.$.signup.getActive();
 	    this.$.signup.setActive(!a);
+	    this.$.signup.setDisabled(a);
 	}
 });
 
