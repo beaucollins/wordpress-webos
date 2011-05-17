@@ -31,6 +31,45 @@
 		  { name:'postButton', kind:'enyo.Button', toggling:true, caption:'Publish', onclick:'savePost' }
         ] },		
         { kind:'HFlexBox', flex:1, components:[
+		{ name:'settings', kind:'VFlexBox', width:'300px', style:'background:#EEE;', showing:false, components:[
+            { kind:'Scroller', flex:1, components:[
+              { kind:'Item', components:[
+                { kind:'Drawer', caption:'Status', open:false, components:[
+                  { content:'Draft' },
+                  { content:'Pending Review' },
+                  { content:'Published' },
+				  { content:'Private' }
+                ] }
+              ]},
+              { kind:'Item', components:[
+                { kind:'Drawer', caption:'Categories', open:false, components:[
+                  { content:'One' },
+                  { content:'Two' },
+                  { content:'Three' }
+                ] }
+              ]},
+			{ kind:'Item', components:[
+                { kind:'Drawer', open:false, caption:'Tags', components:[
+                  { kind:'Input', hint:'Separate tags with commas', inputType:'text' }
+                ] }
+              ] },
+			{ kind:'Item', components:[
+                { kind:'Drawer', open:false, caption:'Password', components:[
+                  { kind:'Input', hint:'Password', inputType:'password' }
+                ] }
+              ] },
+			{ kind:'Item', components:[
+				{ kind:'Drawer', open:false, caption:'Publish Date', components:[
+					{kind: "DatePicker", label: "Date", onChange: "pickerPick"}
+				] }
+            ]},
+			{ kind:'Item', components:[
+                { kind:'Drawer', open:false, caption:'Publish Time', components:[
+                  {kind: "TimePicker", label: "Time", onChange: "pickerPick"}
+                ] }
+              ] },
+			] }
+          ]},
           { name:'main', kind:'VFlexBox', flex:1, components:[
             { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:'Title' },
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
@@ -39,27 +78,7 @@
           	] },
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:'Settings', onclick:'toggleSettings' }
 			] },
-		  ] },
-          { name:'settings', kind:'VFlexBox', width:'300px', style:'background:#EEE;', showing:false, components:[
-            { kind:'Scroller', flex:1, components:[
-              { kind:'Item', layoutKind:'HFlexLayout', components:[
-                { flex:1, content:"Published" },
-                { kind:'ToggleButton' }
-              ] },
-              { kind:'Item', components:[
-                { kind:'Drawer', open:false, caption:'Password', components:[
-                  { kind:'Input', hint:'Password', inputType:'password' }
-                ] }
-              ] },
-              { kind:'Item', components:[
-                { kind:'Drawer', caption:'Categories', open:false, components:[
-                  { content:'One' },
-                  { content:'Two' },
-                  { content:'Three' }
-                ] }
-              ]}
-            ]}
-          ]}
+		  ] }
         ]}
       ] }
     ] }
