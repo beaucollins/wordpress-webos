@@ -60,14 +60,10 @@
               ] },
 			{ kind:'Item', components:[
 				{ kind:'Drawer', open:false, caption:'Publish Date', components:[
-					{kind: "DatePicker", label: "Date", onChange: "pickerPick"}
+					{kind: "DatePicker", label: "Date", onChange: "pickerPick"},
+					{kind: "TimePicker", label: "Time", onChange: "pickerPick"}
 				] }
-            ]},
-			{ kind:'Item', components:[
-                { kind:'Drawer', open:false, caption:'Publish Time', components:[
-                  {kind: "TimePicker", label: "Time", onChange: "pickerPick"}
-                ] }
-              ] },
+            ]}
 			] }
           ]},
           { name:'main', kind:'VFlexBox', flex:1, components:[
