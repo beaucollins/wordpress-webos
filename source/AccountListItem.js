@@ -18,7 +18,8 @@ enyo.kind({
   items: [
     { label:'Comments', icon:'./images/icons/comments-icon.png' },
     { label:'Posts', icon:'./images/icons/posts-icon.png' },
-    { label:'Pages', icon:'./images/icons/pages-icon.png'}
+    { label:'Pages', icon:'./images/icons/pages-icon.png'},
+    { label:'Stats', icon:'./images/icons/posts-icon.png'}
   ],
   create:function(){
     this.inherited(arguments);

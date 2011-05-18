@@ -315,3 +315,7 @@ img {
 	padding: 1px 10px;
 	font-size: .8em
 }
+
+#wordPress_stats .enyo-spinner-large, #wordPress_stats .enyo-spinner {
+    margin: 0 auto;
+}

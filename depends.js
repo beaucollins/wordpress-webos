@@ -11,6 +11,7 @@ enyo.depends(
   "source/PostList.js",
   "source/PostView.js",
   "source/PostPreviewView.js",
+  "source/Stats.js",
   "source/AccountSetup.js",
   'source/Accounts.js',
   "css/WordPress.css",
@@ -19,5 +20,8 @@ enyo.depends(
   "lib/XMLRPCService.js",
   "lib/WordPressService.js",
   "lib/SimpleHtmlParser.js",
+  "lib/StatsService.js",
+  "lib/jquery.min.js",
+  "lib/jquery.flot.js",
   "Canvas.js"
 );

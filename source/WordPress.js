@@ -35,6 +35,7 @@ enyo.kind({
               { name:'comments', kind: 'wp.Comments', flex:1, lazy:true },
               { name:'posts', kind: 'wp.Posts', flex:1, lazy:true },
               { name:'pages', kind: 'wp.Posts', methodName:'wp.getPages', flex:1, lazy:true },
+              { name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
               { name:'drafts', kind: 'Control', flex:1, lazy:true, style:'background:-webkit-gradient(linear, left top, left bottom, from(#000), to(#FFF));'},
             ]}
         ]}
@@ -81,12 +82,15 @@ enyo.kind({
     if (action == 'Drafts') {
       this.$.content.selectViewByName('drafts');
     };
+    if (action == 'Stats') {
+      this.$.content.selectViewByName('stats');
+    };
     if (!this.$.panes.multiView) {
       this.$.panes.selectView(this.$.main);
     };
   },
   setupSubView:function(sender, view){
-    if (view.name == 'comments' || view.name == 'posts' || view.name == 'pages') {
+    if (view.name == 'comments' || view.name == 'posts' || view.name == 'pages' || view.name == 'stats') {
       view.setAccount(this.activeAccount);
     };
   },
