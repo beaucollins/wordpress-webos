@@ -26,7 +26,6 @@
         { kind:'enyo.Header', components:[
           { content:'New Post', flex:1 },
          // {kind: "Button", caption: "Show FilePicker", onclick: "showFilePicker"},
-          { name:'uploadButton', kind:'enyo.ActivityButton', caption:'New Media', onclick:'uploadMedia' },
           { name:'previewButton', kind:'enyo.Button', caption:'Preview', onclick:'showPreview' },
 		  { name:'postButton', kind:'enyo.Button', toggling:true, caption:'Publish', onclick:'savePost' }
         ] },		
@@ -68,11 +67,12 @@
           ]},
           { name:'main', kind:'VFlexBox', flex:1, components:[
             { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:'Title' },
-			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
 			{ kind:'Scroller', flex:1, components:[
+			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
+			{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Add Media', onclick:'uploadMedia' },
           	{ kind: "HtmlContent", srcId: "tinyMCE", onLinkClick: "htmlContentLinkClick"},
-          	] },
-	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:'Settings', onclick:'toggleSettings' }
+			]},
+	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:'Settings', onclick:'toggleSettings' },
 			] },
 		  ] }
         ]}
