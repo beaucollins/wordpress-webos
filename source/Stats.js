@@ -8,7 +8,7 @@ enyo.kind({
     { name:'statsService', kind:'StatsService'},
     { name:'statsChart', kind:'Pane', height:'210px', components:[
         { name:'statsChartSpinner', kind:'enyo.SpinnerLarge' },
-        { name:'statsChartPlot', style:'width: 790px; height: 210px' }
+        { name:'statsChartPlot', style:'width: 790px; height: 200px' }
     ]},
     { kind:'HFlexBox', flex:4, components:[
         { name:'statsReferrer', kind:'Pane', style: 'width: 50%', components:[
@@ -89,7 +89,7 @@ enyo.kind({
     
     this.$.statsService.setAccount(this.account);
     if (this.$.statsService.hasApiKey()) {
-        this.$.statsService.callStats({table:'views'}, {onSuccess:'gotViews'});
+        this.$.statsService.callStats({table:'views', period:'days', days:30}, {onSuccess:'gotViews'});
         this.$.statsService.callStats({table:'referrers', summarize:'1'}, {onSuccess:'gotReferrers'});
         this.$.statsService.callStats({table:'postviews', summarize:'1'}, {onSuccess:'gotPosts'});
         this.$.statsService.callStats({table:'searchterms', summarize:'1'}, {onSuccess:'gotKeywords'});
