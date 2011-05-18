@@ -106,8 +106,6 @@ enyo.kind({
         labels[i] = response[i].date;
     };
     this.$.statsChart.selectView(this.$.statsChartPlot);
-    console.log(data);
-    console.log(jQuery(this.$.statsChartPlot));
     jQuery.plot(jQuery('#' + this.$.statsChartPlot.id), [{
         "label":"Views",
         "data":data
