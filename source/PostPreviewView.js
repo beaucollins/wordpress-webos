@@ -70,6 +70,9 @@ enyo.kind({
 	  this.$.postPreviewResponse.setContent(content);
   },
   windowParamsChangeHandler: function(inSender, inEvent) {
+	  var p = inEvent.params;
+	  this.log(window.name, p);
+	  
 	  if(typeof(enyo.windowParams.account) == "undefined") {
 		  //load local preview	  
 		  var title = enyo.windowParams.title; 

@@ -1,4 +1,6 @@
- enyo.kind({
+var showWebOsImageFilePickerFunctionBind = null; //this variable is used to show the webOS filePicker when the user tap on the Image btn on the editor toolbar
+
+enyo.kind({
   name:'wp.Compose',
   kind:'Control',
   published:{
@@ -25,7 +27,6 @@
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
           { content:'New Post', flex:1 },
-         // {kind: "Button", caption: "Show FilePicker", onclick: "showFilePicker"},
           { name:'previewButton', kind:'enyo.Button', caption:'Preview', onclick:'showPreview' },
 		  { name:'postButton', kind:'enyo.Button', toggling:true, caption:'Publish', onclick:'savePost' }
         ] },		
@@ -69,7 +70,7 @@
             { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:'Title' },
 			{ kind:'Scroller', flex:1, components:[
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
-			{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Add Media', onclick:'uploadMedia' },
+			{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
           	{ kind: "HtmlContent", srcId: "tinyMCE", onLinkClick: "htmlContentLinkClick"},
 			]},
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:'Settings', onclick:'toggleSettings' },
@@ -82,6 +83,7 @@
   create:function(){
     this.inherited(arguments);
     mediaFiles = new Array();
+    showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showFilePicker"); //js clousure. filePickerFunctionBind is declared globally and is used to access a function inside this obj
   },
   windowParamsChangeHandler: function(inSender, inEvent) {
 	 var p = inEvent.params;
@@ -198,10 +200,12 @@
 	  currentMediaFile = null;
   },
   showFilePicker: function(inSender, inEvent) {
-	  this.$.filePicker.pickFile();
+	 alert("Hey baby, the File Picker doesn't work.");
+	//  this.$.filePicker.pickFile();
   },
   handleResult: function(inSender, msg) {
-	  this.$.selectedFiles.setContent("Selected Files : "+enyo.json.stringify(msg));
+	  //TODO: call the upload function here
+	  //this.$.selectedFiles.setContent("Selected Files : "+enyo.json.stringify(msg));
   },
 	//close the error dialog
   closeDialog: function() {
