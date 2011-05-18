@@ -70,7 +70,7 @@ enyo.kind({
   },
   accountChanged:function(){
     if (this.$.statsChartPlot.node) {
-        this.$.statsChartPlot.node.innerHTML = "";        
+        this.$.statsChartPlot.node.innerHTML = "";
     }
     this.$.statsReferrerList.punt();
     this.$.statsPostsList.punt();
@@ -86,12 +86,17 @@ enyo.kind({
     if (this.account == null) {
       return;
     };
-    this.$.statsService.setBlog(this.account.blogid);
-    this.$.statsService.callStats({table:'views'}, {onSuccess:'gotViews'});
-    this.$.statsService.callStats({table:'referrers', summarize:'1'}, {onSuccess:'gotReferrers'});
-    this.$.statsService.callStats({table:'postviews', summarize:'1'}, {onSuccess:'gotPosts'});
-    this.$.statsService.callStats({table:'searchterms', summarize:'1'}, {onSuccess:'gotKeywords'});
-    this.$.statsService.callStats({table:'clicks', summarize:'1'}, {onSuccess:'gotClicks'});    
+    
+    this.$.statsService.setAccount(this.account);
+    if (this.$.statsService.hasApiKey()) {
+        this.$.statsService.callStats({table:'views'}, {onSuccess:'gotViews'});
+        this.$.statsService.callStats({table:'referrers', summarize:'1'}, {onSuccess:'gotReferrers'});
+        this.$.statsService.callStats({table:'postviews', summarize:'1'}, {onSuccess:'gotPosts'});
+        this.$.statsService.callStats({table:'searchterms', summarize:'1'}, {onSuccess:'gotKeywords'});
+        this.$.statsService.callStats({table:'clicks', summarize:'1'}, {onSuccess:'gotClicks'});            
+    } else {
+        this.$.statsService.getApiKey();
+    }
   },
   gotViews:function(sender, response, request) {
     var data = [];
