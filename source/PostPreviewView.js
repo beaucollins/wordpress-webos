@@ -2,8 +2,8 @@ enyo.kind({
   name:'wp.PostPreviewView',
   kind:'enyo.Scroller',
   published: {
-    //account:null,
-    //post:null
+    account:null,
+    post:null
   },
   events: { 
   },
@@ -11,21 +11,24 @@ enyo.kind({
 	 this.inherited(arguments);
   },
   components: [
-     {name: "postPreviewResponse", kind: "HtmlContent"}
+	{name:"loadingScrim",  kind: "Scrim", layoutKind: "VFlexLayout", align: "center", pack: "center", components: [
+		{name: "loadingSpinner", kind: "SpinnerLarge"},
+	]},
+    {name: "postPreviewResponse", kind: "HtmlContent"}
   ],
   openPostURL:function(){
+	  this.showScrim(true);
 	  //TODO: check the connection to host here!!!
 	  if (this.post.permaLink && this.post.permaLink.trim() != "" ) {
 		  var loginURL = this.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
 		  var postdata='log='+this.account.username+'&pwd='+this.account.password+'&redirect_to='+this.post.permaLink;
-		  var htmlForm ='<h1>Loading Preview...</h1><form method="post" action="'+loginURL+'" id="loginform" name="loginform" style="visibility:hidden">'
+		  var htmlForm ='<form method="post" action="'+loginURL+'" id="loginform" name="loginform" style="visibility:hidden">'
 		  +'<input type="text" tabindex="10" size="20" value="'+this.account.username+'" class="input" id="user_login" name="log"></label>'
 		  +'<input type="password" tabindex="20" size="20" value="'+this.account.password+'" class="input" id="user_pass" name="pwd"></label>'
 		  +'<input type="submit" tabindex="100" value="Log In" class="button-primary" id="wp-submit" name="wp-submit">'
 		  +'<input type="hidden" value="'+ this.post.permaLink +'" name="redirect_to">'
 		  +'</form>';
 		  this.$.postPreviewResponse.setContent(htmlForm);
-
 		  loginform.submit();
 	  } else {
 		//fallback to  local preview	    
@@ -34,7 +37,7 @@ enyo.kind({
 	  }
   },
   loadlocalPreview:function(alert_msg, title, content, tags, categories){
-	  
+	  this.showScrim(true);
 	  if (typeof(title) == "undefined" || enyo.string.trim(title) =="")
 		  title = "(no title)";		  
 	  
@@ -53,7 +56,8 @@ enyo.kind({
 		  categories ="";
 	  }
 	  
-	  var alert_msg = "Sorry, no connection to host. A simple preview is shown below.";
+	  //TODO check the connection status here
+	 // var alert_msg = "Sorry, no connection to host. A simple preview is shown below.";
 	  
 	  var content = '<div class="preview_page"><h5 id="preview_alert">'+alert_msg+'</h5>'+
 	  '<h1>'+ title + '</h1>'+
@@ -62,9 +66,10 @@ enyo.kind({
 	  '</div> <div id="preview_meta"><p id="preview_tags">'+tags+'</p>' +
 	  '<p id="preview_categories">'+categories+'</p>' +
 	  '</div></div>';
+	  this.showScrim(false);
 	  this.$.postPreviewResponse.setContent(content);
   },
-  windowParamsChangeHandler: function() {
+  windowParamsChangeHandler: function(inSender, inEvent) {
 	  if(typeof(enyo.windowParams.account) == "undefined") {
 		  //load local preview	  
 		  var title = enyo.windowParams.title; 
@@ -79,5 +84,9 @@ enyo.kind({
 		  this.post = enyo.windowParams.post;
 		  this.openPostURL();
 	  }
-  }
+  },
+  showScrim: function(inShowing) {
+	this.$.loadingScrim.setShowing(inShowing);
+	this.$.loadingSpinner.setShowing(inShowing);
+  },
 });

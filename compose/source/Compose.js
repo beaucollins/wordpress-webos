@@ -83,13 +83,14 @@
     this.inherited(arguments);
     mediaFiles = new Array();
   },
-  windowParamsChangeHandler: function() {
-	 if(typeof(enyo.windowParams.account) != "undefined") {
-		  this.account = enyo.windowParams.account;
+  windowParamsChangeHandler: function(inSender, inEvent) {
+	 var p = inEvent.params;
+	 if(typeof(p.account) != "undefined") {
+		  this.account = p.account;
 		  console.log("new account set on the compose view");
 	 } else {
 		 this.account = null;
-		  console.log("no account set on the compose view");
+		 console.log("no account set on the compose view");
 	 }
   },
   toggleSettings:function(sender){
