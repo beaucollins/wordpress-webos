@@ -83,7 +83,7 @@ enyo.kind({
   create:function(){
     this.inherited(arguments);
     mediaFiles = new Array();
-    showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showFilePicker"); //js clousure. filePickerFunctionBind is declared globally and is used to access a function inside this obj
+    showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showFilePicker"); //js clousure. showWebOsImageFilePickerFunctionBind is declared globally and is used to access a function inside this obj
   },
   windowParamsChangeHandler: function(inSender, inEvent) {
 	 var p = inEvent.params;
