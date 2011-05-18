@@ -33,19 +33,19 @@
 		{ name:'settings', kind:'VFlexBox', width:'300px', style:'background:#EEE;', showing:false, components:[
             { kind:'Scroller', flex:1, components:[
               { kind:'Item', components:[
-                { kind:'Drawer', caption:'Status', open:false, components:[
-                  { content:'Draft' },
-                  { content:'Pending Review' },
-                  { content:'Published' },
-				  { content:'Private' }
-                ] }
+                {kind: "ListSelector", label: "Status", value: 1, onChange: "itemChanged", items: [
+					{caption: "Publish", value: 1},
+					{caption: "Draft", value: 2},
+					{caption: "Pending Review", value: 3},
+					{caption: "Private", value: 4},
+				]}
               ]},
               { kind:'Item', components:[
-                { kind:'Drawer', caption:'Categories', open:false, components:[
-                  { content:'One' },
-                  { content:'Two' },
-                  { content:'Three' }
-                ] }
+                {kind: "ListSelector", label: "Categories", value: 2, onChange: "itemChanged", items: [
+					{caption: "One", value: 1},
+					{caption: "Two", value: 2},
+					{caption: "Three", value: 3},
+				]}
               ]},
 			{ kind:'Item', components:[
                 { kind:'Drawer', open:false, caption:'Tags', components:[
