@@ -155,13 +155,13 @@ enyo.kind({
   // if given a post, then creating a draft based on that post
   // the sender should have an associated account that we will
   // link up by xmlrpc url for now
-  composeDraft:function(sender, post, options){
+  composeDraft:function(sender, inEvent, post, options){
     //launches a new window with the compose view
-	this.log(post);
-	this.log(options);
+	this.log("post",post);
+	this.log("options", options);
 	params = {'account': this.activeAccount};
     enyo.mixin(params, options);
-	this.log(params);
+	this.log("params", params);
     var composeLabel = Math.round(Math.random() * 100); // just for fun
     enyo.windows.activate("compose-" + composeLabel, "./compose/index.html", params);
   },
