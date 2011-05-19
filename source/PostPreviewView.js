@@ -51,7 +51,7 @@ enyo.kind({
 	  }
 	  
 	  if(categories && categories.length > 0) {
-		  categories ='Categories: '+ this.post.categories.join(', ');
+		  categories ='Categories: '+ categories.join(', ');
 	  } else {
 		  categories ="";
 	  }
@@ -63,9 +63,20 @@ enyo.kind({
 	  '<h1>'+ title + '</h1>'+
 	  '<div id="preview_content">' +
 	  '<p>'+ content +'</p>' + 
-	  '</div> <div id="preview_meta"><p id="preview_tags">'+tags+'</p>' +
-	  '<p id="preview_categories">'+categories+'</p>' +
-	  '</div></div>';
+	  '</div>';
+	  if(tags != "" || categories !="")
+		  content+='<div id="preview_meta">';
+	  
+	  if(tags != "")
+		  content+='<p id="preview_tags">'+tags+'</p>';
+	 
+	  if(categories !="")
+		  content+='<p id="preview_categories">'+categories+'</p>';
+	  
+	  if(tags != "" || categories !="")
+		  content+='</div>';
+	  
+	  content+='</div>';
 	  this.showScrim(false);
 	  this.$.postPreviewResponse.setContent(content);
   },
@@ -77,8 +88,8 @@ enyo.kind({
 		  //load local preview	  
 		  var title = enyo.windowParams.title; 
 		  var content = enyo.windowParams.content;
-		  var tags = "";
-		  var categories = "";
+		  var tags = enyo.windowParams.tags;
+		  var categories = enyo.windowParams.categories;
 		  var alert_msg = "Sorry, the post has changed, or it is not published. A simple preview is shown below.";
 		  this.loadlocalPreview(alert_msg, title,content, tags, categories);
 	  } else {

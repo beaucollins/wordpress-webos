@@ -41,16 +41,19 @@ enyo.kind({
 					{caption: "Private", value: 4},
 				]}
               ]},
-              { kind:'Item', components:[
-                {kind: "ListSelector", label: "Categories", value: 2, onChange: "itemChanged", items: [
-					{caption: "One", value: 1},
-					{caption: "Two", value: 2},
-					{caption: "Three", value: 3},
-				]}
-              ]},
+              {kind: "DividerDrawer", caption: "Categories", open: false, components: [
+       			{kind: "HFlexBox", align: "center", tapHighlight: false, components: [
+       				{kind: "CheckBox", checked: false},
+       				{content: "Get kids to school"}
+       			]},
+       			{kind: "HFlexBox", align: "center", tapHighlight: false, components: [
+       				{kind: "CheckBox", checked: false},
+       				{content: "Sleep a full 8 hours"}
+       			]}
+	    	  ]},
 			{ kind:'Item', components:[
                 { kind:'Drawer', open:false, caption:'Tags', components:[
-                  { kind:'Input', hint:'Separate tags with commas', inputType:'text' }
+                  { kind:'Input', name:'tagsField', hint:'Separate tags with commas', inputType:'text' }
                 ] }
               ] },
 			{ kind:'Item', components:[
@@ -111,8 +114,10 @@ enyo.kind({
 	console.log('tap!');
   },
   showPreview:function() {
+	   
 	  //launches a new window with the preview view
-	  params = {'title' : this.$.titleField.value, 'content' : tinyMCE.get('txtEntry').getContent()};
+	  params = {'title' : this.$.titleField.getValue(), 'content' : tinyMCE.get('txtEntry').getContent(), 
+			  'tags': this.$.tagsField.getValue(), /*'categories': [this.$.categoriesField.getValue()] */};
 	  options = {};
 	  enyo.mixin(params, options);
 	  enyo.windows.activate("Post Preview", "../postPreview.html", params);
