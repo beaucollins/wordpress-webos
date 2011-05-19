@@ -8,7 +8,7 @@ enyo.kind({
     account:null
   },
   currentMediaFile : null, //@protected
-  categoriesCheckboxFields : [],
+  postCategorieObjs :[true,false,true,false,true,false,true,false,false,false,false],
   components:[
 	{	name: "uploadMediaFile", 
 		kind: "WebService", 
@@ -43,7 +43,7 @@ enyo.kind({
 				]}
               ]},
               {kind: "DividerDrawer", caption: "Categories", open: false, components: [
-				{kind: "VirtualRepeater", onGetItem: "getCategoryItem", components: [
+				{name:'categoriesVirtualRepeterField', kind: "VirtualRepeater", onGetItem: "getCategoryItem", components: [
 					{kind: "Item", layoutKind: "HFlexLayout", components: [
 						{name: "categoryCheckbox", kind: "CheckBox", checked: false, onChange: "categoryCheckboxClicked"},
 						{name: "categoryLabel", content: "Get kids to school"}
@@ -82,25 +82,6 @@ enyo.kind({
       ] }
     ] }
   ],
-  getCategoryItem: function(inSender, inIndex) {
-	    if (inIndex < 10) {
-	        this.$.categoryCheckbox.setChecked(true);
-	        this.$.categoryLabel.setContent("category " + inIndex);
-	        this.categoriesCheckboxFields[inIndex] = this.$.categoryCheckbox;
-	        return true;
-	    } else if (inIndex < 15) {
-	        this.$.categoryCheckbox.setChecked(false);
-	        this.$.categoryLabel.setContent("category " + inIndex);
-	        this.categoriesCheckboxFields[inIndex] = this.$.categoryCheckbox;
-	        return true;
-	    }  
-	},
-	categoryCheckboxClicked: function(inSender) {
-		this.log(inSender);
-		if (inSender.getChecked()) {
-			this.log("I've been checked!");
-		}
-	},
   create:function(){
     this.inherited(arguments);
     mediaFiles = new Array();
@@ -130,6 +111,20 @@ enyo.kind({
   },
   keyTapped: function() {
 	console.log('tap!');
+  },
+  getCategoryItem: function(inSender, inIndex) {
+	  if (inIndex < this.postCategorieObjs.length) {
+		  this.$.categoryCheckbox.setChecked(this.postCategorieObjs[inIndex]);
+		  this.$.categoryLabel.setContent("category " + inIndex);
+		  return true;
+	  } 
+  },
+  categoryCheckboxClicked: function(inSender) {
+	  var index = this.$.categoriesVirtualRepeterField.fetchRowIndex();
+	  this.log("The user clicked on item number: " + index);
+	  //this.log(inSender);
+	  this.postCategorieObjs[index] = inSender.getChecked();
+	  this.log(this.postCategorieObjs);
   },
   showPreview:function() {
 	   
