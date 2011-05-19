@@ -127,10 +127,15 @@ enyo.kind({
 	  this.log(this.postCategorieObjs);
   },
   showPreview:function() {
-	   
+	  var categories = new Array();
+	  for(var i = 0; i< this.postCategorieObjs.length; i++) {
+		  if( this.postCategorieObjs[i] == true)
+			  categories.push("category-"+i);
+	  }
+	  
 	  //launches a new window with the preview view
 	  params = {'title' : this.$.titleField.getValue(), 'content' : tinyMCE.get('txtEntry').getContent(), 
-			  'tags': this.$.tagsField.getValue(), /*'categories': [this.$.categoriesField.getValue()] */};
+			  'tags': this.$.tagsField.getValue(), 'categories': categories};
 	  options = {};
 	  enyo.mixin(params, options);
 	  enyo.windows.activate("Post Preview", "../postPreview.html", params);
