@@ -17,11 +17,22 @@
                         	showWebOsImageFilePickerFunctionBind();
                         });
 
+                        ed.addCommand('lauchWebOsVideoFilePicker', function() {
+                        	showWebOsVideoFilePickerFunctionBind();
+                        });
+                        
                         // Register example button
                         ed.addButton('webosimagebtn', {
                                 title : 'Add Image',
                                 cmd : 'lauchWebOsImageFilePicker',
                                 image : url + '/image.gif'
+                        });
+                        
+                        // Register example button
+                        ed.addButton('webosvideobtn', {
+                                title : 'Add Video',
+                                cmd : 'lauchWebOsVideoFilePicker',
+                                image : url + '/video.gif'
                         });
 
                         /* Add a node change handler, selects the button in the UI when a image is selected

@@ -1,4 +1,5 @@
 var showWebOsImageFilePickerFunctionBind = null; //this variable is used to show the webOS filePicker when the user tap on the Image btn on the editor toolbar
+var showWebOsVideoFilePickerFunctionBind = null;
 
 enyo.kind({
   name:'wp.Compose',
@@ -85,7 +86,8 @@ enyo.kind({
   create:function(){
     this.inherited(arguments);
     mediaFiles = new Array();
-    showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showFilePicker"); //js clousure. showWebOsImageFilePickerFunctionBind is declared globally and is used to access a function inside this obj
+    showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showImageFilePicker"); //js clousure. showWebOsImageFilePickerFunctionBind is declared globally and is used to access a function inside this obj
+    showWebOsVideoFilePickerFunctionBind = enyo.bind(this, "showVideoFilePicker");
   },
   windowParamsChangeHandler: function(inSender, inEvent) {
 	 var p = inEvent.params;
@@ -222,8 +224,14 @@ enyo.kind({
 	  this.$.errorDialog.open();
 	  currentMediaFile = null;
   },
-  showFilePicker: function(inSender, inEvent) {
-	 alert("Hey baby, the File Picker doesn't work.");
+  showImageFilePicker: function(inSender, inEvent) {
+	 alert("Hey baby, the Image File Picker doesn't work.");
+	 //this.$.filePicker.fileType=["image"];
+	 //  this.$.filePicker.pickFile();
+  },
+  showVideoFilePicker: function(inSender, inEvent) {
+	 alert("Hey baby, the Video File Picker doesn't work.");
+	 //this.$.filePicker.fileType=["video"];
 	//  this.$.filePicker.pickFile();
   },
   handleResult: function(inSender, msg) {
