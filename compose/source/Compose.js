@@ -7,7 +7,8 @@ enyo.kind({
     showSettings:false,
     account:null
   },
-  currentMediaFile : null,
+  currentMediaFile : null, //@protected
+  categoriesCheckboxFields : [],
   components:[
 	{	name: "uploadMediaFile", 
 		kind: "WebService", 
@@ -42,14 +43,12 @@ enyo.kind({
 				]}
               ]},
               {kind: "DividerDrawer", caption: "Categories", open: false, components: [
-       			{kind: "HFlexBox", align: "center", tapHighlight: false, components: [
-       				{kind: "CheckBox", checked: false},
-       				{content: "Get kids to school"}
-       			]},
-       			{kind: "HFlexBox", align: "center", tapHighlight: false, components: [
-       				{kind: "CheckBox", checked: false},
-       				{content: "Sleep a full 8 hours"}
-       			]}
+				{kind: "VirtualRepeater", onGetItem: "getCategoryItem", components: [
+					{kind: "Item", layoutKind: "HFlexLayout", components: [
+						{name: "categoryCheckbox", kind: "CheckBox", checked: false, onChange: "categoryCheckboxClicked"},
+						{name: "categoryLabel", content: "Get kids to school"}
+					]}
+                ]}                                                                                       
 	    	  ]},
 			{ kind:'Item', components:[
                 { kind:'Drawer', open:false, caption:'Tags', components:[
@@ -83,6 +82,25 @@ enyo.kind({
       ] }
     ] }
   ],
+  getCategoryItem: function(inSender, inIndex) {
+	    if (inIndex < 10) {
+	        this.$.categoryCheckbox.setChecked(true);
+	        this.$.categoryLabel.setContent("category " + inIndex);
+	        this.categoriesCheckboxFields[inIndex] = this.$.categoryCheckbox;
+	        return true;
+	    } else if (inIndex < 15) {
+	        this.$.categoryCheckbox.setChecked(false);
+	        this.$.categoryLabel.setContent("category " + inIndex);
+	        this.categoriesCheckboxFields[inIndex] = this.$.categoryCheckbox;
+	        return true;
+	    }  
+	},
+	categoryCheckboxClicked: function(inSender) {
+		this.log(inSender);
+		if (inSender.getChecked()) {
+			this.log("I've been checked!");
+		}
+	},
   create:function(){
     this.inherited(arguments);
     mediaFiles = new Array();
