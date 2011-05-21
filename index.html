@@ -153,6 +153,7 @@
 		var launcher = enyo.application.launcher = new WordPressLaunch();
 		
 		enyo.applicationRelaunchHandler = function (params) {
+		  console.warn("Time to relaunch?");
 			enyo.application.launcher.relaunch(params);
 		};
 	

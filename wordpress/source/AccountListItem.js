@@ -24,8 +24,9 @@ enyo.kind({
     // blavatar!
   },
   clearSelection:function(){
-    this.$.selection.clear();
-    this.$.list.render();
+    if (this.selected) {
+      this.selected.removeClass('active-selection');
+    };
   },
   accountChanged:function(){
     console.log("Account changed!");

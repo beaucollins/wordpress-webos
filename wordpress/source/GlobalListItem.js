@@ -12,5 +12,13 @@ enyo.kind({
     this.$.posts.hide();
     this.$.pages.hide();
     this.$.stats.hide();
+  },
+  updateCommentCount:function(){
+    // this.$.comments.setUnreadCount(this.account.pendingCommentCount);
+    // get all account pending comment counts
+    var list_item = this;
+    enyo.application.models.Comment.all().filter('status', '=', 'hold').count(function(count){
+      list_item.$.comments.setUnreadCount(count);
+    });
   }
 });

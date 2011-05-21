@@ -17,6 +17,7 @@ enyo.kind({
     pendingCommentCount:0
   },
   events: {
+    onPasswordReady:'',
     onInvalidPassword:'',
     onNewComment:'',
     onUpdateComment:'',
@@ -31,7 +32,7 @@ enyo.kind({
     ] },
     { name:'keystore', kind:'PalmService', service:'palm://com.palm.keymanager/', onSuccess:'keystoreSuccess', onFailure:'keystoreFailure', components:[
       { name: 'fetchKey', method:'fetchKey', onFailure:'missingPassword', onSuccess:'setPasswordFromKey' },
-      { name: 'storeKey', method:'store' },
+      { name: 'storeKey', method:'store', onSuccess:'doPasswordReady' },
       { name: 'removeKey', method:'remove', onSuccess:'doInvalidPassword', onFailure:'doInvalidPassword' }
     ] }
   ],
@@ -51,6 +52,7 @@ enyo.kind({
       });
     }else{
       this.setPassword(this.account.password);
+      this.doPasswordReady()
     }
     
     this.refreshPendingCommentCount();
@@ -58,24 +60,27 @@ enyo.kind({
   // @private
   passwordKeyName:function(){
     var name = (this.account.username + "@" + this.account.xmlrpc.replace(/https?:\/\//,'')).toLowerCase();
-    console.log("Looking up password: " + name);
+    console.log("Password Key: " + name);
     return name;
   },
   keystoreSuccess:function(sender, response, request){
-    console.log("Success!");
+    console.log("Keystore Success!");
     console.log(enyo.json.to(response));
   },
   keystoreFailure:function(sender, response, request){
-    console.log("Failure!");
+    console.log("Keystore Failure!");
     console.log(enyo.json.to(response));
   },
   missingPassword:function(sender, response, request){
-    enyo.windows.addBannerMessage("Invalid password for " + this.account.blogName, "{}" );
+    console.log("Missing password bitches!: " + enyo.json.to(response));
     this.$.removeKey.call({keyname:this.passwordKeyName()});
   },
   setPasswordFromKey:function(sender, response, request){
     console.log("Got the password from the key: " + enyo.json.to(response));
-    this.setPassword(this.account.password = enyo.string.fromBase64(response.keydata));
+    this.account.password = enyo.string.fromBase64(response.keydata)
+    this.setPassword(this.account.password);
+    console.log("We're ready!" + this.password);
+    this.doPasswordReady();
   },
   downloadComments:function(){
     // we should page through comments until there are no more, or to a sane amount of comments
@@ -212,7 +217,7 @@ enyo.kind({
   savePassword:function(onSuccess){
     var options = {}
     if(onSuccess) options.onSuccess = onSuccess;
-
+    console.log("Saving password: " + this.password);
     this.$.storeKey.call({
       'keyname' : this.passwordKeyName(),
       'keydata' : enyo.string.toBase64(this.password),
@@ -224,7 +229,7 @@ enyo.kind({
     // bad password/username
     if (response.faultCode == 403) {
       // delete the password
-      this.doInvalidPassword();
+      this.$.removeKey.call({keyname:this.passwordKeyName()});
     };
   },
   wordpressApiFailure:function(sender, response, request){

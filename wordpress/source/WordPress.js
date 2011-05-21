@@ -61,12 +61,15 @@ enyo.kind({
         onInvalidPassword:'displayPasswordForm',
         onPendingComments:'updateCommentCount',
         onNewComment:'newComment',
-        onUpdateComment:'updatedComment'
+        onUpdateComment:'updatedComment',
+        onPasswordReady:'refreshClient'
       });
-      client.refreshComments();
       clients.push(client);
     }, this);
     this.setAccounts(clients);
+  },
+  refreshClient:function(sender){
+    sender.refreshComments();
   },
   newComment:function(sender, comment){
     
@@ -161,7 +164,7 @@ enyo.kind({
     //launches a new window with the compose view
     this.log("post",post);
     this.log("options", options);
-    this.log("params", params);
+    // this.log("params", params);
     
 
     var account = this.aciveAccount || this.accounts[0];
@@ -170,7 +173,8 @@ enyo.kind({
     enyo.application.launcher.openDraft(params);
   },
   openAppMenuHandler: function() {
-      this.$.appMenu.open();
+    console.log("Open app menu please");
+    this.$.appMenu.open();
   },
   closeAppMenuHandler: function() {
       this.$.appMenu.close();
@@ -181,6 +185,7 @@ enyo.kind({
   },
   saveAccountPassword:function(sender, password){
     this.$.passwordForm.close();
+    console.log("Let's save the password: " + password);
     sender.account.setPassword(password);
     sender.account.savePassword();
   },
