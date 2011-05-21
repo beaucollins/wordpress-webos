@@ -34,7 +34,8 @@ tinyMCE.init({
 	    </form>
 	</div>
 <script type="text/javascript">
-	new wp.Compose().renderInto(document.body);
+  var params = enyo.windowParams;
+	new wp.Compose({account:params.account}).renderInto(document.body);
 </script>
 </body>
 </html>

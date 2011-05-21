@@ -8,7 +8,7 @@ enyo.kind({
     onSelect:""
   },
   components: [
-    { name:'header', kind:'enyo.DividerDrawer', className:'account-drawer', icon:'./images/icons/default-blavatar.png', components:[
+    { name:'header', kind:'enyo.DividerDrawer', className:'account-drawer', icon:'../images/icons/default-blavatar.png', components:[
       { name:'list', kind:'VirtualRepeater', onGetItem:'getItem', className:'account-list', components:[
         { name:'item', kind: 'wp.ReadCountListItem', onclick:'itemClick' }
       ] }
@@ -16,10 +16,10 @@ enyo.kind({
     { kind:'Selection', onChange:'selectionChanged' }
   ],
   items: [
-    { label:'Comments', icon:'./images/icons/comments-icon.png' },
-    { label:'Posts', icon:'./images/icons/posts-icon.png' },
-    { label:'Pages', icon:'./images/icons/pages-icon.png'},
-    { label:'Stats', icon:'./images/icons/posts-icon.png'}
+    { label:'Comments', icon:'../images/icons/comments-icon.png' },
+    { label:'Posts', icon:'../images/icons/posts-icon.png' },
+    { label:'Pages', icon:'../images/icons/pages-icon.png'},
+    { label:'Stats', icon:'../images/icons/posts-icon.png'}
   ],
   create:function(){
     this.inherited(arguments);
@@ -43,14 +43,15 @@ enyo.kind({
   },
   accountChanged:function(){
     if(!this.account) return;
-    this.$.header.setCaption(this.account.blogName);
+    var account = this.account.account;
+    this.$.header.setCaption(account.blogName);
     
     // attempt to setup the blavatar if there is a valid one
     var blavatar = new Image();
     blavatar.onload = enyo.bind(this, function(){
       this.$.header.setIcon(blavatar.src);
     });
-    blavatar.src = enyo.application.makeBlavatar(this.account.xmlrpc, {
+    blavatar.src = enyo.application.makeBlavatar(account.xmlrpc, {
       size:30
     });
 
@@ -74,10 +75,10 @@ enyo.kind({
   name:'wp.SingleAccountListItem',
   kind:'wp.AccountListItem',
   items: [
-    { label:'Comments', icon:'./images/icons/comments-icon.png', unreadCount:0 },
-    { label:'Posts', icon:'./images/icons/posts-icon.png' },
-    { label:'Pages', icon:'./images/icons/pages-icon.png'},
-    { label:'Drafts', icon:'./images/icons/drafts-icon.png', unreadCount:0 }
+    { label:'Comments', icon:'../images/icons/comments-icon.png', unreadCount:0 },
+    { label:'Posts', icon:'../images/icons/posts-icon.png' },
+    { label:'Pages', icon:'../images/icons/pages-icon.png'},
+    { label:'Drafts', icon:'../images/icons/drafts-icon.png', unreadCount:0 }
   ],
   create:function(){
     this.inherited(arguments);

@@ -2,7 +2,7 @@ enyo.kind({
   name: 'wp.SourceList',
   kind: 'VFlexBox',
   published: {
-    accounts:null
+    accounts:[]
   },
   events: {
     onSelectAccountAction:"",
@@ -29,26 +29,21 @@ enyo.kind({
     return this.accounts.length > 1;
   },
   getAccountItem: function(inSender, inIndex){
-    var item = this.accounts[inIndex];
-    if (item && item.global) {
-      return [{kind:'wp.GlobalListItem', onSelect:'selectAccountAction', name:'global'}];
-    }else if(item && this.hasMultipleAccounts()){
-      return [{kind:'wp.AccountListItem', account:item, onSelect:"selectAccountAction"}];
-    }else if(item){
-      return [{kind:'wp.SingleAccountListItem', account:item, onSelect:'selectAccountAction'}];
-    }
+    var item;
+    if (this.accounts.length == 1 && inIndex == 0) {
+      return [{kind:'wp.SingleAccountListItem', account:this.accounts[0], onSelect:'selectAccountAction'}];
+    }else if (this.accounts.length > 1) {
+      if (inIndex == 0) {
+        return [{kind:'wp.GlobalListItem', onSelect:'selectAccountAction', name:'global'}];
+      }else{
+        if(item = this.accounts[inIndex-1]){
+          return [{kind:'wp.AccountListItem', account:item, onSelect:"selectAccountAction"}];
+        }
+      }
+    };
   },
   accountsChanged: function(){
-    if(!this.accounts || this.accounts.length == 0) return;
-    this.accounts = enyo.clone(this.accounts);
-
-    if (this.accounts.length > 1) {
-      this.accounts.unshift({
-        'global':'yeah'
-      });
-    };
-    
-    // render the repeater
+    console.log("Accounts changed", this.accounts);
     this.$.list.build();
     if(this.$.list.hasNode()){
       this.$.list.render();

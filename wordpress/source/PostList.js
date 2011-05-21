@@ -2,11 +2,12 @@ enyo.kind({
   name:'wp.PostList',
   kind:'VFlexBox',
   events:{
-    onSelectPost:''
+    onSelectPost:'',
+    onAcquirePage:'',
+    onRefresh:''
   },
   published: {
-    account:null,
-    methodName:'metaWeblog.getRecentPosts'
+    account:null
   },
   kPostStatus: {
     'publish' : 'Published',
@@ -14,10 +15,9 @@ enyo.kind({
     'private' : 'Private'
   },
   components: [
-    { name:'xmlrpc_client', kind:'XMLRPCService', methodName:'metaWeblog.getRecentPosts', onSuccess:'gotPosts'},
     { kind:'wp.DataPage' },
     // setting lookAhead to 1 for XMLRPC api performance reasons, because we can't get paged results
-    { name:'list', kind:'VirtualList', lookAhead:1, flex:1, onSetupRow:'setupPost', onAcquirePage:'acquirePostPage', components:[
+    { name:'list', kind:'VirtualList', flex:1, onSetupRow:'setupPost', onAcquirePage:'doAcquirePage', onDiscardPage:'discardPage', components:[
       { name:'item', kind:'Item', onclick:'selectPost', className:'post-item', components:[
         { name:'title', className:'post-list-title wp-truncate' },
         { kind:'HFlexBox', components:[
@@ -27,12 +27,12 @@ enyo.kind({
       ] }
     ] },
     { kind:'enyo.Toolbar', components:[
-      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'}
+      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
+      { name: 'refresh', content:'Refresh', onclick:'doRefresh'}
     ] }
   ],
   create:function(){
     this.inherited(arguments);
-    this.methodNameChanged();
   },
   selectPost:function(sender, item){
     var post = this.$.dataPage.itemAtIndex(item.rowIndex);
@@ -41,12 +41,15 @@ enyo.kind({
     this.doSelectPost(post, this.account);
     
   },
-  // Not optimal, this api is seriously going to kill the app,
-  // are we going to set a max number of posts to donwload somehow?
-  acquirePostPage:function(sender, page){
-    if (this.account && this.$.dataPage.missingPage(page)) {
-      this.$.xmlrpc_client.callMethod({methodParams:[this.account.blogid, this.account.username, this.account.password, ((page+1) * this.$.list.pageSize)]}, { page:page });
-    };
+  refresh:function(){
+    this.$.list.refresh();
+  },
+  setPage:function(pageNumber, items){
+    this.$.dataPage.storePage(pageNumber, items);
+    this.$.list.refresh();
+  },
+  discardPage:function(sender, page){
+    this.$.dataPage.clearPage(page);
   },
   setupPost:function(sender, index){
     var post;
@@ -58,7 +61,7 @@ enyo.kind({
         this.$.title.removeClass('untitled');
         this.$.title.setContent(post.title);
       };
-      console.log(post);
+
       var status = post.post_status || post.page_status;
       this.$.postStatus.setContent($L(this.kPostStatus[status]));
       this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(index))
@@ -78,12 +81,8 @@ enyo.kind({
     if (this.account == null) {
       return;
     };
-    this.$.xmlrpc_client.setUrl(this.account.xmlrpc);
     this.$.list.reset();
     
-  },
-  methodNameChanged:function(){
-    this.$.xmlrpc_client.setMethodName(this.methodName);
   },
   resize:function(){
     this.$.list.resizeHandler();

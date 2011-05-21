@@ -12,7 +12,153 @@
 </head>
 <body>
 <script type="text/javascript">
-	new wp.WordPress().renderInto(document.body);
+  
+  enyo.application.persistence = persistence;
+  persistence.store.websql.config(persistence, 'wordpress.webos', "WordPress for webOS", 65536);
+  enyo.application.models = {};
+  var Account = enyo.application.models.Account = persistence.define('Account', {
+    blogName: 'TEXT',
+    blogid: 'TEXT',
+    isAdmin: 'BOOLEAN',
+    url: 'TEXT',
+    username: 'TEXT',
+    xmlrpc: 'TEXT'
+  });
+  
+  var Comment = enyo.application.models.Comment = persistence.define('Comment', {
+    author: 'TEXT',
+    author_email: 'TEXT',
+    author_ip: 'TEXT',
+    author_url: 'TEXT',
+    comment_id: 'TEXT',
+    content: 'TEXT',
+    date_created_gmt: 'DATE',
+    link: 'TEXT',
+    parent: 'TEXT',
+    post_id: 'TEXT',
+    post_title: 'TEXT',
+    status: 'TEXT',
+    type: 'TEXT',
+    user_id: 'TEXT'
+  });
+  
+  Account.hasMany('comments', Comment, 'account');
+  
+  var Post = enyo.application.models.Post = persistence.define('Post', {
+    categories: 'JSON',
+    custom_fields: 'JSON',
+    date_created_gmt: 'DATE',
+    description: 'TEXT',
+    link: 'TEXT',
+    mt_allow_comments: 'INT',
+    mt_allow_pings: 'INT',
+    mt_excerpt: "TEXT",
+    mt_keywords: 'TEXT',
+    mt_text_more: 'TEXT',
+    permaLink: 'TEXT',
+    post_status: 'TEXT',
+    postid: 'TEXT',
+    title: 'TEXT',
+    userid: 'TEXT',
+    wp_author_display_name: 'TEXT',
+    wp_author_id: 'TEXT',
+    wp_password: 'TEXT',
+    wp_post_form: 'TEXT',
+    wp_slug: 'TEXT'
+    
+  });
+  
+  Account.hasMany('posts', Post, 'account');
+  
+  var Page = enyo.application.models.Page = persistence.define('Page', {
+    // categories: Array (0)
+    categories: 'JSON',
+    custom_fields: 'JSON',
+    dateCreated: 'DATE',
+    date_created_gmt: 'DATE',
+    description: 'TEXT',
+    excerpt: 'TEXT',
+    link: 'TEXT',
+    mt_allow_comments: 'INT',
+    mt_allow_pings: 'INT',
+    page_id: 'INT',
+    page_status: 'TEXT',
+    permaLink: 'TEXT',
+    text_more: 'TEXT',
+    title: 'TEXT',
+    userid: 'TEXT',
+    wp_author: 'TEXT',
+    wp_author_id: 'TEXT',
+    wp_page_order: 'INT',
+    wp_page_parent_id: 'INT',
+    wp_page_parent_title: 'INT',
+    wp_page_template: 'TEXT',
+    wp_password: 'TEXT',
+    wp_slug: 'TEXT'
+  });
+  
+  Account.hasMany('pages', Page, 'account');
+  
+  var global_accounts;
+  
+  persistence.schemaSync();
+  
+  /*
+
+  	404: do not load any image if none is associated with the email hash, instead return an HTTP 404 (File Not Found) response
+  	mm: (mystery-man) a simple, cartoon-style silhouetted outline of a person (does not vary by email hash)
+  	identicon: a geometric pattern based on an email hash
+  	monsterid: a generated 'monster' with different colors, faces, etc
+  	wavatar: generated faces with differing features and backgrounds
+  	retro: awesome generated, 8-bit arcade-style pixelated faces
+
+  */
+  
+  enyo.application.makeBlavatar = function(url, settings){
+    var options = {
+      size: '50',
+      missing: '404'
+    }
+    enyo.mixin(options, settings);
+    var domain = url.match(/^((https?)?:\/\/)?([^ \/]+)/).slice(-1)[0].trim();
+    if (domain) {
+      return "http://gravatar.com/blavatar/" + hex_md5(domain) + '?d=' + options.missing + '&s=' + options.size 
+    }else{
+      return false;
+    }   
+    
+  };
+  
+  enyo.application.makeGravatar = function(email, settings){
+    var options = {
+      size: '50',
+      missing: '404'
+    }
+    enyo.mixin(options, settings);
+  
+    if (typeof email == 'string') {
+      return "http://gravatar.com/avatar/" + hex_md5(email.trim().toLowerCase()) + '?d=' + options.missing + '&s=' + options.size;
+    }else{
+      return false;
+    }
+  };
+  
+  
+  (function () {
+    
+    console.warn("*********************************************************");
+		console.warn("WordPress app headless index.html loaded");
+    console.warn("*********************************************************");
+    
+		var launcher = enyo.application.launcher = new WordPressLaunch();
+		
+		enyo.applicationRelaunchHandler = function (params) {
+			enyo.application.launcher.relaunch(params);
+		};
+	
+		launcher.startup();
+	})();
+	
 </script>
 </body>
 </html>

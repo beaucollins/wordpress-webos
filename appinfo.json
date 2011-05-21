@@ -4,6 +4,7 @@
 	"vendor": "WordPress",
 	"type": "web",
 	"main": "index.html",
+	"noWindow": true,
 	"title": "WordPress",
 	"icon": "icon.png",
 	"uiRevision": 2

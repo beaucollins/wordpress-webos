@@ -2,6 +2,6 @@
 enyo.depends(
   "source/Compose.js",
   "source/ImgUploadCanvas.js",
-  "../lib/XMLRPCService.js",
+  "../source/XMLRPCService.js",
   "css/compose.css"
 );

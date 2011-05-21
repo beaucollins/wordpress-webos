@@ -23,9 +23,17 @@ enyo.kind({
   method:"POST",
   handleAs:'xml',
   contentType:'text/xml',
+  events: {
+    onRequestFault:''
+  },
   published: {
     methodName: "",
     methodParams:[]
+  },
+  importProps:function(props){
+    this.inherited(arguments);
+    this.onRequestFault = props.onRequestFault || this.masterService.onRequestFault;
+    this.url = props.url || this.masterService.url;
   },
   callMethod:function(params, options){
     // able to override the methodName and methodParams
@@ -35,7 +43,7 @@ enyo.kind({
   },
   makeRequestProps:function(inProps){
     var delegates = {
-      onFault: this.onFault
+      onRequestFault: this.onRequestFault
     }
     var props = this.inherited(arguments);
     // we need to force our params here
@@ -45,11 +53,11 @@ enyo.kind({
     ;
   },
   responseFault: function(inRequest) {
-		this.dispatchResponse(inRequest.onFault, inRequest);
+		this.dispatchResponse(inRequest.onRequestFault, inRequest);
 	},
 	responseSuccess: function(inRequest) {
     if (inRequest.fault) {
-  		this.dispatchResponse(inRequest.onFault, inRequest);      
+  		this.dispatchResponse(inRequest.onRequestFault, inRequest);      
     }else{
       this.inherited(arguments);
     }
@@ -185,7 +193,6 @@ XMLRPCParser = function(string){
     
   //remove the BOM bytes, white spaces
   var cleaned = XMLRPCParser.protectStrings(XMLRPCParser.cleanBOM(XMLRPCParser.cleanDocument(string)));
-  //console.log("Cleaned", cleaned);
   this.document = doc = new DOMParser().parseFromString(cleaned, 'text/xml');
   //console.log("Parsed DOM", doc);
 }
@@ -310,7 +317,7 @@ XMLRPCParser.prototype.parse = function(node){
     case 'i4':
     case 'int':
     case 'double':
-      return node.firstChild ? new Number(node.firstChild.nodeValue) : null;
+      return node.firstChild ? parseInt(node.firstChild.nodeValue) : null;
       break;
       
     case 'dateTime.iso8601':

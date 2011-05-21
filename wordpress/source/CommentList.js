@@ -53,6 +53,8 @@ enyo.kind({
     filterItem:null
   },
   events: {
+    onAcquireComments:"",
+    onDiscardComments:"",
     onSelectComment:""
   },
   kStatusNames: {
@@ -62,8 +64,7 @@ enyo.kind({
     'trash':'Trash'
   },
   components:[
-    { kind:'wp.DataPage' },
-    { name:'service', kind:'XMLRPCService', onSuccess:'gotComments' },
+    { kind:'wp.DataPage'},
     { name:'filterMenu', scrim:false, kind:'Menu', defaultKind:'MenuCheckItem', components:[
       { name:'allFilter', caption:'All', checked:true },
       { caption:'Pending', checked:false },
@@ -74,7 +75,7 @@ enyo.kind({
     { name:'listHeader', kind:'enyo.Header', layoutKind:'HFlexLayout', components:[
       { name:'filterButton', kind:'enyo.Button', caption:'All Comments', onclick:'showFilterOptions' }
     ] },
-    { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', onAcquirePage:'acquireCommentPage', onDiscardPage:'discardCommentPage', components: [
+    { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', onAcquirePage:'acquireComments', onDiscardPage:'discardComments', components: [
       { name:'item', kind:'Item', tapHighlight:true, onclick:'selectComment', className:'comment-item', layoutKind:'VFlexLayout', components:[
         { name:'header', kind:'HFlexBox', components: [
           { kind:'Control', className:'comment-left-col', components:[{ name:'avatar', width:'30px', height:'30px', kind:'Image', onerror:'imageLoadError', className:'comment-list-avatar', src:'images/icons/default-avatar.png' }] },
@@ -94,7 +95,8 @@ enyo.kind({
       ]}
     ] },
     { kind: 'enyo.Toolbar', components:[
-      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'}
+      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
+      { name: 'refreshButton', content:'Refresh', onclick:'refreshComments' }
     ] }
   ],
   create:function(){
@@ -116,30 +118,18 @@ enyo.kind({
       return true;
     }
   },
-  discardCommentPage:function(sender, page){
-    this.$.dataPage.clearPage(page);
-  },
-  acquireCommentPage:function(sender, page){
-    var index = (page + 1) * sender.pageSize;
-    if (this.$.dataPage.missingPage(page) && this.account) {
-      // look for additional comments
-      
-      // status
-      // post_id
-      // offset
-      // number
-      var filter;
-      var options = {
-        number: sender.pageSize,
-        offset: page * sender.pageSize,
-      }
-      if (filter = this.getStatusFilter()) {
-        options['status'] = filter;
-      };
-      this.$.service.callMethod({
-        methodName:'wp.getComments',
-        methodParams: [this.account.blogid, this.account.username, this.account.password, options]
-      }, { url:this.account.xmlrpc, page:page })
+  acquireComments:function(sender, page){
+    var that = this;
+    if (this.account) {
+      this.account.account
+        .comments
+        .order('date_created_gmt', false)
+        .limit(this.$.list.pageSize)
+        .skip(page*this.$.list.pageSize)
+        .list(function(comments){
+          that.$.dataPage.storePage(page, comments);
+          that.$.list.refresh();
+        });
     };
   },
   gotComments:function(sender, response, request){
@@ -156,7 +146,7 @@ enyo.kind({
     this.$.list.refresh();
   },
   imageLoadError:function(sender){
-    sender.setSrc('images/icons/default-avatar.png');
+    sender.setSrc('../images/icons/default-avatar.png');
   },
   selectComment:function(sender, item){
     var comment = this.$.dataPage.itemAtIndex(item.rowIndex);
@@ -200,6 +190,10 @@ enyo.kind({
   },
   resize:function(){
     this.$.list.resizeHandler();
+  },
+  refreshComments:function(sender){
+    console.log("Account", this.account);
+    this.account.refreshComments();
   }
 });
 

@@ -6,7 +6,7 @@ enyo.kind({
   },
   components: [
     { name: 'list', width:'350px', components:[
-      { name:'comment_list', kind:'wp.CommentList', flex:1, onSelectComment:'showComment' }
+      { name:'comment_list', kind:'wp.CommentList', flex:1, onQuery:'findComments', onSelectComment:'showComment' }
     ]},
     { name: 'right', flex:1, components:[
       { kind:'Pane', flex:1, components:[
@@ -30,5 +30,13 @@ enyo.kind({
   showComment:function(sender, comment){
     this.$.pane.selectViewByName('detail');
     this.$.detail.setComment(comment);
+  },
+  findComments:function(sender, query){
+    var that = this;
+    console.log("Find comments!", query);
+    Comment.all().order('date_created_gmt', false).limit(query.limit).list(function(result){
+      that.$.comment_list.queryResponse(result);
+    });
+    
   }
 })
