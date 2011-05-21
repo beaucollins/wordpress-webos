@@ -148,8 +148,9 @@ XMLRPCBuilder.prototype.encode = function(param){
       return "<double>" + param + "</double>";
     }
   } else if (x.isDate(param)) {
-    return "<dateTime.iso8601>" + param.toIso8601() + "</dateTime.iso8601>";
-  } else if (x.isObject(param)) {
+    return "<dateTime.iso8601>" + XMLRPCBuilder.dateToIso8601(param) + "</dateTime.iso8601>";
+  // } else if (x.isObject(param)) {
+  } else {
     var struct = "<struct>";
     for (key in param) {
       struct += "<member>";
@@ -163,7 +164,19 @@ XMLRPCBuilder.prototype.encode = function(param){
     };
     return struct + "</struct>";
   }
-  throw("Don't know how to encode " + param);
+  throw("Don't know how to encode " + param.constructor + ": " + enyo.json.to(param));
+}
+
+XMLRPCBuilder.dateToIso8601 = function(date){
+  console.log("Encoding date", date, date.getUTCFullYear);
+  year = date.getUTCFullYear();
+  month = date.getUTCMonth() + 1;
+  if (month < 10) month = "0" + month;     
+  day = date.getUTCDate();
+  if (day < 10) day = "0" + day;     
+  time = date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds();
+  return year + month + day + "T" + time;
+  
 }
 
 XMLRPCBuilder.isNumber = function(param){
@@ -183,7 +196,7 @@ XMLRPCBuilder.isInt = function(param){
 }
 
 XMLRPCBuilder.isObject = function(param){
-  return param instanceof Object;
+  return (param instanceof Object || param.constructor == Object);
 }
 
 XMLRPCParser = function(string){
@@ -343,15 +356,16 @@ XMLRPCParser.prototype.parse = function(node){
 * @return
 *		<code>String</code> with an ISO8601 date.
 */
-Date.prototype.toIso8601 = function() {
-  year = this.getUTCFullYear();
-  month = this.getUTCMonth() + 1;
-  if (month < 10) month = "0" + month;     
-  day = this.getUTCDate();
-  if (day < 10) day = "0" + day;     
-  time = this.getUTCHours() + ':' + this.getUTCMinutes() + ':' + this.getUTCSeconds();
-  return year + month + day + "T" + time;
-};
+// Date.prototype.toIso8601 = function() {
+//   console.log("Encoding date", this, this.getUTCFullYear);
+//   year = this.getUTCFullYear();
+//   month = this.getUTCMonth() + 1;
+//   if (month < 10) month = "0" + month;     
+//   day = this.getUTCDate();
+//   if (day < 10) day = "0" + day;     
+//   time = this.getUTCHours() + ':' + this.getUTCMinutes() + ':' + this.getUTCSeconds();
+//   return year + month + day + "T" + time;
+// };
 
 /**
 * <p>Convert ISO8601 date to GMT.</p>

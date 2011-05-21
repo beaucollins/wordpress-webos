@@ -10,13 +10,10 @@ enyo.kind({
     enyo.application.commentDashboard = new CommentDashboard();
     enyo.application.accountManager = new AccountManager();
     		
-		console.log("Load the fuking acounts");
 		enyo.application.accountManager.loadAccounts(function(){
       launcher.openWordPress();
 		});
 		
-    
-    
   },
   relaunch:function(params){
     console.log("Relaunch? " + enyo.json.to(params));

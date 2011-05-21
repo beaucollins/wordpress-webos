@@ -13,13 +13,16 @@ enyo.kind({
   kind: enyo.Component,
   published: {
     account:null,
-    password:''
+    password:'',
+    pendingCommentCount:0
   },
   events: {
     onInvalidPassword:'',
     onNewComment:'',
+    onUpdateComment:'',
     onNewPost:'',
-    onNewPage:''
+    onNewPage:'',
+    onPendingComments:''
   },
   kind: 'Component',
   components: [
@@ -49,15 +52,8 @@ enyo.kind({
     }else{
       this.setPassword(this.account.password);
     }
-  },
-  getDashboard:function(){
-    if(!this.dashboard){
-      this.dashboard = this.createComponent({
-        kind:'enyo.Dashboard',
-        name:'wp_comment_notification'
-      });
-    }
-    return this.dashboard;
+    
+    this.refreshPendingCommentCount();
   },
   // @private
   passwordKeyName:function(){
@@ -87,29 +83,40 @@ enyo.kind({
   },
   // download a sane number of posts
   downloadPages:function(){
-    console.log("Download pages! Now");
     this.$.http.callMethod({
       methodName:'wp.getPages',
       methodParams:[this.account.blogid, this.account.username, this.password, 100]
     }, { url:this.account.xmlrpc, onSuccess:'savePages' });
   },
+  updateComment:function(comment){
+    console.log("Edit comment", comment._data);
+    this.$.http.callMethod({
+      methodName:'wp.editComment',
+      methodParams: [this.account.blogid, this.account.username, this.password, comment.comment_id, comment._data],
+      comment:comment
+    }, { url:this.account.xmlrpc, onSuccess:'commentUpdated' } );
+  },
+  commentUpdated:function(sender, response, request){
+    console.log("Comment updated:", request);
+    var client = this;
+    enyo.application.persistence.flush(function(){
+      client.doUpdateComment(request.comment);
+      client.refreshPendingCommentCount();
+    });
+  },
   savePages:function(semder, response, request){
-    console.log("PAGE!", response);
     var account = this.account;
     var pages = response;
     var client = this;
     enyo.forEach(pages, function(page){
-      console.log("Looking up the page", page);
       account.pages.filter('page_id', '=', page.page_id).one(function(existing){
         if (!existing) {
-          console.log("Creating new page");
           var p = new enyo.application.models.Page(page);
           account.pages.add(p);
           enyo.application.persistence.flush(function(){
             client.doNewPage(p, account);
           });
         }else{
-          console.log("Page exists?", existing);
           
           for(field in page){
             existing[field] = page[field];
@@ -120,14 +127,14 @@ enyo.kind({
     }, this);
   },
   downloadPosts:function(){
-    console.log("Downloading pages!");
+
     this.$.http.callMethod({
       methodName: 'metaWeblog.getRecentPosts',
       methodParams: [this.account.blogid, this.account.username, this.password, 100]
     }, { url:this.account.xmlrpc, onSuccess:'savePosts' });
   },
   savePosts:function(sender, response, request){
-    console.log("Downloaded posts", response);
+
     var account = this.account;
     var posts = response;
     var client = this;
@@ -157,7 +164,6 @@ enyo.kind({
   },
   refreshComments:function(){
     var options = {};
-    console.log("Getting comments", [this.account.blogid, this.account.username, this.password, options] );
     this.$.getComments.callMethod({
       methodParams:[this.account.blogid, this.account.username, this.password, options]
     }, { url: this.account.xmlrpc } );
@@ -165,7 +171,6 @@ enyo.kind({
   checkNewComments:function(sender, response, request){
     var account = this.account;
     var client = this;
-    var dash = client.getDashboard();
     enyo.forEach(response, function(comment){
       // first see if we have the comment already in this account
       // check by the comment's id
@@ -178,17 +183,31 @@ enyo.kind({
           	
             enyo.application.commentDashboard.notifyComment(c, account);
             client.doNewComment(c, account);
+            client.refreshPendingCommentCount();
           });
         }else{
           //let's just update the content
           // this should work, Persistence doesn't have any documentation for mass assigning properties
+          console.log("It exists!", existing);
           for(field in comment){
             existing[field]=comment[field];
           }
-          enyo.application.persistence.flush();
+          enyo.application.persistence.flush(function(){
+            client.doUpdateComment(comment);
+            client.refreshPendingCommentCount();
+          });
         }
       });
     });
+  },
+  refreshPendingCommentCount:function(){
+    var client = this;
+    this.account.comments.filter('status','=','hold').count(function(count){
+      client.setPendingCommentCount(count);
+    });
+  },
+  pendingCommentCountChanged:function(){
+    this.doPendingComments(this.pendingCommentCount);
   },
   savePassword:function(onSuccess){
     var options = {}

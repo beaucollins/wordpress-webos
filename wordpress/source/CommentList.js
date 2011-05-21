@@ -65,16 +65,6 @@ enyo.kind({
   },
   components:[
     { kind:'wp.DataPage'},
-    { name:'filterMenu', scrim:false, kind:'Menu', defaultKind:'MenuCheckItem', components:[
-      { name:'allFilter', caption:'All', checked:true },
-      { caption:'Pending', checked:false },
-      { caption:'Approved', checked:false },
-      { caption:'Trash', checked:false },
-      { caption:'Spam', checked:false }
-    ] },
-    { name:'listHeader', kind:'enyo.Header', layoutKind:'HFlexLayout', components:[
-      { name:'filterButton', kind:'enyo.Button', caption:'All Comments', onclick:'showFilterOptions' }
-    ] },
     { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', onAcquirePage:'acquireComments', onDiscardPage:'discardComments', components: [
       { name:'item', kind:'Item', tapHighlight:true, onclick:'selectComment', className:'comment-item', layoutKind:'VFlexLayout', components:[
         { name:'header', kind:'HFlexBox', components: [
@@ -94,15 +84,13 @@ enyo.kind({
         { name:'commentSubject', className: 'comment-subject' }
       ]}
     ] },
-    { kind: 'enyo.Toolbar', components:[
+    { kind: 'enyo.Toolbar', pack:'left', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { name: 'refreshButton', content:'Refresh', onclick:'refreshComments' }
     ] }
   ],
   create:function(){
     this.inherited(arguments);
-    this.filterItem = this.$.allFilter;
-    // this.filterItemChanged();
   },
   setupComment:function(inSender, inIndex){
     if(comment = this.$.dataPage.itemAtIndex(inIndex)){      
@@ -153,6 +141,11 @@ enyo.kind({
     this.$.list.select(item.rowIndex);
     this.$.item.addClass('active-selection');
     this.doSelectComment(comment, this.account);
+  },
+  refresh:function(){
+    console.log("Refresh the list");
+    this.$.list.reset();
+    this.$.list.refresh();
   },
   selectionChanged:function(){
     this.$.list.refresh();

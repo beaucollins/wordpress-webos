@@ -7,5 +7,10 @@ enyo.kind({
   ],
   create:function(){
     this.inherited(arguments);
+    this.$.comments.setLabel($L('All Comments'))
+    this.$.drafts.show();
+    this.$.posts.hide();
+    this.$.pages.hide();
+    this.$.stats.hide();
   }
 });

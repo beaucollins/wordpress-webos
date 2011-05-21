@@ -38,7 +38,7 @@ enyo.kind({
     // main sliding pane interface
     { kind:'AppMenu', components:[
       {name: "edit", kind: "EditMenu"},
-      {name: 'setupMenuItem', caption: 'Setup Blog', onclick:'addNewBlog' }
+      {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' }
     
@@ -53,27 +53,51 @@ enyo.kind({
   },
   loadAccounts: function(){
     console.log("Load accounts", enyo.application.accountManager.accounts);
-    var clients = [];
+    var client, clients = [];
     enyo.forEach(enyo.application.accountManager.accounts, function(account){
-      clients.push(this.createComponent({kind:'wp.WordPressClient', account:account, onInvalidPassword:'displayPasswordForm'}));
+      client = this.createComponent({
+        kind:'wp.WordPressClient',
+        account:account,
+        onInvalidPassword:'displayPasswordForm',
+        onPendingComments:'updateCommentCount',
+        onNewComment:'newComment',
+        onUpdateComment:'updatedComment'
+      });
+      client.refreshComments();
+      clients.push(client);
     }, this);
     this.setAccounts(clients);
   },
+  newComment:function(sender, comment){
+    
+  },
+  updatedComment:function(sender, comment){
+    if (this.$.content.getView() == this.$.comments) {
+      console.log(this.$.comments.account, sender);
+      if (this.$.comments.account == sender) {
+        this.$.comments.refresh();
+      }
+    };
+  },
+  updateCommentCount:function(sender, count){
+    console.log("Pending comments:", count);
+    this.$.sourceList.updateCommentCounts();
+  },
   performAccountAction: function(sender, action, account){
     this.activeAccount = account;
-    if (action == 'Comments') {
+    if (action == 'comments') {
       this.$.content.selectViewByName('comments');      
     };
-    if (action == 'Posts') {
+    if (action == 'posts') {
       this.$.content.selectViewByName('posts');
     };
-    if (action == 'Pages') {
+    if (action == 'pages') {
       this.$.content.selectViewByName('pages');
     };
-    if (action == 'Drafts') {
+    if (action == 'drafts') {
       this.$.content.selectViewByName('drafts');
     };
-    if (action == 'Stats') {
+    if (action == 'stats') {
       this.$.content.selectViewByName('stats');
     };
     if (!this.$.panes.multiView) {

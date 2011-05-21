@@ -16,12 +16,11 @@ enyo.kind({
     ]},
     { kind:'enyo.Toolbar', className:'source-list-command', components:[
       // { caption:'Add Blog', onclick:'doAddBlog' },
-      { caption:'New Post', onclick:'doCreateDraft'}
+      { caption:$L('New Post'), onclick:'doCreateDraft'}
     ] }
   ],
   create:function(){
     this.inherited(arguments);
-
     this.accountsChanged = enyo.bind(this, this.accountsChanged);
     this.accountsChanged();
   },
@@ -48,6 +47,15 @@ enyo.kind({
     if(this.$.list.hasNode()){
       this.$.list.render();
     }
+  },
+  updateCommentCounts: function(){
+    console.log("Refresh Comment Counts!");
+    var items = this.$.list.getControls(), item;
+    console.log(this.$);
+    for (var i=0; i < items.length; i++) {
+      item = items[i];
+      if(item.children[0].updateCommentCount) item.children[0].updateCommentCount();
+    };
   },
   selectAccountAction: function(inSender, inEvent){
     var account = inSender.account;

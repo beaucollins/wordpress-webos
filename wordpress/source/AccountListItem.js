@@ -9,39 +9,26 @@ enyo.kind({
   },
   components: [
     { name:'header', kind:'enyo.DividerDrawer', className:'account-drawer', icon:'../images/icons/default-blavatar.png', components:[
-      { name:'list', kind:'VirtualRepeater', onGetItem:'getItem', className:'account-list', components:[
-        { name:'item', kind: 'wp.ReadCountListItem', onclick:'itemClick' }
-      ] }
-    ]},
-    { kind:'Selection', onChange:'selectionChanged' }
-  ],
-  items: [
-    { label:'Comments', icon:'../images/icons/comments-icon.png' },
-    { label:'Posts', icon:'../images/icons/posts-icon.png' },
-    { label:'Pages', icon:'../images/icons/pages-icon.png'},
-    { label:'Stats', icon:'../images/icons/posts-icon.png'}
+      { action:'comments', name:'comments', label:$L('Comments'), icon:'../images/icons/comments-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
+      { action:'posts', name:'posts', label:$L('Posts'), icon:'../images/icons/posts-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
+      { action:'pages', name:'pages', label:$L('Pages'), icon:'../images/icons/pages-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
+      { action:'stats', name:'stats', label:$L('Stats'), icon:'../images/icons/posts-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
+      { action:'drafts', name:'drafts', label:$L('Drafts'), icon:'../images/icons/drafts-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick', unreadCount:0 }
+    ]}
   ],
   create:function(){
     this.inherited(arguments);
     this.accountChanged();
+    this.$.drafts.hide();
+    this.selected = null;
     // blavatar!
-  },
-  getItem:function(inSender, inIndex){
-    var item = this.items[inIndex];
-    if (item) {
-      this.$.item.setLabel(item.label);
-      this.$.item.setIcon(item.icon);
-      this.$.item.setUnreadCount(item.unreadCount);
-      this.$.item.addRemoveClass("active-selection", this.$.selection.isSelected(item.label));
-      
-      return true;
-    };
   },
   clearSelection:function(){
     this.$.selection.clear();
     this.$.list.render();
   },
   accountChanged:function(){
+    console.log("Account changed!");
     if(!this.account) return;
     var account = this.account.account;
     this.$.header.setCaption(account.blogName);
@@ -54,19 +41,16 @@ enyo.kind({
     blavatar.src = enyo.application.makeBlavatar(account.xmlrpc, {
       size:30
     });
-
   },
-  selectionChanged:function(){
-    
-    this.$.list.render();
+  updateCommentCount:function(){
+    this.$.comments.setUnreadCount(this.account.pendingCommentCount);
   },
-  itemClick:function(inSender, inEvent){
-    var item = this.items[this.$.list.fetchRowIndex()];
-    inSender.decrement();
-    if(this.$.selection.isSelected(item.label)) return;
-
-    this.$.selection.select(item.label);
-    this.doSelect(item.label, this.account);
+  itemClick:function(item, inEvent){
+    if(this.selected == item) return;
+    if(this.selected) this.selected.removeClass("active-selection");
+    this.selected = item;
+    this.selected.addClass('active-selection');
+    this.doSelect(item.action, this.account);
     return true;
   }
 });
@@ -74,14 +58,9 @@ enyo.kind({
 enyo.kind({
   name:'wp.SingleAccountListItem',
   kind:'wp.AccountListItem',
-  items: [
-    { label:'Comments', icon:'../images/icons/comments-icon.png', unreadCount:0 },
-    { label:'Posts', icon:'../images/icons/posts-icon.png' },
-    { label:'Pages', icon:'../images/icons/pages-icon.png'},
-    { label:'Drafts', icon:'../images/icons/drafts-icon.png', unreadCount:0 }
-  ],
   create:function(){
     this.inherited(arguments);
+    this.$.drafts.show();
   }
 });
 
@@ -93,7 +72,8 @@ enyo.kind({
   published: {
     label:'Label',
     icon:'./images/icons/default.png',
-    unreadCount:0
+    unreadCount:0,
+    action:''
   },
   components:[
     { name:'icon', kind:'Image' },

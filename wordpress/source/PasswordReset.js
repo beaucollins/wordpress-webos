@@ -10,13 +10,13 @@ enyo.kind({
     account:null
   },
   components:[
-    { content:$L("Bas username/password") },
+    { content:$L("Bad username/password") },
     { name:'username' },
-    { name:'login', kind:'enyo.RowGroup', caption:'Password', components:[
+    { name:'login', kind:'enyo.RowGroup', caption:$L('Password'), components:[
       { kind:'enyo.Input', name:'passwordField', inputType:'password' },
     ]},
-    { kind:'enyo.Button', content:'Save', onclick:'savePassword' },
-    { kind:'enyo.Button', content:'Cancel', onclick:'doCancel' }
+    { kind:'enyo.Button', content:$L('Save'), onclick:'savePassword' },
+    { kind:'enyo.Button', content:$L('Cancel'), onclick:'doCancel' }
   ],
   accountChanged:function(){
     this.$.username.setContent(this.account.account.username);

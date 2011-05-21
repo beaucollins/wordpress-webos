@@ -196,12 +196,12 @@ enyo.kind({
   markComment:function(sender){
     var params = [this.account.blogid, this.account.username, this.account.password, this.comment.comment_id];
     if (sender.name == 'trash') {
+      this.account.deleteComment(this.comment);
       this.$.comment_edit.callMethod({ methodParams:params, methodName:'wp.deleteComment' });
     }else{
-      params.push({
-        'status' : sender.name
-      });
-      this.$.comment_edit.callMethod({ methodParams:params })
+      this.comment.status = sender.name;
+      this.account.updateComment(this.comment);
+      // this.$.comment_edit.callMethod({ methodParams:params })
       
     }
   },

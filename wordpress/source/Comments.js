@@ -31,6 +31,10 @@ enyo.kind({
     this.$.pane.selectViewByName('detail');
     this.$.detail.setComment(comment);
   },
+  refresh:function(){
+    this.$.comment_list.refresh();
+    this.$.detail.commentChanged();
+  },
   findComments:function(sender, query){
     var that = this;
     console.log("Find comments!", query);
