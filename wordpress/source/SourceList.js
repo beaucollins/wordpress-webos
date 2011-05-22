@@ -42,16 +42,13 @@ enyo.kind({
     };
   },
   accountsChanged: function(){
-    console.log("Accounts changed", this.accounts);
     this.$.list.build();
     if(this.$.list.hasNode()){
       this.$.list.render();
     }
   },
   updateCommentCounts: function(){
-    console.log("Refresh Comment Counts!");
     var items = this.$.list.getControls(), item;
-    console.log(this.$);
     for (var i=0; i < items.length; i++) {
       item = items[i];
       if(item.children[0].updateCommentCount) item.children[0].updateCommentCount();

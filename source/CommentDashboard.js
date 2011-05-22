@@ -5,6 +5,9 @@ enyo.kind({
     this.inherited(arguments);
     this.dashboards = [];
   },
+  destroy:function(){
+    delete this.dashboards;
+  },
   notifyComment: function(comment, account){
     console.log("Notify comment for account", comment, account);
     var dashboard = this.getAccountDashboard(account);

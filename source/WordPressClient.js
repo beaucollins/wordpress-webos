@@ -46,7 +46,7 @@ enyo.kind({
     this.$.http.setUrl(this.account.xmlrpc);
     // load up the password?
     if (!this.account.password) {
-      console.log("No password, get it from the keystore");
+      // console.log("No password, get it from the keystore");
       this.$.fetchKey.call({
         "keyname" : this.passwordKeyName()
       });
@@ -60,31 +60,32 @@ enyo.kind({
   // @private
   passwordKeyName:function(){
     var name = (this.account.username + "@" + this.account.xmlrpc.replace(/https?:\/\//,'')).toLowerCase();
-    console.log("Password Key: " + name);
+    // console.log("Password Key: " + name);
     return name;
   },
   keystoreSuccess:function(sender, response, request){
-    console.log("Keystore Success!");
-    console.log(enyo.json.to(response));
+    // console.log("Keystore Success!");
+    // console.log(enyo.json.to(response));
   },
   keystoreFailure:function(sender, response, request){
-    console.log("Keystore Failure!");
-    console.log(enyo.json.to(response));
+    // console.log("Keystore Failure!");
+    // console.log(enyo.json.to(response));
   },
   missingPassword:function(sender, response, request){
-    console.log("Missing password bitches!: " + enyo.json.to(response));
+    // console.log("Missing password bitches!: " + enyo.json.to(response));
     this.$.removeKey.call({keyname:this.passwordKeyName()});
   },
   setPasswordFromKey:function(sender, response, request){
-    console.log("Got the password from the key: " + enyo.json.to(response));
+    // console.log("Got the password from the key: " + enyo.json.to(response));
     this.account.password = enyo.string.fromBase64(response.keydata)
     this.setPassword(this.account.password);
-    console.log("We're ready!" + this.password);
+    // console.log("We're ready!" + this.password);
     this.doPasswordReady();
   },
   downloadComments:function(){
     // we should page through comments until there are no more, or to a sane amount of comments
     // this should probably only be done when the account is added
+    this.refreshComments();
   },
   // download a sane number of posts
   downloadPages:function(){
@@ -94,7 +95,7 @@ enyo.kind({
     }, { url:this.account.xmlrpc, onSuccess:'savePages' });
   },
   updateComment:function(comment){
-    console.log("Edit comment", comment._data);
+    // console.log("Edit comment", comment._data);
     this.$.http.callMethod({
       methodName:'wp.editComment',
       methodParams: [this.account.blogid, this.account.username, this.password, comment.comment_id, comment._data],
@@ -102,7 +103,7 @@ enyo.kind({
     }, { url:this.account.xmlrpc, onSuccess:'commentUpdated' } );
   },
   commentUpdated:function(sender, response, request){
-    console.log("Comment updated:", request);
+    // console.log("Comment updated:", request);
     var client = this;
     enyo.application.persistence.flush(function(){
       client.doUpdateComment(request.comment);
@@ -193,7 +194,7 @@ enyo.kind({
         }else{
           //let's just update the content
           // this should work, Persistence doesn't have any documentation for mass assigning properties
-          console.log("It exists!", existing);
+          // console.log("It exists!", existing);
           for(field in comment){
             existing[field]=comment[field];
           }
@@ -217,7 +218,7 @@ enyo.kind({
   savePassword:function(onSuccess){
     var options = {}
     if(onSuccess) options.onSuccess = onSuccess;
-    console.log("Saving password: " + this.password);
+    // console.log("Saving password: " + this.password);
     this.$.storeKey.call({
       'keyname' : this.passwordKeyName(),
       'keydata' : enyo.string.toBase64(this.password),
@@ -233,8 +234,8 @@ enyo.kind({
     };
   },
   wordpressApiFailure:function(sender, response, request){
-    console.log("API Failure!");
-    console.log(enyo.json.to(response));
+    // console.log("API Failure!");
+    // console.log(enyo.json.to(response));
     this.$.removeKey.call({keyname:this.passwordKeyName()});
   }
 })

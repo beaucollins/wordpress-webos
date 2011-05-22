@@ -84,7 +84,7 @@ enyo.kind({
         { name:'commentSubject', className: 'comment-subject' }
       ]}
     ] },
-    { kind: 'enyo.Toolbar', pack:'left', components:[
+    { kind: 'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { name: 'refreshButton', content:'Refresh', onclick:'refreshComments' }
     ] }

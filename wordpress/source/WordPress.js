@@ -52,7 +52,7 @@ enyo.kind({
     // this.runStats();
   },
   loadAccounts: function(){
-    console.log("Load accounts", enyo.application.accountManager.accounts);
+    // console.log("Load accounts", enyo.application.accountManager.accounts);
     var client, clients = [];
     enyo.forEach(enyo.application.accountManager.accounts, function(account){
       client = this.createComponent({
@@ -76,14 +76,14 @@ enyo.kind({
   },
   updatedComment:function(sender, comment){
     if (this.$.content.getView() == this.$.comments) {
-      console.log(this.$.comments.account, sender);
+      // console.log(this.$.comments.account, sender);
       if (this.$.comments.account == sender) {
         this.$.comments.refresh();
       }
     };
   },
   updateCommentCount:function(sender, count){
-    console.log("Pending comments:", count);
+    // console.log("Pending comments:", count);
     this.$.sourceList.updateCommentCounts();
   },
   performAccountAction: function(sender, action, account){
@@ -173,7 +173,8 @@ enyo.kind({
     enyo.application.launcher.openDraft(params);
   },
   openAppMenuHandler: function() {
-    console.log("Open app menu please");
+    // console.log("Open app menu please");
+    this.$.appMenu.render();
     this.$.appMenu.open();
   },
   closeAppMenuHandler: function() {
@@ -185,7 +186,7 @@ enyo.kind({
   },
   saveAccountPassword:function(sender, password){
     this.$.passwordForm.close();
-    console.log("Let's save the password: " + password);
+    // console.log("Let's save the password: " + password);
     sender.account.setPassword(password);
     sender.account.savePassword();
   },

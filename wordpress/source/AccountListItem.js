@@ -26,10 +26,10 @@ enyo.kind({
   clearSelection:function(){
     if (this.selected) {
       this.selected.removeClass('active-selection');
+      this.selected = null;
     };
   },
   accountChanged:function(){
-    console.log("Account changed!");
     if(!this.account) return;
     var account = this.account.account;
     this.$.header.setCaption(account.blogName);

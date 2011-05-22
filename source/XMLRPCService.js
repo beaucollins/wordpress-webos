@@ -216,13 +216,13 @@ XMLRPCParser.parse = function(string){
 
 // prevents empty text nodes. and garbage between non-content XML-RPC nodes
 XMLRPCParser.cleanDocument = function(string){
-  var pairs = [
+  var open, pairs = [
     ['methodResponse', 'params'],
     ['params', 'param'],
     ['param', 'value'],
     ['array', 'data'],
     ['struct', 'member']
-  ];
+  ], open;
   var values = ['array','string', 'i4', 'int', 'dateTime\\.iso8601', 'double', 'struct'];
   pairs.push(['value', values.join("|")]);
   var pair, reg;
