@@ -50,7 +50,7 @@ enyo.kind({
 		{ name:'settings', kind:'VFlexBox', width:'300px', style:'background:#EEE;', showing:false, components:[
             { kind:'Scroller', flex:1, components:[
               { kind:'Item', components:[
-                {kind: "ListSelector", label: "Status", value: 1, onChange: "itemChanged", items: [
+                {name: 'statusSelector', kind: "ListSelector", label: "Status", value: 1, onChange: "itemChanged", items: [
 					{caption: "Publish", value: 1},
 					{caption: "Draft", value: 2},
 					{caption: "Pending Review", value: 3},
@@ -72,7 +72,7 @@ enyo.kind({
               ] },
 			{ kind:'Item', components:[
                 { kind:'Drawer', open:false, caption:'Password', components:[
-                  { kind:'Input', hint:'Password', inputType:'password' }
+                  { name: 'passwordField', kind:'Input', hint:'Password', inputType:'password' }
                 ] }
               ] },
 			{ kind:'Item', components:[
@@ -208,10 +208,28 @@ enyo.kind({
     // otherwise let's instantiate a new post
     var post = this.post ? this.post : new enyo.application.models.Post();
     
-    // set the title/etc
-    
+    // set up the post object
     post.title = this.$.titleField.getValue();
     post.description = this.$.contentField.getValue();
+
+	var statusIndex = this.$.statusSelector.getValue();
+	var status = 'publish';
+	if (statusIndex == 2)
+		status = 'draft';
+	else if (statusIndex == 3)
+		status = 'pending'
+	else if (statusIndex == 4)
+		status = 'private';
+		
+	post.post_status = status;
+
+	var tags = this.$.tagsField.getValue()
+	if (tags != '')
+		post.mt_keywords = tags;
+		
+	var postPassword = this.$.passwordField.getValue();
+	if (postPassword != '')
+		post.wp_password = postPassword;
     
     // save the post via the client
     this.$.client.savePost(post);
