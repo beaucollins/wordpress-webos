@@ -1,13 +1,17 @@
+body {
+	background: url(../images/background.jpg) 0 0 no-repeat;
+}
+
 img {
   vertical-align:middle;
 }
 
 #wordPress {
-  background:#FFF;
+  
 }
 
 #wordPress_sourceList {
-  background:url(../images/texture-dark.png);
+  /*background:#cecece;*/
 }
 
 .source-item {
@@ -42,17 +46,12 @@ img {
 }
 
 .account-drawer {
-  background:url(../images/account-drawer.png) repeat-x left bottom;
+  /*background:url(../images/account-drawer.png) repeat-x left bottom;
+  background: #fff;*/
   border-top:1px solid rgba(0,0,0,0.1);
 }
 
-.account-drawer .source-item {
-  border:none;
-}
-
 .source-item.active-selection {
-  padding-top:0;
-  padding-bottom:0;
   border-color: #FFF;
   border-style:solid;
   border-width: 5px 0;
@@ -60,15 +59,28 @@ img {
 }
 
 
+/* nav item */
 .enyo-divider-caption {
   font-size:16px;
   font-weight:normal;
-  color:#FFF;
+  color:#464646;
+  font-weight: bold;
+  background: #fff;
 }
 
 .account-drawer > .enyo-hflexbox {
   border-bottom:1px solid rgba(255,255,255,0.1);
   padding:0 0;
+  background: #fff;
+}
+
+/* sub item */
+
+.account-drawer .source-item {
+	border-top: 1px solid rgba(255,255,255,.15);
+	/*border-bottom: 1px solid rgba(0,0,0,.15);*/
+	margin: 0 0 1px;
+	background: rgba(255,255,255,.25);
 }
 
 .account-list {
@@ -81,16 +93,16 @@ img {
 }
 
 .enyo-collapsible-arrow {
-  background-image:url(../images/divider-arrow.png);
+  background-image:url(../images/wordpress-divider-arrow.png);
 }
 
 .enyo-collapsible-arrow {
   width:36px;
-  background-image:url(../images/divider-arrow.png);
+  background-image:url(../images/wordpress-divider-arrow.png);
 }
 
 .enyo-button-switched.enyo-collapsible-arrow {
-  background-image:url(../images/divider-arrow.png);
+  background-image:url(../images/wordpress-divider-arrow.png);
   width:36px;
 }
 
@@ -317,4 +329,55 @@ img {
 
 #wordPress_stats .enyo-spinner-large, #wordPress_stats .enyo-spinner {
     margin: 0 auto;
+}
+
+/* Left (main) pane */
+
+.enyo-drawer {
+	border-bottom: 1px solid rgba(255,255,255,.15);
+}
+
+.enyo-sliding-view {
+	background: #fff;
+}
+
+.enyo-sliding-view#wordPress_left {
+	background: none;
+}
+
+.source-item {
+	color: #464646;
+	padding: 9px 10px;
+}
+
+.source-item.active-selection {
+	padding: 9px 10px 5px;
+}
+
+.source-item.active-selection div {
+
+}
+
+/* link color */
+.source-item div {
+	color: #fff;
+	font-weight: bold;
+	line-height: 25px;
+	}
+
+/* Right pane */
+
+.enyo-bg {
+	background: none;
+}
+
+/* Buttons */
+
+.enyo-tool-button {
+	background-color: #21759B;
+	text-shadow: 0 -1px 0 rgba(0,0,0,.3);
+}
+
+.class {
+	background-color: #21759B;
 }

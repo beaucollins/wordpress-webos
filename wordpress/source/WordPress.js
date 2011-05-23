@@ -31,7 +31,7 @@ enyo.kind({
                 { name:'posts', kind: 'wp.Posts', flex:1, lazy:true },
                 { name:'pages', kind: 'wp.Pages', flex:1, lazy:true },
                 { name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
-                { name:'drafts', kind: 'Control', flex:1, lazy:true, style:'background:-webkit-gradient(linear, left top, left bottom, from(#000), to(#FFF));'},
+                { name:'drafts', kind: 'Control', flex:1, lazy:true },
               ]}
           ]}
       ]},

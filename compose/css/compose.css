@@ -1,5 +1,10 @@
+body {
+	
+}
+
+
 .desktop {
-  background:url(../../images/texture-full.png);
+	background: url(../../images/background.jpg) 0 0 no-repeat;
   position:absolute; top:0; right:0; left:0; bottom:0
 }
 
@@ -75,6 +80,7 @@
 #compose_postButton {
 	background-color: #21759b;
 	color: #FFFFFF;
+	text-shadow: 0 -1px 0 rgba(0,0,0,.3);
 }
 
 #compose_uploadButton {
@@ -157,4 +163,8 @@
 
 #compose_dialog {
 	z-index: 1000;
+}
+
+.enyo-button {
+	text-shadow: 0 1px 0 rgba(255,255,255,1);
 }
