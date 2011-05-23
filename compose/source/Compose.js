@@ -6,7 +6,11 @@ enyo.kind({
   kind:'Control',
   published:{
     showSettings:false,
-    account:null
+    account:null,
+	selectionStart:0,
+	selectionEnd:0,
+	startNode:null,
+	endNode:null
   },
   currentMediaFile : null, //@protected
   postCategorieObjs :[true,false,true,false,true,false,true,false,false,false,false],
@@ -19,7 +23,15 @@ enyo.kind({
     	onSuccess: "onUploadMediaFileSuccess", 
     	onFailure: "onUploadMediaFileFailure",
     },
-    {name: "canvasUsedToUploadTheImage", kind: "ImgUploadCanvas", onImageLoaded:"sendFile"},	
+    {name: "canvasUsedToUploadTheImage", kind: "ImgUploadCanvas", onImageLoaded:"sendFile"},
+	{kind: "Dialog", components: [
+		{content: "Insert a Link"},
+		{kind: "VFlexBox", components: [
+			{ kind:'Input', name:'linkURL', hint: 'Link URL', onfocus: 'addHTTPToLink', inputType:'text' },
+        	{ kind:'Input', name:'linkName', hint: 'Link name (optional)', inputType:'text' },
+			{kind: "Button", name: 'linkOKBtn', caption: "OK", onclick: "linkOKClick"}
+		]}
+	]},	
     { name:'desktop', className:'desktop', components:[
       {name:'filePicker', kind: "FilePicker", fileType:["image"], allowMultiSelect:false, onPickFile: "handleResult"},
       {name: "errorDialog", kind: "Dialog", components: [
@@ -30,7 +42,7 @@ enyo.kind({
         { kind:'enyo.Header', components:[
           { content:'New Post', flex:1 },
           { name:'previewButton', kind:'enyo.Button', caption:'Preview', onclick:'showPreview' },
-		  { name:'postButton', kind:'enyo.Button', toggling:true, caption:'Publish', onclick:'savePost' }
+		  { name:'postButton', kind:'enyo.Button', caption:'Publish', onclick:'savePost' }
         ] },		
         { kind:'HFlexBox', flex:1, components:[
 		{ name:'settings', kind:'VFlexBox', width:'300px', style:'background:#EEE;', showing:false, components:[
@@ -76,7 +88,7 @@ enyo.kind({
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
           	//{ kind: "HtmlContent", srcId: "tinyMCE", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
-			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, oninput: 'keyTapped'},
+			{ name: 'contentField', kind: 'enyo.RichText' },
 			]},
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:'Settings', onclick:'toggleSettings' },
 			] },
@@ -130,32 +142,51 @@ enyo.kind({
 	
   },
   linkHelper:function(){
-
-	if (type == 'indent') {
-		var el = document.getElementById('blockquoteButton');
-		var curClass = el.className;
-		if (curClass.search('btnActive') > -1) {
-			console.log('made it here ' + el.className);
-			document.execCommand('outdent', false, null);
-		}
-		else {
-			document.execCommand(type, false, null);
-		}
-
-	}
-	else {
-		document.execCommand(type, false, null);
-	}
-
-  },
-  focusContentField:function(sender){
-		console.log('boom!');
-		this.$.contentField.forceFocus();
-  },
-  keyTapped: function() {
-		var content = this.$.contentField.getHtml();
-		//this.$.contentField.setValue(content.substr(0, content.length -1 ) + '<strong>' + content.substr(content.length, content.length));
+	//get the cursor position for l8r
+	var selObj = window.getSelection();
+	var selRange = selObj.getRangeAt(0);
+	selectionStart = selRange.startOffset;
+	selectionEnd = selRange.endOffset;
+	startNode = selRange.startContainer;
+	endNode = selRange.endContainer;
 	
+	console.log('start: ' + selectionStart + ' selection end: ' + selectionEnd);
+	
+	this.$.dialog.open();
+
+  },
+  addHTTPToLink:function(){
+	if (this.$.linkURL.getValue() == '') {
+		this.$.linkURL.setValue('http://');
+	}
+  },
+  linkOKClick:function(){
+		console.log('made it');
+		// process confirmation
+		var url = this.$.linkURL.getValue();
+		var linkName = this.$.linkName.getValue();
+		compose_contentField_input
+		var inputElement = document.getElementById('compose_contentField_input');
+		range = document.createRange();//Create a range (a range is a like the selection but invisible)
+		range.selectNodeContents(inputElement);//Select the entire contents of the element with the range
+		range.setStart(startNode, selectionStart);
+		range.setEnd(endNode, selectionEnd);
+		//range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+		selection = window.getSelection();//get the selection object (allows you to change selection)
+		selection.removeAllRanges();//remove any selections already made
+		selection.addRange(range);//make the range you have just created the visible selection
+		
+		if (url != '' && url != 'http://') {
+			if (linkName != '') {
+				document.execCommand('inserthtml', false, '<a href="' + url + '">' + linkName + '</a>');
+			}
+			else {
+				document.execCommand('createlink', false, url);
+			}
+		}
+		
+		// then close dialog
+		this.$.dialog.close();
   },
   getCategoryItem: function(inSender, inIndex) {
 	  if (inIndex < this.postCategorieObjs.length) {

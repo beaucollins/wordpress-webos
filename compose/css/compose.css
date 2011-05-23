@@ -58,6 +58,10 @@
 	margin-top: 4px;
 }
 
+#compose_contentField a:link{
+	color: color: #21759b !important;
+}
+
 #compose_contentField_input {
 	margin: 10px;
 	padding-right: 20px;
@@ -130,10 +134,27 @@
 	text-decoration: line-through;
 }
 
+#linkButton {
+	text-decoration: underline;
+	color: #21759b;
+}
+
+#uButton {
+	text-decoration: underline;
+}
 .formatBtn {
 	/*width: 60px;*/
 }
 
 .btnActive {
 	background-color: #ccc;
+}
+
+#compose_linkOKBtn{
+	width: 100px;
+	display: block;
+}
+
+#compose_dialog {
+	z-index: 1000;
 }
