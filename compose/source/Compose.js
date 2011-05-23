@@ -10,7 +10,7 @@ enyo.kind({
 	selectionStart:0,
 	selectionEnd:0,
 	startNode:null,
-	endNode:null
+	endNode:null,
     post:null
   },
   currentMediaFile : null, //@protected
@@ -213,7 +213,7 @@ enyo.kind({
     // set the title/etc
     
     post.title = this.$.titleField.getValue();
-    post.description = tinyMCE.get('txtEntry').getContent();
+    post.description = this.$.contentField.getValue();
     
     // save the post via the client
     this.$.client.savePost(post);
