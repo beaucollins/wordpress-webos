@@ -91,6 +91,7 @@ enyo.kind({
     showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showImageFilePicker"); //js clousure. showWebOsImageFilePickerFunctionBind is declared globally and is used to access a function inside this obj
     showWebOsVideoFilePickerFunctionBind = enyo.bind(this, "showVideoFilePicker");
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
+	linkBtnClickFunctionBind = enyo.bind(this, "linkHelper");
   },
   windowParamsChangeHandler: function(inSender, inEvent) {
 	 var p = inEvent.params;
@@ -127,6 +128,25 @@ enyo.kind({
 		document.execCommand(type, false, null);
 	}
 	
+  },
+  linkHelper:function(){
+
+	if (type == 'indent') {
+		var el = document.getElementById('blockquoteButton');
+		var curClass = el.className;
+		if (curClass.search('btnActive') > -1) {
+			console.log('made it here ' + el.className);
+			document.execCommand('outdent', false, null);
+		}
+		else {
+			document.execCommand(type, false, null);
+		}
+
+	}
+	else {
+		document.execCommand(type, false, null);
+	}
+
   },
   focusContentField:function(sender){
 		console.log('boom!');
