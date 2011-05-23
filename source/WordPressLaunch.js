@@ -15,7 +15,7 @@ enyo.kind({
   startup:function(){
     var launcher = this;
     enyo.application.accountManager = new AccountManager();
-    enyo.application.commentDashboard = new CommentDashboard();
+    enyo.application.commentDashboard = this.createComponent({kind:'CommentDashboard', onTapComment:'displayComment'});
     
     this.scheduleTimer();
     
@@ -37,9 +37,9 @@ enyo.kind({
     }
     this.openWordPress();
   },
-  openWordPress:function(){
+  openWordPress:function(params){
     var basePath = enyo.fetchAppRootPath();
-    enyo.windows.activate('wordpress', basePath + 'wordpress/index.html');		  
+    enyo.windows.activate('wordpress', basePath + 'wordpress/index.html', params);
   },
   openDraft:function(params){
     var composeLabel = Math.round(Math.random() * 100); // just for fun
@@ -95,6 +95,10 @@ enyo.kind({
     if (wordpress) {
       // tell it we have updated comments
     };
+  },
+  displayComment:function(sender, comment, account){
+    console.log("Open to the comment!");
+    this.openWordPress({comment:comment, account:account});
   }
   
 });

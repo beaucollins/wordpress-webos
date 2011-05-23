@@ -2,7 +2,8 @@ enyo.kind({
   name: 'wp.Comments',
   kind: 'SlidingPane',
   published: {
-    account:null
+    account:null,
+    comment:null
   },
   components: [
     { name: 'list', width:'350px', components:[
@@ -22,14 +23,18 @@ enyo.kind({
   accountChanged:function(){
     this.$.comment_list.setAccount(this.account);
     this.$.detail.setAccount(this.account);
+    this.$.pane.selectView(this.$.blank);
+  },
+  commentChanged:function(){
+    this.$.pane.selectViewByName('detail');
+    this.$.detail.setComment(this.comment);
   },
   resize:function(){
     this.inherited(arguments);
     this.$.comment_list.resize();
   },
   showComment:function(sender, comment){
-    this.$.pane.selectViewByName('detail');
-    this.$.detail.setComment(comment);
+    this.setComment(comment);
   },
   refresh:function(){
     this.$.comment_list.refresh();

@@ -22,8 +22,12 @@ enyo.kind({
     onNewComment:'',
     onUpdateComment:'',
     onNewPost:'',
+    onUpdatePost:'',
     onNewPage:'',
-    onPendingComments:''
+    onUpdatePage:'',
+    onPendingComments:'',
+    onSavePost:'',
+    onSaveDraft:''
   },
   kind: 'Component',
   components: [
@@ -127,7 +131,9 @@ enyo.kind({
           for(field in page){
             existing[field] = page[field];
           }
-          enyo.application.persistence.flush();
+          enyo.application.persistence.flush(function(){
+            client.doUpdatePage(existing, account);
+          });
         }
       });
     }, this);
@@ -162,7 +168,9 @@ enyo.kind({
             existing[field] = post[field];
           }
           
-          enyo.application.persistence.flush();
+          enyo.application.persistence.flush(function(){
+            client.doUpdatePost(existing, account);
+          });
           
         }
       });
@@ -199,7 +207,7 @@ enyo.kind({
             existing[field]=comment[field];
           }
           enyo.application.persistence.flush(function(){
-            client.doUpdateComment(comment);
+            client.doUpdateComment(existing, account);
             client.refreshPendingCommentCount();
           });
         }
@@ -225,6 +233,57 @@ enyo.kind({
       'type' : 'AES',
       'nohide' : true
     }, options);
+  },
+  // saves local modifications
+  // Post should be an instance of enyo.application.models.Post
+  saveDraft:function(post){
+    var client = this;
+    var account = this;
+    account.posts.add(post);
+    enyo.persistence.flush(function(){
+      client.doSaveDraft(post, account);
+    });
+  },
+  savePost:function(post){
+		
+    var client = this;
+    var http = this.$.http;
+    var account = this.account;
+    // this posts exists already
+    if (post.postid) {
+      // mw.method('editPost', 'post_id', 'username', 'password', 'content', 'publish');
+      return http.callMethod({
+        methodName:'metaWeblog.editPost',
+        methodParams:[post.postid, account.username, account.password, post, false]
+      }, {onSuccess:'savePostSuccess', post:post});
+    }else{
+      return http.callMethod({
+        //     mw.method('newPost', 'blog_id', 'username', 'password', 'content', 'publish');
+        methodName:'metaWeblog.newPost',
+        methodParams:[account.blogid, account.username, client.password, post._data, false]
+      }, {onSuccess:'savePostSuccess', post:post});
+    };
+  },
+  savePostSuccess:function(sender, response, request){
+    // if it was a metaWeblog.editPost request response will be boolean true
+    // otherwise it will be the new id of the post
+    var post = request.post;
+    var client = this;
+    var account = this.account;
+    if (response === true) {
+      
+    }else{
+      post.postid = response;
+      account.posts.add(post);
+      enyo.application.persistence.flush(function(){
+        client.doSavePost(post, account);
+      });
+    }
+  },
+  onSavePost:function(sender, response, request){
+    console.log("Saved the post!", response);
+    var post = response;
+    this.doSavePost(post, this.account);
   },
   wordpressApiFault:function(sender, response, request){
     // bad password/username

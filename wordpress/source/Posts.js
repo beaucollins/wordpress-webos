@@ -23,6 +23,10 @@ enyo.kind({
     this.$.postList.setAccount(this.account);
     this.$.detail.setAccount(this.account);
   },
+  refresh:function(){
+    this.$.postList.refresh();
+    this.$.detail.postChanged();
+  },
   resize:function(){
     this.inherited(arguments);
     this.$.postList.resize();

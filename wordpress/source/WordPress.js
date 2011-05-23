@@ -6,7 +6,9 @@ enyo.kind({
   kind: 'enyo.VFlexBox',
   className: 'enyo-bg',
   published: {
-    accounts:[]
+    accounts:[],
+    account:null,
+    comment:null
   },
   components: [
     { name: 'xmlrpc_client', kind:'XMLRPCService' },
@@ -25,7 +27,7 @@ enyo.kind({
           { name:'main', flex:1, onResize:'resizeSubviews', peekWidth:42, components:[
               { name:'content', flex:1, kind:'Pane', onSelectView:'setupSubView', components:[
                 { name:'blank', kind:'Control', flex:1 },
-                { name:'comments', kind: 'wp.Comments', flex:1, lazy:true },
+                { name:'comments', kind: 'wp.Comments', flex:1, lazy:false },
                 { name:'posts', kind: 'wp.Posts', flex:1, lazy:true },
                 { name:'pages', kind: 'wp.Pages', flex:1, lazy:true },
                 { name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
@@ -60,25 +62,45 @@ enyo.kind({
         account:account,
         onInvalidPassword:'displayPasswordForm',
         onPendingComments:'updateCommentCount',
-        onNewComment:'newComment',
-        onUpdateComment:'updatedComment',
-        onPasswordReady:'refreshClient'
+        onNewComment:'refreshComments',
+        onUpdateComment:'refreshComments',
+        onNewPost:'refreshPosts',
+        onUpdatePost:'refreshPosts',
+        onNewPage:'refreshPages',
+        onUpdatePage:'refreshPages',
+        onPasswordReady:'refreshPages'
       });
       clients.push(client);
     }, this);
     this.setAccounts(clients);
+    this.accountChanged();
+    this.commentChanged();
   },
   refreshClient:function(sender){
-    sender.refreshComments();
+    console.log("Refresh client");
+    sender.downloadComments();
+    sender.downloadPages();
+    sender.downloadPosts();
   },
-  newComment:function(sender, comment){
-    
-  },
-  updatedComment:function(sender, comment){
+  refreshComments:function(sender, comment, account){
     if (this.$.content.getView() == this.$.comments) {
-      // console.log(this.$.comments.account, sender);
       if (this.$.comments.account == sender) {
         this.$.comments.refresh();
+      }
+    };
+  },
+  refreshPosts:function(sender, post, account){
+    if (this.$.content.getView() == this.$.posts) {
+      if (this.$.posts.account == sender) {
+        console.log("Refresh posts!")
+        this.$.posts.refresh();
+      }
+    };
+  },
+  refreshPages:function(sender, page, account){
+    if (this.$.content.getView() == this.$.page) {
+      if (this.$.page.account == sender) {
+        this.$.page.refresh();
       }
     };
   },
@@ -133,6 +155,13 @@ enyo.kind({
       this.$.pane.setTransitionKind('enyo.transitions.Fade');
     }
   },
+  accountChanged:function(){
+    //an account should be selected, show in source list as activeaccount
+  },
+  commentChanged:function(){
+    // select the comment item from the account source list
+    // show the comment view
+  },
   addNewBlog:function(sender){
     if (this.accounts.length > 0) this.$.setup.setCancelable(true);
     this.$.setup.reset();
@@ -166,8 +195,14 @@ enyo.kind({
     this.log("options", options);
     // this.log("params", params);
     
-
-    var account = this.aciveAccount || this.accounts[0];
+    var account;
+    
+    if(this.activeAccount){
+      account = this.activeAccount.account;
+    }else{
+      account = this.accounts[0].account;
+    }
+    
 	  params = {'account': account, 'post' : post};
     enyo.mixin(params, options);
     enyo.application.launcher.openDraft(params);

@@ -22,7 +22,7 @@ enyo.kind({
   },
   cancelled: null, //the request was cancelled
   components:[
-    { name:'xmlrpc_service', kind:'XMLRPCService', methodName:'wp.getUsersBlogs', onSuccess:'gotBlogs', onFault:'apiFault', onFailure:'_badURL' },
+    { name:'xmlrpc_service', kind:'XMLRPCService', methodName:'wp.getUsersBlogs', onSuccess:'gotBlogs', onRequestFault:'apiFault', onFailure:'_badURL' },
     { kind:'wp.EndpointDiscover', onSuccess:'foundEndpoint', onFailure:'_badURL' }
   ],
   create:function(){

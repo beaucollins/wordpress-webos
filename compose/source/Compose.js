@@ -11,10 +11,12 @@ enyo.kind({
 	selectionEnd:0,
 	startNode:null,
 	endNode:null
+    post:null
   },
   currentMediaFile : null, //@protected
   postCategorieObjs :[true,false,true,false,true,false,true,false,false,false,false],
   components:[
+  { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onSavePost:'savePostSuccess' },
 	{	name: "uploadMediaFile", 
 		kind: "WebService", 
 		method: "POST", 
@@ -100,6 +102,7 @@ enyo.kind({
   create:function(){
     this.inherited(arguments);
     mediaFiles = new Array();
+    this.accountChanged();
     showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showImageFilePicker"); //js clousure. showWebOsImageFilePickerFunctionBind is declared globally and is used to access a function inside this obj
     showWebOsVideoFilePickerFunctionBind = enyo.bind(this, "showVideoFilePicker");
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
@@ -201,6 +204,29 @@ enyo.kind({
 	  //this.log(inSender);
 	  this.postCategorieObjs[index] = inSender.getChecked();
 	  this.log(this.postCategorieObjs);
+  },
+  savePost:function(){
+    // if the composer was given a post model, we'll just use that
+    // otherwise let's instantiate a new post
+    var post = this.post ? this.post : new enyo.application.models.Post();
+    
+    // set the title/etc
+    
+    post.title = this.$.titleField.getValue();
+    post.description = tinyMCE.get('txtEntry').getContent();
+    
+    // save the post via the client
+    this.$.client.savePost(post);
+    
+    // if you just want to save the post locally as a draft
+    // this.$.client.saveDraft(post);
+  },
+  savePostSuccess:function(sender, post, account){
+    enyo.windows.addBannerMessage("Post saved successfully", "{}");
+    console.log("Post was saved", post, account);
+  },
+  saveDraftSuccess:function(sender, post, account){
+    console.log("Draft was saved", post account);
   },
   showPreview:function() {
 	  var categories = new Array();
@@ -316,6 +342,14 @@ enyo.kind({
   closeDialog: function() {
 		this.$.errorDialog.close();
 	},
+	accountChanged:function(){
+	  console.log("Client:", this.account);
+	  this.$.client.setAccount(this.account);
+	},
+	clientReady:function(sender){
+	  //password has been set from the Key Manager now
+	  console.log("Client is ready");
+	}
 });
  
  enyo.kind({

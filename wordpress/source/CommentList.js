@@ -50,7 +50,7 @@ enyo.kind({
   kind:'VFlexBox',
   published: {
     account: null,
-    filterItem:null
+    filterItem:null,
   },
   events: {
     onAcquireComments:"",
@@ -99,7 +99,7 @@ enyo.kind({
       this.$.timestamp.setContent(TimeAgo(comment.date_created_gmt));
       this.$.commentContent.setContent(TruncateText(StripHTML(comment.content)));
       this.$.commentSubject.setContent(comment.post_title);
-      this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(inIndex))
+      this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(comment.id))
       this.$.item.addClass("status-"+comment.status);
       this.$.status.addClass("status-"+comment.status);
       this.$.status.setContent($L(this.kStatusNames[comment.status]));
@@ -138,7 +138,7 @@ enyo.kind({
   },
   selectComment:function(sender, item){
     var comment = this.$.dataPage.itemAtIndex(item.rowIndex);
-    this.$.list.select(item.rowIndex);
+    this.$.list.select(comment.id);
     this.$.item.addClass('active-selection');
     this.doSelectComment(comment, this.account);
   },

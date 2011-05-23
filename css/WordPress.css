@@ -199,8 +199,7 @@ img {
 }
 
 .post-item.active-selection {
-  background-image:url(../images/active-selection.png);
-  -webkit-background-size: 100% 100%;
+  background:-webkit-gradient(linear, left top, left bottom, from(#DDE7F3), to(#B4D6F3));
 }
 
 

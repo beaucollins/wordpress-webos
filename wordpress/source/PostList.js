@@ -42,6 +42,7 @@ enyo.kind({
     
   },
   refresh:function(){
+    this.$.list.reset();    
     this.$.list.refresh();
   },
   setPage:function(pageNumber, items){

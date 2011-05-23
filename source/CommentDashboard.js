@@ -1,6 +1,9 @@
 enyo.kind({
   name:'CommentDashboard',
   kind: enyo.Component,
+  events: {
+    onTapComment:''
+  },
   constructor:function(){
     this.inherited(arguments);
     this.dashboards = [];
@@ -9,33 +12,29 @@ enyo.kind({
     delete this.dashboards;
   },
   notifyComment: function(comment, account){
-    console.log("Notify comment for account", comment, account);
     var dashboard = this.getAccountDashboard(account);
     dashboard.push({
       icon:'images/notification-comment-large.png',
       title:comment.author,
-      text:comment.content.replace(/<\/?[^>]+>/,'')}
-    );
+      text:comment.content.replace(/<\/?[^>]+>/,''),
+      comment:comment,
+      account:account
+    });
   },
   getAccountDashboard:function(account){
     var dashboards;
     if (dashboard = this.dashboards[account.id]) {
       return dashboard;
     };
-    dashboard = this.dashboards[account.id] = this.createComponent({kind:'enyo.Dashboard', name:'comment_dashboard_' + account.id});
+    dashboard = this.dashboards[account.id] = this.createComponent({
+      kind:'enyo.Dashboard',
+      name:'comment_dashboard_' + account.id,
+      onTap:'tappedComment'
+    });
     return dashboard;
   },
-  showTest: function(){
-    console.log("Test dsahboard")
-    if (!this.testDashboard) { this.testDashboard = this.createComponent({kind:'enyo.Dashboard', name:'testDashboard'}); };
-    
-    var message = {
-      icon: "images/notification-comment-large.png",
-      title: "Test Notification",
-      text: "Seriously this better fucking work"
-    };
-
-    
-    this.testDashboard.push(message);
+  tappedComment:function(sender, layer, mouseEvent){
+    console.log("Tapped Comment");
+    this.doTapComment(layer.comment, layer.account);
   }
 });

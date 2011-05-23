@@ -97,10 +97,10 @@ enyo.kind({
     this.log("Bad URL message");
     // this.$.scrim.hide();
     this.$.setupForm.toggleSignUpActivity();
-	var errorTitle = 'Sorry, can\'t log in';
-	var errorMessage = 'Please insert a correct blog URL and try again.';
-	this.$.needHelpPane.setErrorMessage(errorTitle, errorMessage);
-	this.$.errorPopup.openAtCenter();
+  	var errorTitle = 'Sorry, can\'t log in';
+  	var errorMessage = 'Please insert a correct blog URL and try again.';
+  	this.$.needHelpPane.setErrorMessage(errorTitle, errorMessage);
+  	this.$.errorPopup.openAtCenter();
   },
   apiFailure:function(sender, response, success){
     this.log('API Failure', response);
