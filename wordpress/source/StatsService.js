@@ -42,7 +42,7 @@ enyo.kind({
   callStats:function(params, options){
       params.api_key = this.account.apiKey;
       params.format = 'json';
-      params.blog_id = this.account.blogid;
+      params.blog_id = this.account.account.blogid;
       this.callParams = params;
       this.call({}, options);
   }
