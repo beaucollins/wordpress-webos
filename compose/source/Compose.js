@@ -210,11 +210,11 @@ enyo.kind({
 	  }
 	  
 	  //launches a new window with the preview view
-	  params = {'title' : this.$.titleField.getValue(), 'content' : tinyMCE.get('txtEntry').getContent(), 
+	  params = {'title' : this.$.titleField.getValue(), 'content' :  this.$.contentField.getValue(), 
 			  'tags': this.$.tagsField.getValue(), 'categories': categories};
 	  options = {};
 	  enyo.mixin(params, options);
-	  enyo.windows.activate("Post Preview", "../postPreview.html", params);
+	  enyo.windows.activate("Post Preview", "../wordpress/postPreview.html", params);
   },
   //Handles the download image
   uploadMedia: function() {  
