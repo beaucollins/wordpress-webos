@@ -44,6 +44,7 @@ enyo.kind({
         { kind:'enyo.Header', components:[
           { content:'New Post', flex:1 },
           { name:'previewButton', kind:'enyo.Button', caption:'Preview', onclick:'showPreview' },
+          { name:'draftButton', kind:'enyo.Button', caption:'Save Draft', onclick:'savePost' },
 		  { name:'postButton', kind:'enyo.Button', caption:'Publish', onclick:'savePost' }
         ] },		
         { kind:'HFlexBox', flex:1, components:[
@@ -203,7 +204,7 @@ enyo.kind({
 	  this.postCategorieObjs[index] = inSender.getChecked();
 	  this.log(this.postCategorieObjs);
   },
-  savePost:function(){
+  savePost:function(inSender){
     // if the composer was given a post model, we'll just use that
     // otherwise let's instantiate a new post
     var post = this.post ? this.post : new enyo.application.models.Post();
@@ -231,11 +232,14 @@ enyo.kind({
 	if (postPassword != '')
 		post.wp_password = postPassword;
     
-    // save the post via the client
-    this.$.client.savePost(post);
-    
-    // if you just want to save the post locally as a draft
-    // this.$.client.saveDraft(post);
+	if (inSender.name == 'postButton') {
+		// save the post via the client
+	    this.$.client.savePost(post);
+	}
+	else {
+		// save the post as a local draft
+		this.$.client.saveDraft(post);
+	}
   },
   savePostSuccess:function(sender, post, account){
     enyo.windows.addBannerMessage("Post saved successfully", "{}");

@@ -238,9 +238,9 @@ enyo.kind({
   // Post should be an instance of enyo.application.models.Post
   saveDraft:function(post){
     var client = this;
-    var account = this;
+    var account = this.account;
     account.posts.add(post);
-    enyo.persistence.flush(function(){
+    enyo.application.persistence.flush(function(){
       client.doSaveDraft(post, account);
     });
   },
