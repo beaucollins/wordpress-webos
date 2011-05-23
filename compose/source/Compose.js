@@ -161,7 +161,9 @@ enyo.kind({
 	}
   },
   linkOKClick:function(){
-		console.log('made it');
+		// close dialog
+		this.$.dialog.close();
+		
 		// process confirmation
 		var url = this.$.linkURL.getValue();
 		var linkName = this.$.linkName.getValue();
@@ -185,8 +187,6 @@ enyo.kind({
 			}
 		}
 		
-		// then close dialog
-		this.$.dialog.close();
   },
   getCategoryItem: function(inSender, inIndex) {
 	  if (inIndex < this.postCategorieObjs.length) {
