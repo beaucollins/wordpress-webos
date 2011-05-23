@@ -23,6 +23,19 @@ tinyMCE.init({
 				plugins : "autoresize, webosfilemanager"
 });
 </script>
+<script type="text/javascript">
+function toggle(obj) {
+	console.log('time to toggle ' + obj.id);
+	var el = document.getElementById(obj.id);
+	var curClass = el.className;
+	
+	if (curClass.search('btnActive') > -1)
+		el.className = 'formatBtn';
+	else
+		el.className = 'formatBtn btnActive';
+
+}
+</script>
   <!--<script src="/usr/palm/frameworks/enyo/0.9/framework/enyo.js" type="text/javascript"></script>-->
 </head>
 <body>
@@ -33,6 +46,21 @@ tinyMCE.init({
 	        </textarea>
 	    </form>
 	</div>
+	<div id="toolbarButtons">
+		<button class="formatBtn" id="strongButton" onClick="formatBtnClickFunctionBind('bold')">b</button>
+		<button class="formatBtn" type="button" id="emButton" onClick="formatBtnClickFunctionBind('italic')">i</button>
+		<button class="formatBtn" type="button" id="strikethroughButton" onClick="formatBtnClickFunctionBind('strikethrough')">ABC</button>
+		<button class="formatBtn" type="button" id="linkButton" onClick="formatBtnClickFunctionBind('createlink')">link</button>
+		<button class="formatBtn" type="button" id="uButton" onClick="formatBtnClickFunctionBind('underline')">u</button>
+		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('indent');toggle(this)">b-quote</button>
+		
+		<button class="formatBtn" type="button" id="leftButton" onClick="formatBtnClickFunctionBind('justifyleft')">left</button>
+		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifycenter')">center</button>
+		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifyright')">right</button>
+		
+		
+		<button class="formatBtn" type="button" id="imageButton" value="Add Image" onClick="showWebOsImageFilePickerFunctionBind">image</button>
+		<button class="formatBtn" type="button" id="videoButton" value="Add Video" onClick="showWebOsVideoFilePickerFunctionBind">video</button>	
 <script type="text/javascript">
   var params = enyo.windowParams;
 	new wp.Compose({account:params.account}).renderInto(document.body);

@@ -76,7 +76,7 @@
 #compose_uploadButton {
 	-webkit-border-image: none;
 	position: absolute;
-	top: 3px;
+	top: 130px;
 	left: 817px;
 	font-size:8pt;
 	width: 30px;
@@ -93,4 +93,50 @@
 #compose_uploadButton .enyo-button-down {
 	-webkit-border-image: none;
 	border: 1px solid #686868;
+}
+
+#compose_contentScroller {
+	position: relative;
+	z-index: 1000;
+}
+
+#wrapper {
+	position: absolute;
+	z-index: 1;
+	top: 45px;
+	bottom: 48px;
+	left: 0;
+	width: 100%;
+	background: #AAA;
+	overflow: auto;
+	display: block;
+}
+
+#scroller {
+	display: block;
+	position: absolute;
+	z-index: 1;
+	-webkit-tap-highlight-color: transparent;
+	width: 100%;
+	padding: 0;
+}
+
+#strongButton {
+	font-weight: bold;
+}
+
+#emButton {
+	font-style: italic;
+}
+
+#strikethroughButton {
+	text-decoration: line-through;
+}
+
+.formatBtn {
+	/*width: 60px;*/
+}
+
+.btnActive {
+	background-color: #ccc;
 }

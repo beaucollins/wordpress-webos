@@ -71,10 +71,12 @@ enyo.kind({
           ]},
           { name:'main', kind:'VFlexBox', flex:1, components:[
             { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:'Title' },
-			{ kind:'Scroller', flex:1, components:[
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
 			{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
-          	{ kind: "HtmlContent", srcId: "tinyMCE", onLinkClick: "htmlContentLinkClick"},
+			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
+          	//{ kind: "HtmlContent", srcId: "tinyMCE", onLinkClick: "htmlContentLinkClick"},
+			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
+			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, oninput: 'keyTapped'},
 			]},
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:'Settings', onclick:'toggleSettings' },
 			] },
@@ -88,6 +90,7 @@ enyo.kind({
     mediaFiles = new Array();
     showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showImageFilePicker"); //js clousure. showWebOsImageFilePickerFunctionBind is declared globally and is used to access a function inside this obj
     showWebOsVideoFilePickerFunctionBind = enyo.bind(this, "showVideoFilePicker");
+	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
   },
   windowParamsChangeHandler: function(inSender, inEvent) {
 	 var p = inEvent.params;
@@ -106,13 +109,33 @@ enyo.kind({
   showSettingsChanged:function(){
     this.$.settings.setShowing(this.showSettings);
   },
-  formatBtnClick:function(sender){
-	if (sender.name == 'boldButton') {
-		//this.$.boldButton.depressed = true;		
+  formatBtnClick:function(type){
+	
+	if (type == 'indent') {
+		var el = document.getElementById('blockquoteButton');
+		var curClass = el.className;
+		if (curClass.search('btnActive') > -1) {
+			console.log('made it here ' + el.className);
+			document.execCommand('outdent', false, null);
+		}
+		else {
+			document.execCommand(type, false, null);
+		}
+		
 	}
+	else {
+		document.execCommand(type, false, null);
+	}
+	
+  },
+  focusContentField:function(sender){
+		console.log('boom!');
+		this.$.contentField.forceFocus();
   },
   keyTapped: function() {
-	console.log('tap!');
+		var content = this.$.contentField.getHtml();
+		//this.$.contentField.setValue(content.substr(0, content.length -1 ) + '<strong>' + content.substr(content.length, content.length));
+	
   },
   getCategoryItem: function(inSender, inIndex) {
 	  if (inIndex < this.postCategorieObjs.length) {
