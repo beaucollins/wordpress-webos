@@ -88,7 +88,6 @@ enyo.kind({
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
 			{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
-          	//{ kind: "HtmlContent", srcId: "tinyMCE", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
 			{ name: 'contentField', kind: 'enyo.RichText' },
 			]},
@@ -172,14 +171,13 @@ enyo.kind({
 		var linkName = this.$.linkName.getValue();
 		compose_contentField_input
 		var inputElement = document.getElementById('compose_contentField_input');
-		range = document.createRange();//Create a range (a range is a like the selection but invisible)
-		range.selectNodeContents(inputElement);//Select the entire contents of the element with the range
+		range = document.createRange();
+		range.selectNodeContents(inputElement);
 		range.setStart(startNode, selectionStart);
 		range.setEnd(endNode, selectionEnd);
-		//range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
-		selection = window.getSelection();//get the selection object (allows you to change selection)
-		selection.removeAllRanges();//remove any selections already made
-		selection.addRange(range);//make the range you have just created the visible selection
+		selection = window.getSelection();
+		selection.removeAllRanges();
+		selection.addRange(range);
 		
 		if (url != '' && url != 'http://') {
 			if (linkName != '') {
@@ -226,7 +224,7 @@ enyo.kind({
     console.log("Post was saved", post, account);
   },
   saveDraftSuccess:function(sender, post, account){
-    console.log("Draft was saved", post account);
+    console.log("Draft was saved", post, account);
   },
   showPreview:function() {
 	  var categories = new Array();
