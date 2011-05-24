@@ -103,6 +103,22 @@
   
   persistence.schemaSync();
   
+  persistence.migrations.init();
+  persistence.defineMigration(1, {
+    up:function(){
+      console.log("Migrating");
+      this.addColumn('Post', 'local_modifications', "BOOLEAN")
+      this.addColumn('Page', 'local_modifications', "BOOLEAN")
+      console.log("Done");
+    },
+    down:function(){
+      this.removeColumn('Post', 'local_modifications');
+      this.removeColumn('Page', 'local_modifications');
+    }
+  });
+  
+  persistence.migrate(1, function(){});
+  
   /*
 
   	404: do not load any image if none is associated with the email hash, instead return an HTTP 404 (File Not Found) response

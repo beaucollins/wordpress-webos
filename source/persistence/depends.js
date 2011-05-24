@@ -14,5 +14,6 @@ This work is licensed under the MIT license.
 enyo.depends(
   'persistence.js',
   'persistence.store.sql.js',
-  'persistence.store.websql.js'
+  'persistence.store.websql.js',
+  'persistence.migrations.js'
 );
