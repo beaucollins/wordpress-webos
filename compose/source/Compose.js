@@ -67,12 +67,12 @@ enyo.kind({
                 ]}                                                                                       
 	    	  ]},
 			{ kind:'Item', components:[
-                { kind:'Drawer', open:false, caption:'Tags', components:[
+                { kind:'Drawer', open:false, caption:'Tags', onclick: 'tagsClick', components:[
                   { kind:'Input', name:'tagsField', hint:'Separate tags with commas', inputType:'text' }
                 ] }
               ] },
 			{ kind:'Item', components:[
-                { kind:'Drawer', open:false, caption:'Password', components:[
+                { kind:'Drawer', open:false, caption:'Password', onclick: 'passwordClick', components:[
                   { name: 'passwordField', kind:'Input', hint:'Password', inputType:'password' }
                 ] }
               ] },
@@ -394,6 +394,12 @@ enyo.kind({
 		  this.setPost(null);
 	  } 
   },
+	tagsClick:function(sender){
+		this.$.tagsField.forceFocus();
+	},
+	passwordClick:function(sender){
+		this.$.passwordField.forceFocus();
+	}
 });
  
  enyo.kind({
