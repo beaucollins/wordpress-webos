@@ -18,7 +18,7 @@ enyo.kind({
       { kind: 'Scroller', flex:1, components:[
         { name:'header', components:[
           { kind:'Control', kind:'HFlexBox', className:'enyo-item first', components:[
-            { name:'avatar', kind:'Image', className:'avatar-large', src:'./images/icons/avatar-large.png' },
+            { name:'avatar', kind:'Image', className:'avatar-large', src:'./images/icons/avatar-large.png', width:'62',height:'62' },
             { kind:'VFlexBox', flex:1, components:[
               { name:'authorName' },
               { kind:'HFlexBox', components:[
@@ -50,6 +50,7 @@ enyo.kind({
         { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
         { flex:1 },
         { name:'approve', caption: 'Approve', onclick:'markComment' },
+        { name:'unapprove', caption: 'Unapprove', onclick:'markComment' },
         { name:'trash', caption: 'Trash', onclick:'markComment' },
         { name:'spam', caption: 'Spam', onclick:'markComment' },
         { flex:1 },
@@ -94,6 +95,12 @@ enyo.kind({
       this.$.approve.show();
     }
     
+    if (this.comment.status == 'unapprove') {
+      this.$.unapprove.hide();
+    }else{
+      this.$.unapprove.show();
+    }
+    
     if (this.comment.status == 'trash') {
       this.$.trash.hide();
     }else{
@@ -115,7 +122,7 @@ enyo.kind({
       this.$.avatar.setSrc(avatar.src);
     });
     avatar.src = enyo.application.makeGravatar(this.comment.author_email, {
-      size:50
+      size:62
     });
     
 

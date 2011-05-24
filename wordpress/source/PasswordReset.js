@@ -11,7 +11,7 @@ enyo.kind({
   },
   components:[
     { content:$L("Bad username/password") },
-    { name:'username' },
+    //{ name:'username' },
     { name:'login', kind:'enyo.RowGroup', caption:$L('Password'), components:[
       { kind:'enyo.Input', name:'passwordField', inputType:'password' },
     ]},
