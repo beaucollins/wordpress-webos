@@ -127,7 +127,6 @@ enyo.kind({
     this.$.settings.setShowing(this.showSettings);
   },
   formatBtnClick:function(type){
-	
 	if (type == 'indent') {
 		var el = document.getElementById('blockquoteButton');
 		var curClass = el.className;
@@ -142,6 +141,8 @@ enyo.kind({
 	else {
 		document.execCommand(type, false, null);
 	}
+	
+	this.$.contentField.forceFocus();
 	
   },
   linkHelper:function(){
