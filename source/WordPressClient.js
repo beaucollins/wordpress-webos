@@ -139,15 +139,52 @@ enyo.kind({
     }, this);
   },
   downloadPosts:function(){
-
     this.$.http.callMethod({
       methodName: 'metaWeblog.getRecentPosts',
       methodParams: [this.account.blogid, this.account.username, this.password, 100]
     }, { url:this.account.xmlrpc, onSuccess:'savePosts' });
+    
+    this.$.http.callMethod({
+        methodName: 'wp.getCategories',
+        methodParams: [this.account.blogid, this.account.username, this.password]
+      }, { url:this.account.xmlrpc, onSuccess:'saveCategories' });
+  },
+  saveCategories:function(sender, response, request){
+	 
+	    var account = this.account;
+	    var categories = response;
+	    var client = this;
+	    this.log("categories", categories);
+
+	    enyo.forEach(categories, function(category){
+	        account.categories.filter('categoryId', '=', category.categoryId).one(function(existing){
+	          if (!existing) {
+	        	  this.log("! existing");
+	       /*     // create it and save it
+	            var p = new enyo.application.models.Category(post);
+	            account.posts.add(p);
+	            enyo.application.persistence.flush(function(){
+	              client.doNewPost(p, account);
+	            });*/
+	          }else{
+	        	  this.log(" existing ");
+	  /*          // update the post
+	            for(field in post){
+	              existing[field] = post[field];
+	            }
+	            
+	            enyo.application.persistence.flush(function(){
+	              client.doUpdatePost(existing, account);
+	            });
+	         */   
+	          }
+	        });
+	      }, this);
+	    
   },
   savePosts:function(sender, response, request){
 
-    var account = this.account;
+	var account = this.account;
     var posts = response;
     var client = this;
     enyo.forEach(posts, function(post){

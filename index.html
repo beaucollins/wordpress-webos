@@ -100,6 +100,19 @@
   });
   
   Account.hasMany('pages', Page, 'account');
+
+  var Category = enyo.application.models.Category = persistence.define('Category', {
+	  categoryDescription: 'TEXT',
+	  categoryId: 'INT',
+	  categoryName: 'TEXT',
+	  description: 'TEXT',
+	  htmlUrl: 'TEXT',
+	  parentId: 'INT',
+	  rssUrl: 'TEXT'
+  });
+  
+  Account.hasMany('categories', Category, 'account');
+  
   
   var global_accounts;
   
