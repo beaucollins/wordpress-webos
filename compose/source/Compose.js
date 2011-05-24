@@ -364,14 +364,18 @@ enyo.kind({
 		  // set up the post object
 		  this.$.titleField.setValue(this.post.title);
 		  this.$.contentField.setValue( this.post.description);
-
-		  /*	if (this.post.post_status == 'draft')
-				this.$.statusSelector.setValue()
-			else if (statusIndex == 3)
-				status = 'pending'
-			else if (statusIndex == 4)
-				status = 'private';
-		   */	
+		  
+		  if (this.post.post_status == 'publish')
+			  this.$.statusSelector.setValue(1)
+		  else
+		  if (this.post.post_status == 'draft')
+			  this.$.statusSelector.setValue(2);
+		  else
+		  if (this.post.post_status == 'pending')
+			  this.$.statusSelector.setValue(3);
+		  else
+			  this.$.statusSelector.setValue(4);
+		   	
 		  this.$.tagsField.setValue(this.post.mt_keywords);
 		  this.$.passwordField.setValue(this.post.wp_password);
 
