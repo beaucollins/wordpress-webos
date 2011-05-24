@@ -68,7 +68,7 @@ enyo.kind({
         onUpdatePost:'refreshPosts',
         onNewPage:'refreshPages',
         onUpdatePage:'refreshPages',
-        onPasswordReady:'refreshPages'
+        onPasswordReady:'refreshClient'
       });
       clients.push(client);
     }, this);
@@ -109,6 +109,7 @@ enyo.kind({
     this.$.sourceList.updateCommentCounts();
   },
   performAccountAction: function(sender, action, account){
+    this.setAccount(sender);
     this.activeAccount = account;
     if (action == 'comments') {
       this.$.content.selectViewByName('comments');      
@@ -130,7 +131,10 @@ enyo.kind({
     };
   },
   setupSubView:function(sender, view){
+    console.log("Setup Sub View", view);
+    var account;
     if (view.name == 'comments' || view.name == 'posts' || view.name == 'pages' || view.name == 'stats') {
+      account = this.account ? this.account : this.activeAccount;
       view.setAccount(this.activeAccount);
     };
   },

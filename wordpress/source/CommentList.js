@@ -20,6 +20,9 @@ enyo.kind({
   clearPage:function(page){
     this.pages[page] = null;
   },
+  getPage:function(page){
+    return this.pages[page];
+  },
   itemAtIndex:function(index){
     var pagesize = this.pageSize;
     var page = Math.floor(index/pagesize);
