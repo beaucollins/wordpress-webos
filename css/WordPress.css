@@ -11,6 +11,7 @@ img {
 }
 
 #wordPress_sourceList {
+	
   /*background:#cecece;*/
 }
 
@@ -23,17 +24,18 @@ img {
 }
 
 .unread-count {
-  min-width:20px;
+  min-width:16px;
   height:22px;
   text-align:center;
   font-size:14px;
-  color:#A52A08;
   font-weight:bold;
-  text-shadow:0 1px 0 #FFF;
+  text-shadow: 0 -1px 0 rgba(0,0,0,1);
   border-width:0 10px;
   line-height:22px;
-  -webkit-border-image:url(../images/unread-count-border.png) 0 10 0 10;
-
+  -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,.65);
+  background: rgba(0,0,0,.25);
+  border-radius: 11px;
+  padding: 0 8px;
 }
 
 #wordPress_middle_client {
@@ -65,12 +67,13 @@ img {
   font-weight:normal;
   color:#464646;
   font-weight: bold;
-  background: #fff;
 }
 
 .account-drawer > .enyo-hflexbox {
-  border-bottom:1px solid rgba(255,255,255,0.1);
+	border-top: 1px solid rgba(255,255,255,.8);
+  border-bottom:1px solid rgba(0,0,0,.5);
   padding:0 0;
+  /*background: -webkit-gradient(linear, left bottom, right bottom, from(rgba(255,255,255,.65)), to(rgba(255,255,255,8)));;*/
   background: #fff;
 }
 
@@ -107,7 +110,9 @@ img {
 }
 
 .enyo-divider-icon {
-  border-radius:5px;
+	border-radius: 3px;
+  margin: 0 9px 0 7px;
+  /*-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.35);*/
 }
 
 .comment-item {
@@ -348,6 +353,11 @@ img {
 .source-item {
 	color: #464646;
 	padding: 9px 10px;
+	text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+}
+
+.source-item img {
+	margin: 0 4px 0 0;
 }
 
 .source-item.active-selection {
@@ -356,6 +366,10 @@ img {
 
 .source-item.active-selection div {
 
+}
+
+.source-item.active-selection div {
+	
 }
 
 /* link color */
@@ -373,7 +387,7 @@ img {
 
 /* Buttons */
 
-.enyo-tool-button {
+.enyo-tool-button.enyo-tool-button-captioned {
 	background-color: #21759B;
 	text-shadow: 0 -1px 0 rgba(0,0,0,.3);
 }
