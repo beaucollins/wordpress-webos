@@ -372,7 +372,7 @@ enyo.kind({
 	  if (this.post) {
 	    
 	  };
-	}
+	},
 	clientReady:function(sender){
 	  //password has been set from the Key Manager now
 	  console.log("Client is ready");
