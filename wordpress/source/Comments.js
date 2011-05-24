@@ -32,6 +32,9 @@ enyo.kind({
     this.$.pane.selectViewByName('detail');
     this.$.detail.setComment(this.comment);
   },
+  highlightComment:function(comment){
+    this.$.comment_list.highlightComment(comment);
+  },
   resize:function(){
     this.inherited(arguments);
     this.$.comment_list.resize();

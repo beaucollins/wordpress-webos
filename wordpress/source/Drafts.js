@@ -25,6 +25,7 @@ enyo.kind({
     this.refresh();
   },
   openPostEditor:function(sender, post){
+    console.log("Opening with account: " + post.account);
     enyo.application.launcher.openComposer(post.account, post);    
   }
 });

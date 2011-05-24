@@ -41,6 +41,19 @@ enyo.kind({
       }
     };
   },
+  selectAccountItem:function(account, action){
+    this.forEachAccountControl(function(control){
+      if (control.account) {
+        console.log("Checking control", control);
+        if (control.account && control.account.account.id == account.id) {
+          //highlight the action
+          control.setSelection(action);
+        }else{
+          control.clearSelection();
+        }
+      };
+    }, this);
+  },
   accountsChanged: function(){
     this.$.list.build();
     if(this.$.list.hasNode()){
@@ -51,7 +64,7 @@ enyo.kind({
     if (this.$.global) {
       this.$.global.setDraftCount(count)
     }else{
-      this.singleAccountListItem.setDraftCount(count);
+      this.$.singleAccountListItem.setDraftCount(count);
     }
   },
   updateCommentCounts: function(){

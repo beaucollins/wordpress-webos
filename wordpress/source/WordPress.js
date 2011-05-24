@@ -50,7 +50,7 @@ enyo.kind({
     // create a signing key
     // should this only be done when needed or can it be called whenever?
     this.loadAccounts();
-    
+    enyo.windowParamsChangeHandler = enyo.bind(this, 'windowParamsChangeHandler');
     // this.runStats();
   },
   loadAccounts: function(){
@@ -128,7 +128,8 @@ enyo.kind({
     this.setAccount(sender);
     this.activeAccount = account;
     if (action == 'comments') {
-      this.$.content.selectViewByName('comments');      
+      this.$.comments.setAccount(account);
+      this.$.content.selectView(this.$.comments);      
     };
     if (action == 'posts') {
       this.$.content.selectViewByName('posts');
@@ -149,7 +150,7 @@ enyo.kind({
   setupSubView:function(sender, view){
     console.log("Setup Sub View", view);
     var account;
-    if (view.name == 'comments' || view.name == 'posts' || view.name == 'pages' || view.name == 'stats') {
+    if ( view.name == 'posts' || view.name == 'pages' || view.name == 'stats') {
       account = this.account ? this.account : this.activeAccount;
       view.setAccount(this.activeAccount);
     };
@@ -226,8 +227,9 @@ enyo.kind({
       account = this.accounts[0].account;
     }
     
-	  params = {'account': account, 'post' : post};
+	  params = {'account': account.id};
     enyo.mixin(params, options);
+    console.log("Compose draft", params);
     enyo.application.launcher.openDraft(params);
   },
   openAppMenuHandler: function() {
@@ -294,6 +296,42 @@ enyo.kind({
     client.newComment(comment);
     this.$.replyForm.close();
     
+  },
+  windowParamsChangeHandler:function(params){
+
+    if (params.action == 'refreshComments') {
+      this.updateCommentCount();
+      if (this.$.content.getView() == this.$.comments) {
+        this.$.comments.refresh();
+      };
+    };
+    if (params.action == 'refreshDrafts') {
+      this.refreshDraftCount();
+      if (this.$.content.getView() == this.$.drafts) {
+        this.$.drafts.refresh();
+      };
+    };
+    if (params.action == 'showComment') {
+      // we should have a comment id
+      var app = this;
+      enyo.application.models.Comment.load(params.comment_id, function(comment){
+        if (comment) {
+          comment.fetch('account', function(account){
+            var client;
+            
+            for (var i=0; i < app.accounts.length; i++) {
+              if (app.accounts[i].account.id == account.id) client = app.activeAccount = app.accounts[i]
+            };
+            
+            app.$.sourceList.selectAccountItem(account, 'comments');
+            app.$.comments.setAccount(client);
+            app.$.content.selectView(app.$.comments);
+            app.$.comments.setComment(comment);
+            app.$.comments.highlightComment(comment);
+          });
+        };
+      });
+    };
   }
   
 });

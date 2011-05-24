@@ -31,6 +31,16 @@ enyo.kind({
       this.selected = null;
     };
   },
+  setSelection:function(selection){
+    var item;
+    if (item = this.$[selection]){
+      if (this.selected == item) return;
+      if (this.selected) this.selected.removeClass('active-selection');
+      this.selected = item;
+      this.selected.addClass('active-selection');
+    }
+    
+  },
   accountChanged:function(){
     if(!this.account) return;
     var account = this.account.account;

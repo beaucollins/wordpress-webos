@@ -164,13 +164,15 @@ enyo.kind({
         }else{
           
           // update the post
-          for(field in post){
-            existing[field] = post[field];
-          }
-          
-          enyo.application.persistence.flush(function(){
-            client.doUpdatePost(existing, account);
-          });
+          if (!existing.local_modifications) {
+            for(field in post){
+              existing[field] = post[field];
+            }
+
+            enyo.application.persistence.flush(function(){
+              client.doUpdatePost(existing, account);
+            });
+          };
           
         }
       });
@@ -189,14 +191,16 @@ enyo.kind({
       // first see if we have the comment already in this account
       // check by the comment's id
       // account.comments.add(new Comment(comment));
-      // console.log("Checking for a comment with id: ", comment.comment_id);
       account.comments.filter('comment_id', '=', comment.comment_id).one(function(existing){
         if (!existing) {
           var c = new enyo.application.models.Comment(comment);
           account.comments.add(c);
           enyo.application.persistence.flush(function(){
-          	
-            if(request.skip_notifications === true){ enyo.application.commentDashboard.notifyComment(c, account) };
+            if(request.skip_notifications !== true){
+              enyo.application.commentDashboard.notifyComment(c, account)
+            }else{
+              console.log("Skipping notifications");
+            }
             client.doNewComment(c, account);
             client.refreshPendingCommentCount();
           });
@@ -245,6 +249,8 @@ enyo.kind({
     console.log("Save draft");
     enyo.application.persistence.flush(function(){
       client.doSaveDraft(post, account);
+      enyo.windows.addBannerMessage("Draft saved", "{}");
+      enyo.application.launcher.draftSaved();
     });
   },
   savePost:function(post){
@@ -257,7 +263,7 @@ enyo.kind({
       // mw.method('editPost', 'post_id', 'username', 'password', 'content', 'publish');
       return http.callMethod({
         methodName:'metaWeblog.editPost',
-        methodParams:[post.postid, account.username, account.password, post, false]
+        methodParams:[post.postid, account.username, account.password, post._data, false]
       }, {onSuccess:'savePostSuccess', post:post});
     }else{
       return http.callMethod({
@@ -272,6 +278,8 @@ enyo.kind({
     var client = this;
     var account = this.account;
     //reload the post from the api
+    enyo.windows.addBannerMessage("Post updated successfully", "{}");
+    
     this.$.http.callMethod({
       methodName:'metaWeblog.getPost',
       methodParams:[post.postid, this.account.username, this.password]
@@ -285,10 +293,11 @@ enyo.kind({
     var account = this.account;
     post.postid = response;
     account.posts.add(post);
+    enyo.windows.addBannerMessage("Post saved successfully", "{}");
     enyo.application.persistence.flush(function(){
       client.$.http.callMethod({
         methodName:'metaWeblog.getPost',
-        methodParams:[post.postid, this.account.username, this.password]
+        methodParams:[post.postid, client.account.username, client.password]
       }, { url:this.account.xmlrpc, onSuccess:'refreshPost', post:post, update:false })
     });
   },

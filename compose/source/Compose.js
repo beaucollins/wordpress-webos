@@ -358,7 +358,7 @@ enyo.kind({
   },
   // this is where fields should be populated with data from the post to be edited
   postChanged:function(){
-	  console.log("Post Changed");
+	  console.log("Post Changed", this.post);
 	  if (this.post) {
 		  console.log("new post obj:", this.post);
 		  // set up the post object
@@ -385,18 +385,33 @@ enyo.kind({
 	  //password has been set from the Key Manager now
 	  console.log("Compose Client is ready");
   },
-  windowParamsChangeHandler: function(inSender, inEvent) {
-	  var p = inEvent.params;
-	  if(typeof(p.account) != "undefined") {
-		  this.setAccount(p.account);
-	  } else {
-		  this.setAccount(null);
-	  } 
-	  if(typeof(p.post) != "undefined") {
-		  this.setPost(p.post);
-	  } else {
-		  this.setPost(null);
-	  } 
+  windowParamsChangeHandler: function(inSender, event) {
+    console.log("Params changed", event.params);
+    var account_id = event.params.account;
+    var post_id = event.params.post;
+    var composer = this;
+    
+    var load_account = function(){
+      enyo.application.models.Account.load(account_id, function(account){
+        composer.setAccount(account)
+      })
+    }
+    if (post_id) {
+      enyo.application.models.Post.load(post_id, function(post){
+        console.log("Found a post? ", post);
+        if (post) {
+          composer.setPost(post);
+          post.fetch('account', function(account){
+            composer.setAccount(account);
+          })
+        }else{
+          load_account();
+        }
+      });
+    }else{
+      console.log("No post to find, finding account");
+      load_account();
+    }
   },
 	tagsClick:function(sender){
 		this.$.tagsField.forceFocus();

@@ -26,8 +26,6 @@ enyo.kind({
 		  launcher.relaunch(params);
 		});
 		
-		
-		
   },
   relaunch:function(params){
     
@@ -49,15 +47,15 @@ enyo.kind({
   openComposer:function(account, post){
     var label = "post-" + post.id;
     var params = {
-      account: account,
-      post: post
+      account: account.id,
+      post: post.id
     }
     enyo.windows.activate(label, "./compose/index.html", params);
   },
   scheduleTimer:function(){
     this.$.setTimer.call({
       'key':'org.wordpress.webos.comment_timer',
-      'in':'00:15:00', // 10 minutes, 5 minutes is the minimum and 24 hours is the maximum
+      'in':'00:10:00', // 10 minutes, 5 minutes is the minimum and 24 hours is the maximum
       'uri':'palm://com.palm.applicationManager/launch',
       'params': enyo.json.to({
         'id':'org.wordpress.webos',
@@ -100,11 +98,20 @@ enyo.kind({
     var wordpress = enyo.windows.fetchWindow('wordpress');
     if (wordpress) {
       // tell it we have updated comments
+      console.log("Update your comment counts!");
+      enyo.windows.setWindowParams(wordpress, {'action':'refreshComments'});
+    };
+  },
+  draftSaved:function(){
+    var wordpress = enyo.windows.fetchWindow('wordpress');
+    if (wordpress) {
+      // tell it we have updated comments
+      enyo.windows.setWindowParams(wordpress, {'action':'refreshDrafts'});
     };
   },
   displayComment:function(sender, comment, account){
     console.log("Open to the comment!");
-    this.openWordPress({comment:comment, account:account});
+    this.openWordPress({action:'showComment', comment_id:comment.id, account_id:account.id});
   }
   
 });

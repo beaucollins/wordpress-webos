@@ -150,8 +150,10 @@ enyo.kind({
     this.$.list.reset();
     this.$.list.refresh();
   },
-  selectionChanged:function(){
-    this.$.list.refresh();
+  highlightComment:function(comment){
+    this.$.list.select(comment.id);
+    console.log("Selected", this.$.list);
+    this.refresh();
   },
   showFilterOptions:function(sender){
     this.$.filterMenu.openAtControl(sender);

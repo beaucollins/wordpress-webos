@@ -158,6 +158,7 @@ XMLRPCBuilder.prototype.encode = function(param){
       struct += key;
       struct += "</name>";
       struct += "<value>";
+      console.log("Encoding", param[key]);
       struct += this.encode(param[key]);
       struct += "</value>";
       struct += "</member>";
