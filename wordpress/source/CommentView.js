@@ -6,17 +6,13 @@ enyo.kind({
     comment:null,
     replies:[]
   },
+  events: {
+    onReply:''
+  },
   components:[
     { kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
     { name:'xmlrpc_client', kind: 'XMLRPCService', onSuccess:'appendConversation', components:[
       { name:'comment_edit', methodName:'wp.editComment', onSuccess:'updatedComment' }
-    ]},
-    { kind:'enyo.Popup', showHideMode:'transition', className:'transitioner fastAnimate', onOpen:'focusReply', openClassName:'scaleFadeIn', scrim:true, components:[
-      { name:'reply', kind: 'enyo.RichText', width:'300px', height:'300px' },
-      { kind: 'HFlexBox', components:[
-        { kind:'enyo.Button', flex:1, caption:'Cancel', onclick:'cancelReply' },
-        { kind:'enyo.Button', flex:1, caption:'Submit', onclick:'publishReply' }
-      ] }
     ]},
     { name:'comment', flex:1, kind:'VFlexBox', components:[
       { kind: 'Scroller', flex:1, components:[
@@ -57,7 +53,7 @@ enyo.kind({
         { name:'trash', caption: 'Trash', onclick:'markComment' },
         { name:'spam', caption: 'Spam', onclick:'markComment' },
         { flex:1 },
-        { caption: 'Reply', onclick:'showReplyWindow' },
+        { caption: 'Reply', onclick:'doReply' },
         { caption: 'View', onclick:'launchBrowser'}
       ] } 
     ] }
@@ -149,7 +145,8 @@ enyo.kind({
     }
   },
   showReplyWindow:function(){
-    this.$.popup.openAtCenter();
+    // this.$.popup.openAtCenter();
+    this.$.replyForm.open();
   },
   hasConversation:function(){
     return this.comment.parent != "0";
@@ -163,24 +160,6 @@ enyo.kind({
   // open up a browser window with the comment's URL
   launchBrowser:function(){
     this.$.palmService.call({target:this.comment.link}); 
-  },
-  focusReply:function(){
-    this.$.reply.forceFocus();
-  },
-  publishReply:function(){
-    var reply = this.$.reply.getValue();
-    this.$.popup.close();
-    		
-    this.$.xmlrpc_client.callMethod({ methodName:'wp.newComment', methodParams:[this.account.blogid, this.account.username, this.account.password, this.comment.post_id, {
-      post_id: this.comment.post_id,
-      content: reply,
-      comment_parent: this.comment.comment_id, //
-      status: 'approve'
-    }]});
-    
-  },
-  cancelReply:function(){
-    this.$.popup.close();
   },
   openEmailToAuthor:function(){
     var query = {

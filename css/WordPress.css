@@ -395,3 +395,11 @@ img {
 .class {
 	background-color: #21759B;
 }
+
+.wp-comment-reply-dialog {
+  left:15%;
+  right:15%;
+  bottom:0;
+  top:0;
+  background:#FFF;
+}

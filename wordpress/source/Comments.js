@@ -5,6 +5,9 @@ enyo.kind({
     account:null,
     comment:null
   },
+  events: {
+    onReply:''
+  },
   components: [
     { name: 'list', width:'350px', components:[
       { name:'comment_list', kind:'wp.CommentList', flex:1, onSelectComment:'showComment' }
@@ -12,7 +15,7 @@ enyo.kind({
     { name: 'right', flex:1, components:[
       { kind:'Pane', flex:1, components:[
         { name:'blank', kind:'Control' },
-        { name:'detail', kind:'wp.CommentView' }
+        { name:'detail', kind:'wp.CommentView', onReply:'doReply' }
       ]}
     ]}
   ],

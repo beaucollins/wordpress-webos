@@ -1,6 +1,7 @@
 
 enyo.depends(
   "source/WordPress.js",
+  "source/ReplyForm.js",
   "source/PasswordReset.js",
   "source/SourceList.js",
   "source/AccountListItem.js",

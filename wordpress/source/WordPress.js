@@ -27,7 +27,7 @@ enyo.kind({
           { name:'main', flex:1, onResize:'resizeSubviews', peekWidth:42, components:[
               { name:'content', flex:1, kind:'Pane', onSelectView:'setupSubView', components:[
                 { name:'blank', kind:'Control', flex:1 },
-                { name:'comments', kind: 'wp.Comments', flex:1, lazy:false },
+                { name:'comments', kind: 'wp.Comments', flex:1, lazy:false, onReply:'replyToComment' },
                 { name:'posts', kind: 'wp.Posts', flex:1, lazy:true },
                 { name:'pages', kind: 'wp.Pages', flex:1, lazy:true },
                 { name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
@@ -38,6 +38,7 @@ enyo.kind({
       { name: 'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' },
     ]},
     // main sliding pane interface
+    { name:'replyForm', scrim:true, onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
     { kind:'AppMenu', components:[
       {name: "edit", kind: "EditMenu"},
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
@@ -253,6 +254,28 @@ enyo.kind({
           this.$.stats_api.call(statsParams);
           enyo.setCookie('statsLastRun', new Date());          
       }
+  },
+  replyToComment:function(sender){
+    this.$.replyForm.setComment(sender.comment);
+    this.$.replyForm.open();
+    console.log("Reply to comment", sender);
+  },
+  cancelCommentReply:function(sender){
+    this.$.replyForm.close();
+  },
+  publishCommentReply:function(sender){
+    var client = this.activeAccount;
+    var reply = sender.getValue();
+    console.log("Reply", sender);
+    var comment = new enyo.application.models.Comment();
+    comment.content = reply;
+    comment.status = 'approve';
+    comment.comment_parent = sender.comment.comment_id;
+    comment.post_id = sender.comment.post_id;
+        
+    client.newComment(comment);
+    this.$.replyForm.close();
+    
   }
   
 });

@@ -189,6 +189,7 @@ enyo.kind({
       // first see if we have the comment already in this account
       // check by the comment's id
       // account.comments.add(new Comment(comment));
+      console.log("Checking for a comment with id: ", comment.comment_id);
       account.comments.filter('comment_id', '=', comment.comment_id).one(function(existing){
         if (!existing) {
           var c = new enyo.application.models.Comment(comment);
@@ -296,5 +297,33 @@ enyo.kind({
     // console.log("API Failure!");
     // console.log(enyo.json.to(response));
     this.$.removeKey.call({keyname:this.passwordKeyName()});
+  },
+  newComment:function(comment){
+    console.log("Publishing new comment", comment);
+    this.account.comments.add(comment);
+    return this.$.http.callMethod({
+      methodName:'wp.newComment',
+      methodParams:[
+        this.account.blogid,
+        this.account.username,
+        this.password,
+        comment.post_id,
+        comment._data
+      ] // methodParams
+    }, { url:this.account.xmlrpc, onSuccess:'publishCommentSuccess', comment:comment });
+    
+  },
+  publishCommentSuccess:function(sender, response, request){
+    console.log("Success!", response);
+    var comment = request.comment;
+    comment.comment_id = response;
+    comment.date_created_gmt = new Date();
+    var client = this;
+    enyo.application.persistence.flush(function(){
+      client.refreshComments();
+    });
+    console.log("Comment has an id now", comment.comment_id, comment);
   }
+  
+  
 })
