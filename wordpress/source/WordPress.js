@@ -31,7 +31,7 @@ enyo.kind({
                 { name:'posts', kind: 'wp.Posts', flex:1, lazy:true },
                 { name:'pages', kind: 'wp.Pages', flex:1, lazy:true },
                 { name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
-                { name:'drafts', kind: 'Control', flex:1, lazy:true },
+                { name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
               ]}
           ]}
       ]},
@@ -40,7 +40,6 @@ enyo.kind({
     // main sliding pane interface
     { name:'replyForm', scrim:true, onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
     { kind:'AppMenu', components:[
-      {name: "edit", kind: "EditMenu"},
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' }
@@ -69,19 +68,34 @@ enyo.kind({
         onUpdatePost:'refreshPosts',
         onNewPage:'refreshPages',
         onUpdatePage:'refreshPages',
-        onPasswordReady:'refreshClient'
+        onPasswordReady:'refreshClient',
+        onSaveDraft:'refreshDrafts',
+        onSavePost:'refreshPosts'
       });
       clients.push(client);
     }, this);
     this.setAccounts(clients);
     this.accountChanged();
     this.commentChanged();
+    this.refreshDraftCount();
   },
   refreshClient:function(sender){
     console.log("Refresh client");
     sender.downloadComments();
     sender.downloadPages();
     sender.downloadPosts();
+  },
+  refreshDrafts:function(){
+    this.refreshDraftCount();
+    if (this.$.content.getView() == this.$.drafts) {
+      this.$.drafts.refresh();
+    };
+  },
+  refreshDraftCount:function(){
+    var sourceList = this.$.sourceList;
+    enyo.application.models.Post.all().filter('local_modifications', '=', 'true').count(function(draft_count){
+      sourceList.setDraftCount(draft_count);
+    });
   },
   refreshComments:function(sender, comment, account){
     if (this.$.content.getView() == this.$.comments) {
@@ -91,6 +105,7 @@ enyo.kind({
     };
   },
   refreshPosts:function(sender, post, account){
+    this.refreshDraftCount();
     if (this.$.content.getView() == this.$.posts) {
       if (this.$.posts.account == sender) {
         console.log("Refresh posts!")
@@ -137,6 +152,9 @@ enyo.kind({
     if (view.name == 'comments' || view.name == 'posts' || view.name == 'pages' || view.name == 'stats') {
       account = this.account ? this.account : this.activeAccount;
       view.setAccount(this.activeAccount);
+    };
+    if (view.name == 'drafts') {
+      view.refresh();
     };
   },
   resizeHandler: function(){

@@ -7,12 +7,12 @@ enyo.kind({
   },
   components: [
     { name:'list', width:'350px', components:[
-      { kind:'wp.PostList', flex:1, onSelectPost:'selectPost', onAcquirePage:'acquirePosts', onRefresh:'downloadPosts' }
+      { kind:'wp.PostList', flex:1, onSelectPost:'selectPost', onAcquirePage:'acquirePosts', onRefresh:'refreshPosts' }
     ]},
     { name:'right', flex:1, components:[
       { kind:'Pane', flex:1, components:[
         { name:'blank', kind:'Control', flex:1 },
-        { name:'detail', kind:'wp.PostView', flex:1 }
+        { name:'detail', kind:'wp.PostView', onEdit:'openPostEditor', flex:1 }
       ]}
     ]}
   ],
@@ -24,7 +24,7 @@ enyo.kind({
     this.$.detail.setAccount(this.account);
   },
   refresh:function(){
-    this.$.postList.refresh();
+    this.$.postList.accountChanged();
     this.$.detail.postChanged();
   },
   resize:function(){
@@ -45,6 +45,7 @@ enyo.kind({
     this.account.account
       .posts
       .order('date_created_gmt', false)
+      .filter('postid', '!=', '0')
       .limit(pageSize)
       .skip(page*pageSize)
       .list(function(posts){
@@ -57,8 +58,11 @@ enyo.kind({
     //   this.$.xmlrpc_client.callMethod({methodParams:[this.account.blogid, this.account.username, this.account.password, ((page+1) * this.$.list.pageSize)]}, { page:page });
     // };
   },
-  downloadPosts:function(){
+  refreshPosts:function(){
     this.account.downloadPosts();    
+  },
+  openPostEditor:function(sender, post){
+    enyo.application.launcher.openComposer(this.account.account, post);    
   }
   
 });

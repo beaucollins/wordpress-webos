@@ -32,19 +32,26 @@ enyo.kind({
     if (this.accounts.length == 1 && inIndex == 0) {
       return [{kind:'wp.SingleAccountListItem', account:this.accounts[0], onSelect:'selectAccountAction'}];
     }else if (this.accounts.length > 1) {
-      // if (inIndex == 0) {
-      //   return [{kind:'wp.GlobalListItem', onSelect:'selectAccountAction', name:'global'}];
-      // }else{
-        if(item = this.accounts[inIndex]){
+      if (inIndex == 0) {
+        return [{kind:'wp.GlobalListItem', onSelect:'selectAccountAction', name:'global'}];
+      }else{
+        if(item = this.accounts[inIndex-1]){
           return [{kind:'wp.AccountListItem', account:item, onSelect:"selectAccountAction"}];
         }
-      // }
+      }
     };
   },
   accountsChanged: function(){
     this.$.list.build();
     if(this.$.list.hasNode()){
       this.$.list.render();
+    }
+  },
+  setDraftCount:function(count){
+    if (this.$.global) {
+      this.$.global.setDraftCount(count)
+    }else{
+      this.singleAccountListItem.setDraftCount(count);
     }
   },
   updateCommentCounts: function(){

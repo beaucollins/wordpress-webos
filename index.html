@@ -18,7 +18,7 @@
   enyo.application.models = {};
   var Account = enyo.application.models.Account = persistence.define('Account', {
     blogName: 'TEXT',
-    blogid: 'TEXT',
+    blogid: 'INT',
     isAdmin: 'BOOLEAN',
     url: 'TEXT',
     username: 'TEXT',
@@ -35,7 +35,7 @@
     date_created_gmt: 'DATE',
     link: 'TEXT',
     parent: 'TEXT',
-    post_id: 'TEXT',
+    post_id: 'INT',
     post_title: 'TEXT',
     status: 'TEXT',
     type: 'TEXT',
@@ -57,14 +57,15 @@
     mt_text_more: 'TEXT',
     permaLink: 'TEXT',
     post_status: 'TEXT',
-    postid: 'TEXT',
+    postid: 'INT',
     title: 'TEXT',
-    userid: 'TEXT',
+    userid: 'INT',
     wp_author_display_name: 'TEXT',
     wp_author_id: 'TEXT',
     wp_password: 'TEXT',
     wp_post_form: 'TEXT',
-    wp_slug: 'TEXT'
+    wp_slug: 'TEXT',
+    local_modifications: 'BOOLEAN'
     
   });
   
@@ -88,13 +89,14 @@
     title: 'TEXT',
     userid: 'TEXT',
     wp_author: 'TEXT',
-    wp_author_id: 'TEXT',
+    wp_author_id: 'INT',
     wp_page_order: 'INT',
     wp_page_parent_id: 'INT',
     wp_page_parent_title: 'INT',
     wp_page_template: 'TEXT',
     wp_password: 'TEXT',
-    wp_slug: 'TEXT'
+    wp_slug: 'TEXT',
+    local_modifications: 'BOOLEAN'
   });
   
   Account.hasMany('pages', Page, 'account');

@@ -241,6 +241,8 @@ enyo.kind({
     var client = this;
     var account = this.account;
     account.posts.add(post);
+    post.local_modifications = true
+    console.log("Save draft");
     enyo.application.persistence.flush(function(){
       client.doSaveDraft(post, account);
     });
@@ -265,21 +267,46 @@ enyo.kind({
       }, {onSuccess:'savePostSuccess', post:post});
     };
   },
+  updatePostSuccess:function(sender, response, request){
+    var post = request.post;
+    var client = this;
+    var account = this.account;
+    //reload the post from the api
+    this.$.http.callMethod({
+      methodName:'metaWeblog.getPost',
+      methodParams:[post.postid, this.account.username, this.password]
+    }, { url:this.account.xmlrpc, onSuccess:'refreshPost', post:post, update:true })
+  },
   savePostSuccess:function(sender, response, request){
     // if it was a metaWeblog.editPost request response will be boolean true
     // otherwise it will be the new id of the post
     var post = request.post;
     var client = this;
     var account = this.account;
-    if (response === true) {
-      
-    }else{
-      post.postid = response;
-      account.posts.add(post);
-      enyo.application.persistence.flush(function(){
-        client.doSavePost(post, account);
-      });
+    post.postid = response;
+    account.posts.add(post);
+    enyo.application.persistence.flush(function(){
+      client.$.http.callMethod({
+        methodName:'metaWeblog.getPost',
+        methodParams:[post.postid, this.account.username, this.password]
+      }, { url:this.account.xmlrpc, onSuccess:'refreshPost', post:post, update:false })
+    });
+  },
+  refreshPost:function(sender, response, request){
+    var post = request.post;
+    var client = this;
+    var account = this.account;
+    for(field in response){
+      post[field] = response[field];
     }
+    enyo.application.persistence.flush(function(){
+      this.doSavePost(post, account);
+      if (request.update) {
+        this.doUpdatePost(post, account);
+      }else{
+        this.doNewPost(post, account);
+      }
+    })
   },
   onSavePost:function(sender, response, request){
     console.log("Saved the post!", response);

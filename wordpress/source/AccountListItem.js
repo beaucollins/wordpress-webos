@@ -2,7 +2,8 @@ enyo.kind({
   name:'wp.AccountListItem',
   kind:'Control',
   published: {
-    account:null
+    account:null,
+    draftCount:0
   },
   events: {
     onSelect:""
@@ -21,6 +22,7 @@ enyo.kind({
     this.accountChanged();
     this.$.drafts.hide();
     this.selected = null;
+    this.draftCountChanged();
     // blavatar!
   },
   clearSelection:function(){
@@ -53,6 +55,9 @@ enyo.kind({
     this.selected.addClass('active-selection');
     this.doSelect(item.action, this.account);
     return true;
+  },
+  draftCountChanged:function(){
+    this.$.drafts.setUnreadCount(this.draftCount);
   }
 });
 

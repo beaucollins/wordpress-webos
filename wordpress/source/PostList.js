@@ -64,6 +64,7 @@ enyo.kind({
   setupPost:function(sender, index){
     var post;
     if (post = this.$.dataPage.itemAtIndex(index)) {
+      console.log("Set up post");
       // console.log("Setting up index: ", index, post);
       if (post.title.trim() == '') {
         this.$.title.addClass('untitled');
@@ -72,8 +73,13 @@ enyo.kind({
         this.$.title.removeClass('untitled');
         this.$.title.setContent(post.title);
       };
-
-      var status = post.post_status || post.page_status;
+      
+      var status;
+      if (post.postid == 0) {
+        status = 'draft';
+      }else{
+        status = post.post_status || post.page_status || 'draft';
+      }
       this.$.postStatus.setContent($L(this.kPostStatus[status]));
       this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(index))
       if (post.date_created_gmt) {
@@ -84,18 +90,9 @@ enyo.kind({
       return true;
     };
   },
-  gotPosts:function(sender, response, request){
-    var trimmed = request.page*this.$.list.pageSize;
-    var posts = response.slice(trimmed);
-    this.$.dataPage.storePage(request.page, posts);
-    this.$.list.refresh();
-  },
   accountChanged:function(){
     this.$.list.punt();
     this.$.dataPage.clear();
-    if (this.account == null) {
-      return;
-    };
     this.$.list.reset();
     
   },

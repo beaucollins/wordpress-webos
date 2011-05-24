@@ -6,7 +6,7 @@ enyo.kind({
     post:null
   },
   events: {
-    
+    onEdit:''
   },
   components: [
     { name:"xmlrpc_client", kind:"XMLRPCService" },
@@ -35,13 +35,13 @@ enyo.kind({
     this.$.content.setContent(this.post.description);
     this.$.scroller.setScrollPositionDirect(0,0);
   },
-  openEditor:function(){
-    enyo.application.launcher.openComposer(this.account.account, this.post);
-  },
   openPostURL:function(sender){
 	  //launches a new window with the preview view
 	  console.log("Launching Preview");
 	  params = {'account': this.account.account, 'post': this.post};
 	  enyo.windows.activate("Post Preview", "./postPreview.html", params);
+  },
+  openEditor:function(sender){
+    this.doEdit(this.post);
   }
 });
