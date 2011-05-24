@@ -32,13 +32,13 @@ enyo.kind({
     if (this.accounts.length == 1 && inIndex == 0) {
       return [{kind:'wp.SingleAccountListItem', account:this.accounts[0], onSelect:'selectAccountAction'}];
     }else if (this.accounts.length > 1) {
-      if (inIndex == 0) {
-        return [{kind:'wp.GlobalListItem', onSelect:'selectAccountAction', name:'global'}];
-      }else{
-        if(item = this.accounts[inIndex-1]){
+      // if (inIndex == 0) {
+      //   return [{kind:'wp.GlobalListItem', onSelect:'selectAccountAction', name:'global'}];
+      // }else{
+        if(item = this.accounts[inIndex]){
           return [{kind:'wp.AccountListItem', account:item, onSelect:"selectAccountAction"}];
         }
-      }
+      // }
     };
   },
   accountsChanged: function(){

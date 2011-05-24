@@ -16,14 +16,16 @@ enyo.kind({
     ]},
     { name:'comment', flex:1, kind:'VFlexBox', components:[
       { kind: 'Scroller', flex:1, components:[
-        { name:'header', components:[
-          { kind:'Control', kind:'HFlexBox', className:'enyo-item first', components:[
+        { name:'header', kind:'Header', components:[
+          { kind:'Control', kind:'HFlexBox', components:[
             { name:'avatar', kind:'Image', className:'avatar-large', src:'./images/icons/avatar-large.png', width:'62',height:'62' },
             { kind:'VFlexBox', flex:1, components:[
               { name:'authorName' },
               { kind:'HFlexBox', components:[
+                { kind:'Button', caption: 'Reply', onclick:'doReply', className:'enyo-button-blue' },
+                { kind:'Button', caption: 'View', onclick:'launchBrowser'},
                 { name:'authorEmail', caption:'Email', kind:'Button', onclick:'openEmailToAuthor' },
-                { name:'authorURL', caption:'Web Page', kind:'Button', onclick:'openBrowserToAuthor' },
+                { name:'authorURL', caption:'Home Page', kind:'Button', onclick:'openBrowserToAuthor' },
                 { flex:1 }
               ]}
             ]}
@@ -53,9 +55,6 @@ enyo.kind({
         { name:'unapprove', caption: 'Unapprove', onclick:'markComment' },
         { name:'trash', caption: 'Trash', onclick:'markComment' },
         { name:'spam', caption: 'Spam', onclick:'markComment' },
-        { flex:1 },
-        { caption: 'Reply', onclick:'doReply' },
-        { caption: 'View', onclick:'launchBrowser'}
       ] } 
     ] }
   ],

@@ -11,7 +11,7 @@ enyo.kind({
     this.$.drafts.show();
     this.$.posts.hide();
     this.$.pages.hide();
-    this.$.stats.hide();
+    // this.$.stats.hide();
   },
   updateCommentCount:function(){
     // this.$.comments.setUnreadCount(this.account.pendingCommentCount);

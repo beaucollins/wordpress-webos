@@ -176,11 +176,11 @@ enyo.kind({
       });
     }, this);
   },
-  refreshComments:function(){
+  refreshComments:function(skip_notifications){
     var options = {};
     this.$.getComments.callMethod({
       methodParams:[this.account.blogid, this.account.username, this.password, options]
-    }, { url: this.account.xmlrpc } );
+    }, { url: this.account.xmlrpc, skip_notifications:skip_notifications } );
   },
   checkNewComments:function(sender, response, request){
     var account = this.account;
@@ -196,7 +196,7 @@ enyo.kind({
           account.comments.add(c);
           enyo.application.persistence.flush(function(){
           	
-            enyo.application.commentDashboard.notifyComment(c, account);
+            if(request.skip_notifications === true){ enyo.application.commentDashboard.notifyComment(c, account) };
             client.doNewComment(c, account);
             client.refreshPendingCommentCount();
           });
@@ -320,9 +320,35 @@ enyo.kind({
     comment.date_created_gmt = new Date();
     var client = this;
     enyo.application.persistence.flush(function(){
-      client.refreshComments();
+      client.getComment(comment.comment_id);
     });
     console.log("Comment has an id now", comment.comment_id, comment);
+  },
+  getComment:function(comment_id){
+    this.$.http.callMethod({
+      methodName:'wp.getComment',
+      methodParams:[this.account.blogid, this.account.username, this.account.password, comment_id]
+    }, { url:this.account.xmlrpc, onSuccess:'getCommentSuccess' });
+  },
+  getCommentSuccess:function(sender, response, success){
+    var account = this.account;
+    var client = this;
+    this.account.comments.filter('comment_id', '=', response.comment_id).one(function(comment){
+      if (existing) {
+        for(field in response){
+          comment[field] = response[field];
+        }
+        enyo.application.persistence.flush(function(){
+          client.doUpdateComment(comment, account);
+        });
+      }else{
+        comment = new enyo.application.models.Comment(response)
+        account.comments.add(comment);
+        enyo.application.persistence.flush(function(){
+          client.doNewComment(comment, account);
+        });
+      }
+    });
   }
   
   
