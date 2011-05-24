@@ -1,6 +1,6 @@
 
 enyo.kind({
-  name:'wp.TestShit',
+  name:'wp.TestStuff',
   kind:'VFlexBox',
   components:[
     { kind:'enyo.PageHeader', content:"WordPress Tests" },
