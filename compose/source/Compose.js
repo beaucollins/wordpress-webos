@@ -109,16 +109,6 @@ enyo.kind({
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
 	linkBtnClickFunctionBind = enyo.bind(this, "linkHelper");
   },
-  windowParamsChangeHandler: function(inSender, inEvent) {
-	 var p = inEvent.params;
-	 if(typeof(p.account) != "undefined") {
-		  this.account = p.account;
-		  console.log("new account set on the compose view");
-	 } else {
-		 this.account = null;
-		 console.log("no account set on the compose view");
-	 }
-  },
   toggleSettings:function(sender){
     this.$.composer.addRemoveClass('expanded-mode', sender.depressed);
     this.setShowSettings(sender.depressed);
@@ -358,25 +348,52 @@ enyo.kind({
 	  //TODO: call the upload function here
 	  //this.$.selectedFiles.setContent("Selected Files : "+enyo.json.stringify(msg));
   },
-	//close the error dialog
+  //close the error dialog
   closeDialog: function() {
-		this.$.errorDialog.close();
-	},
-	accountChanged:function(){
+	  this.$.errorDialog.close();
+  },
+  accountChanged:function(){
 	  console.log("Account Changed:", this.account);
 	  this.$.client.setAccount(this.account);
-	},
-	// this is where fields should be populated with data from the post to be edited
-	postChanged:function(){
-	  console.log("Post Changed:", this.post);
+  },
+  // this is where fields should be populated with data from the post to be edited
+  postChanged:function(){
+	  console.log("Post Changed");
 	  if (this.post) {
-	    
+		  console.log("new post obj:", this.post);
+		  // set up the post object
+		  this.$.titleField.setValue(this.post.title);
+		  this.$.contentField.setValue( this.post.description);
+
+		  /*	if (this.post.post_status == 'draft')
+				this.$.statusSelector.setValue()
+			else if (statusIndex == 3)
+				status = 'pending'
+			else if (statusIndex == 4)
+				status = 'private';
+		   */	
+		  this.$.tagsField.setValue(this.post.mt_keywords);
+		  this.$.passwordField.setValue(this.post.wp_password);
+
 	  };
-	},
-	clientReady:function(sender){
+  },
+  clientReady:function(sender){
 	  //password has been set from the Key Manager now
 	  console.log("Compose Client is ready");
-	}
+  },
+  windowParamsChangeHandler: function(inSender, inEvent) {
+	  var p = inEvent.params;
+	  if(typeof(p.account) != "undefined") {
+		  this.setAccount(p.account);
+	  } else {
+		  this.setAccount(null);
+	  } 
+	  if(typeof(p.post) != "undefined") {
+		  this.setPost(p.post);
+	  } else {
+		  this.setPost(null);
+	  } 
+  },
 });
  
  enyo.kind({

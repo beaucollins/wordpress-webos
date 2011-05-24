@@ -47,7 +47,7 @@ enyo.kind({
     this.draftCount ++;
   },
   openComposer:function(account, post){
-    var label = "postID : " + post.id;
+    var label = "post-" + post.id;
     var params = {
       account: account,
       post: post
