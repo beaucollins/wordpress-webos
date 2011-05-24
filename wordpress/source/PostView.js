@@ -22,7 +22,7 @@ enyo.kind({
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
-      { caption: 'Edit' },
+      { caption: 'Edit', onclick:"openEditor" },
       { caption: 'Preview', onclick:'openPostURL' }
     ]}
   ],
@@ -34,6 +34,9 @@ enyo.kind({
     this.$.title.setContent(this.post.title);
     this.$.content.setContent(this.post.description);
     this.$.scroller.setScrollPositionDirect(0,0);
+  },
+  openEditor:function(){
+    enyo.application.launcher.openComposer(this.account.account, this.post);
   },
   openPostURL:function(sender){
 	  //launches a new window with the preview view

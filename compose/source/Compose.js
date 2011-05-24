@@ -103,6 +103,7 @@ enyo.kind({
     this.inherited(arguments);
     mediaFiles = new Array();
     this.accountChanged();
+    this.postChanged();
     showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showImageFilePicker"); //js clousure. showWebOsImageFilePickerFunctionBind is declared globally and is used to access a function inside this obj
     showWebOsVideoFilePickerFunctionBind = enyo.bind(this, "showVideoFilePicker");
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
@@ -366,6 +367,12 @@ enyo.kind({
 	  console.log("Client:", this.account);
 	  this.$.client.setAccount(this.account);
 	},
+	// this is where fields should be populated with data from the post to be edited
+	postChanged:function(){
+	  if (this.post) {
+	    
+	  };
+	}
 	clientReady:function(sender){
 	  //password has been set from the Key Manager now
 	  console.log("Client is ready");

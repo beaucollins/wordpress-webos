@@ -42,11 +42,17 @@ enyo.kind({
     enyo.windows.activate('wordpress', basePath + 'wordpress/index.html', params);
   },
   openDraft:function(params){
-    var composeLabel = Math.round(Math.random() * 100); // just for fun
     var label = "draft-" + this.draftCount;
     enyo.windows.activate(label, "./compose/index.html", params);
     this.draftCount ++;
-    
+  },
+  openComposer:function(account, post){
+    var label = "post-" + post.id;
+    var params = {
+      account: account,
+      post: post
+    }
+    enyo.windows.activate(label, "./compose/index.html", params);
   },
   scheduleTimer:function(){
     this.$.setTimer.call({
