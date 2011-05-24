@@ -13,7 +13,7 @@ enyo.kind({
       { action:'comments', name:'comments', label:$L('Comments'), icon:'../images/icons/comments-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
       { action:'posts', name:'posts', label:$L('Posts'), icon:'../images/icons/posts-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
       { action:'pages', name:'pages', label:$L('Pages'), icon:'../images/icons/pages-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
-      // { action:'stats', name:'stats', label:$L('Stats'), icon:'../images/icons/posts-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
+      { action:'stats', name:'stats', label:$L('Stats'), icon:'../images/icons/posts-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
       { action:'drafts', name:'drafts', label:$L('Drafts'), icon:'../images/icons/drafts-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick', unreadCount:0 }
     ]}
   ],

@@ -99,13 +99,14 @@ enyo.kind({
     }
   },
   gotViews:function(sender, response, request) {
+    this.$.statsChart.selectView(this.$.statsChartPlot);
+    if (response == null) return false;
     var data = [];
     var labels = [];
     for (var i = response.length - 1; i >= 0; i--){
         data[i] = [i, response[i].views];
         labels[i] = response[i].date;
     };
-    this.$.statsChart.selectView(this.$.statsChartPlot);
     jQuery.plot(jQuery('#' + this.$.statsChartPlot.id), [{
         "label":"Views",
         "data":data
@@ -160,6 +161,7 @@ enyo.kind({
       this.$.statsClicksList.refresh();
   },
   setupReferrerRow: function(inSender, inIndex){
+      if (this.referrerData == null) return false;
       var row = this.referrerData[inIndex];
       if (row) {
           this.$.refTitle.setContent(row.referrer);
@@ -170,8 +172,10 @@ enyo.kind({
       }
   },
   setupPostsRow: function(inSender, inIndex){
+      if (this.postsData == null) return false;
       var row = this.postsData[inIndex];
       if (row) {
+          console.log('row: ' + row);
           this.$.postTitle.setContent(row.post_title);
           this.$.postValue.setContent(row.views);
           return true;          
@@ -180,6 +184,7 @@ enyo.kind({
       }
   },
   setupKeywordsRow: function(inSender, inIndex){
+      if (this.keywordsData == null) return false;
       var row = this.keywordsData[inIndex];
       if (row) {
           this.$.keywordTitle.setContent(row.searchterm);
@@ -190,6 +195,7 @@ enyo.kind({
       }
   },
   setupClicksRow: function(inSender, inIndex){
+      if (this.clicksData == null) return false;
       var row = this.clicksData[inIndex];
       if (row) {
           this.$.clickTitle.setContent(row.click);
