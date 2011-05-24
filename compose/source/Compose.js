@@ -328,8 +328,7 @@ enyo.kind({
 	  } else {
 		  currentMediaFile.setRemoteURL(response.url); //TODO check for shortcode here
 		  var mediaHTML = currentMediaFile.getMediaHTML();
-	  	  //this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML);
-		  tinyMCE.get('txtEntry').setContent( tinyMCE.get('txtEntry').getContent() + mediaHTML );
+	  	  this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML);
 	  }
 	  
 	  this.$.errorMessage.setContent('Img uploaded');
@@ -364,18 +363,19 @@ enyo.kind({
 		this.$.errorDialog.close();
 	},
 	accountChanged:function(){
-	  console.log("Client:", this.account);
+	  console.log("Account Changed:", this.account);
 	  this.$.client.setAccount(this.account);
 	},
 	// this is where fields should be populated with data from the post to be edited
 	postChanged:function(){
+	  console.log("Post Changed:", this.post);
 	  if (this.post) {
 	    
 	  };
 	},
 	clientReady:function(sender){
 	  //password has been set from the Key Manager now
-	  console.log("Client is ready");
+	  console.log("Compose Client is ready");
 	}
 });
  

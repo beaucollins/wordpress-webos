@@ -40,9 +40,8 @@ enyo.kind({
   },
   openPostURL:function(sender){
 	  //launches a new window with the preview view
-	  params = {'account': this.account, 'post': this.post};
-	  options = {};
-	  enyo.mixin(params, options);
+	  console.log("Launching Preview");
+	  params = {'account': this.account.account, 'post': this.post};
 	  enyo.windows.activate("Post Preview", "./postPreview.html", params);
   }
 });

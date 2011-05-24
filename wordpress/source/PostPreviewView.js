@@ -11,23 +11,32 @@ enyo.kind({
 	 this.inherited(arguments);
   },
   components: [
-	{name:"loadingScrim",  kind: "Scrim", layoutKind: "VFlexLayout", align: "center", pack: "center", components: [
+    { name:'previewPasswordManager', kind:'wp.WordPressClient', onPasswordReady:'passwordReady', onPasswordInvalid:'passwordInvalid' },
+	{ name:"loadingScrim",  kind: "Scrim", layoutKind: "VFlexLayout", align: "center", pack: "center", components: [
 		{name: "loadingSpinner", kind: "SpinnerLarge"},
 	]},
-    {name: "postPreviewResponse", kind: "HtmlContent"}
+    {name: "postPreviewResponse", kind: "HtmlContent"},
   ],
-  openPostURL:function(){
+  passwordReady:function(sender){
+     console.log("We have the password now: " + sender.password);
+     this.openPostURL(sender.password);
+  },
+  passwordInvalid:function(sender){
+     console.log("The password was missing or the XML-RPC api received a 403 fault code");
+  },
+  openPostURL:function(password){
 	  this.showScrim(true);
 	  //TODO: check the connection to host here!!!
-	  if (this.post.permaLink && this.post.permaLink.trim() != "" ) {
+	  if (this.post.permaLink && this.post.permaLink.trim() != "" && password != null) {
 		  var loginURL = this.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
-		  var postdata='log='+this.account.username+'&pwd='+this.account.password+'&redirect_to='+this.post.permaLink;
+		 // var postdata='log='+this.account.username+'&pwd='+password+'&redirect_to='+this.post.permaLink;
 		  var htmlForm ='<form method="post" action="'+loginURL+'" id="loginform" name="loginform" style="visibility:hidden">'
 		  +'<input type="text" tabindex="10" size="20" value="'+this.account.username+'" class="input" id="user_login" name="log"></label>'
-		  +'<input type="password" tabindex="20" size="20" value="'+this.account.password+'" class="input" id="user_pass" name="pwd"></label>'
+		  +'<input type="password" tabindex="20" size="20" value="'+password+'" class="input" id="user_pass" name="pwd"></label>'
 		  +'<input type="submit" tabindex="100" value="Log In" class="button-primary" id="wp-submit" name="wp-submit">'
 		  +'<input type="hidden" value="'+ this.post.permaLink +'" name="redirect_to">'
 		  +'</form>';
+		  console.log(htmlForm);
 		  this.$.postPreviewResponse.setContent(htmlForm);
 		  loginform.submit();
 	  } else {
@@ -82,8 +91,7 @@ enyo.kind({
   },
   windowParamsChangeHandler: function(inSender, inEvent) {
 	  var p = inEvent.params;
-	  this.log(window.name, p);
-	  
+	  this.log("PostPreview Parameters", p);
 	  if(typeof(enyo.windowParams.account) == "undefined") {
 		  //load local preview	  
 		  var title = enyo.windowParams.title; 
@@ -96,7 +104,7 @@ enyo.kind({
 		  //load remote preview
 		  this.account = enyo.windowParams.account;
 		  this.post = enyo.windowParams.post;
-		  this.openPostURL();
+		  this.$.previewPasswordManager.setAccount(this.account);
 	  }
   },
   showScrim: function(inShowing) {
