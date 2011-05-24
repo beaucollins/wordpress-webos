@@ -32,18 +32,20 @@ function toggle(obj) {
 	    </form>
 	</div>
 	<div id="toolbarButtons">
-		<button class="formatBtn" id="strongButton" onClick="formatBtnClickFunctionBind('bold')">b</button>
-		<button class="formatBtn" type="button" id="emButton" onClick="formatBtnClickFunctionBind('italic')">i</button>
+		<button class="formatBtn" id="strongButton" onClick="formatBtnClickFunctionBind('bold')">B</button>
+		<button class="formatBtn" type="button" id="emButton" onClick="formatBtnClickFunctionBind('italic')">I</button>
 		<button class="formatBtn" type="button" id="strikethroughButton" onClick="formatBtnClickFunctionBind('strikethrough')">ABC</button>
-		<button class="formatBtn" type="button" id="linkButton" onClick="linkBtnClickFunctionBind()">link</button>
-		<button class="formatBtn" type="button" id="uButton" onClick="formatBtnClickFunctionBind('underline')">u</button>
-		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('indent');toggle(this)">b-quote</button>
-		
-		<button class="formatBtn" type="button" id="leftButton" onClick="formatBtnClickFunctionBind('justifyleft')">left</button>
-		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifycenter')">center</button>
-		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifyright')">right</button>
-		
-		
+		<button class="formatBtn" type="button" id="uButton" onClick="formatBtnClickFunctionBind('underline')">U</button>
+		<div class="spacer"></div>
+		<button class="formatBtn" type="button" onClick="formatBtnClickFunctionBind('insertorderedlist')"><img src="images/icon_ul.png" /></button>
+		<button class="formatBtn" type="button" onClick="formatBtnClickFunctionBind('insertunorderedlist')"><img src="images/icon_ol.png" /></button>
+		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('indent');toggle(this)"><img src="images/icon_bquote.png" /></button>
+		<button class="formatBtn" type="button" id="linkButton" onClick="linkBtnClickFunctionBind()"><img src="images/icon_link.png" /></button>
+		<div class="spacer"></div>
+		<button class="formatBtn" type="button" id="leftButton" onClick="formatBtnClickFunctionBind('justifyleft')"><img src="images/icon_left.png" /></button>
+		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifycenter')"><img src="images/icon_center.png" /></button>
+		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifyright')"><img src="images/icon_right.png" /></button>
+		<div class="spacer"></div>
 		<button class="formatBtn" type="button" id="imageButton" onClick="showWebOsImageFilePickerFunctionBind()">image</button>
 		<button class="formatBtn" type="button" id="videoButton" onClick="showWebOsVideoFilePickerFunctionBind()">video</button>
 	</div>

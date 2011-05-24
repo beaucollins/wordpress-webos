@@ -68,7 +68,7 @@ body {
 }
 
 #compose_contentField_input {
-	margin: 10px;
+	margin: 10px 10px 10px 6px;
 	padding-right: 20px;
 }
 
@@ -150,7 +150,10 @@ body {
 	text-decoration: underline;
 }
 
-
+.spacer {
+	display:inline;
+	margin-right: 8px;
+}
 
 #compose_htmlContent {
 	padding: 5px 5px 2px;
@@ -178,15 +181,22 @@ body {
 }*/
 
 .formatBtn {
-	background: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#dfdfdf), to(#fff));
+	background: url(../images/btn_bg.png) repeat-x;
 	border: 1px solid #ccc;
 	border-bottom-color: #aaa;
-	min-width: 30px;
+	min-width: 32px;
 	border-radius: 5px;
 	padding: 0 8px;
 	margin: 0;
-	font-size: 16px;
-	line-height: 26px;
+	font-size: 14px;
+	line-height: 32px;
+	font-family: Georgia;
+	color: #616161;
+}
+
+.formatBtn img{
+	position: relative;
+	top: 5px;
 }
 
 .btnActive {

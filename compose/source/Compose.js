@@ -132,7 +132,6 @@ enyo.kind({
 		var el = document.getElementById('blockquoteButton');
 		var curClass = el.className;
 		if (curClass.search('btnActive') > -1) {
-			console.log('made it here ' + el.className);
 			document.execCommand('outdent', false, null);
 		}
 		else {
