@@ -49,7 +49,7 @@ enyo.kind({
       .skip(page*pageSize)
       .list(function(posts){
         if (posts.length > 0) {
-          console.log("Data for the page:", page, posts);
+          // console.log("Data for the page:", page, posts);
           that.$.postList.setPage(page, posts);          
         };
       });

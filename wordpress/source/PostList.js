@@ -64,7 +64,7 @@ enyo.kind({
   setupPost:function(sender, index){
     var post;
     if (post = this.$.dataPage.itemAtIndex(index)) {
-      console.log("Setting up index: ", index, post);
+      // console.log("Setting up index: ", index, post);
       if (post.title.trim() == '') {
         this.$.title.addClass('untitled');
         this.$.title.setContent("Untitled");

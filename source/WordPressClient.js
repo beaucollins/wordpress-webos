@@ -189,7 +189,7 @@ enyo.kind({
       // first see if we have the comment already in this account
       // check by the comment's id
       // account.comments.add(new Comment(comment));
-      console.log("Checking for a comment with id: ", comment.comment_id);
+      // console.log("Checking for a comment with id: ", comment.comment_id);
       account.comments.filter('comment_id', '=', comment.comment_id).one(function(existing){
         if (!existing) {
           var c = new enyo.application.models.Comment(comment);
