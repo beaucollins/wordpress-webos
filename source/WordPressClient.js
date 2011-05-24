@@ -27,7 +27,9 @@ enyo.kind({
     onUpdatePage:'',
     onPendingComments:'',
     onSavePost:'',
-    onSaveDraft:''
+    onSaveDraft:'',
+    onNewCategory:'',
+    onUpdateCategory:''
   },
   kind: 'Component',
   components: [
@@ -154,32 +156,26 @@ enyo.kind({
 	    var account = this.account;
 	    var categories = response;
 	    var client = this;
-	    this.log("categories", categories);
-
-	    enyo.forEach(categories, function(category){
-	        account.categories.filter('categoryId', '=', category.categoryId).one(function(existing){
+      var category;
+	    enyo.forEach(categories, function(cat){
+	        account.categories.filter('categoryId', '=', cat.categoryId).one(function(existing){
 	          if (!existing) {
-	        	  this.log("! existing");
-	       /*     // create it and save it
-	            var p = new enyo.application.models.Category(post);
-	            account.posts.add(p);
+	            var category = new enyo.application.models.Category(cat);
+	            account.categories.add(category);
 	            enyo.application.persistence.flush(function(){
-	              client.doNewPost(p, account);
-	            });*/
-	          }else{
-	        	  this.log(" existing ");
-	  /*          // update the post
-	            for(field in post){
-	              existing[field] = post[field];
-	            }
-	            
-	            enyo.application.persistence.flush(function(){
-	              client.doUpdatePost(existing, account);
+	              client.doNewCategory(category, account);
 	            });
-	         */   
+	            
+	          }else{
+	        	  for(field in cat){
+	        	    existing[field] = cat[field];
+	        	  }
+	        	  enyo.application.persistence.flush(function(){
+	        	    client.doUpdateCategory(existing, account);
+	        	  })
 	          }
 	        });
-	      }, this);
+	    }, this);
 	    
   },
   savePosts:function(sender, response, request){
