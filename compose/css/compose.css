@@ -220,6 +220,13 @@ body {
 	color: #21759B;
 	}
 
+.more {
+	display: block;
+	height: 1px;
+	width: 100%;
+	border-bottom: 1px dotted #ccc;
+}
+
 /* tags / password text fields 
 
 #compose_settings .enyo-input {

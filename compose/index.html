@@ -37,17 +37,19 @@ function toggle(obj) {
 		<button class="formatBtn" type="button" id="strikethroughButton" onClick="formatBtnClickFunctionBind('strikethrough')">ABC</button>
 		<button class="formatBtn" type="button" id="uButton" onClick="formatBtnClickFunctionBind('underline')">U</button>
 		<div class="spacer"></div>
-		<button class="formatBtn" type="button" onClick="formatBtnClickFunctionBind('insertorderedlist')"><img src="images/icon_ul.png" /></button>
-		<button class="formatBtn" type="button" onClick="formatBtnClickFunctionBind('insertunorderedlist')"><img src="images/icon_ol.png" /></button>
+		<button class="formatBtn" type="button" onClick="formatBtnClickFunctionBind('insertunorderedlist')"><img src="images/icon_ul.png" /></button>
+		<button class="formatBtn" type="button" onClick="formatBtnClickFunctionBind('insertorderedlist')"><img src="images/icon_ol.png" /></button>
 		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('indent');toggle(this)"><img src="images/icon_bquote.png" /></button>
 		<button class="formatBtn" type="button" id="linkButton" onClick="linkBtnClickFunctionBind()"><img src="images/icon_link.png" /></button>
+		<button class="formatBtn" type="button" id="moreButton" onClick="formatBtnClickFunctionBind('more')"><img src="images/icon_more.png" /></button>
 		<div class="spacer"></div>
 		<button class="formatBtn" type="button" id="leftButton" onClick="formatBtnClickFunctionBind('justifyleft')"><img src="images/icon_left.png" /></button>
 		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifycenter')"><img src="images/icon_center.png" /></button>
 		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifyright')"><img src="images/icon_right.png" /></button>
+		<!-- no media buttons for now
 		<div class="spacer"></div>
 		<button class="formatBtn" type="button" id="imageButton" onClick="showWebOsImageFilePickerFunctionBind()">image</button>
-		<button class="formatBtn" type="button" id="videoButton" onClick="showWebOsVideoFilePickerFunctionBind()">video</button>
+		<button class="formatBtn" type="button" id="videoButton" onClick="showWebOsVideoFilePickerFunctionBind()">video</button>-->
 	</div>
 <script type="text/javascript">
   var params = enyo.windowParams;

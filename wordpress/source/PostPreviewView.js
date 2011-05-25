@@ -42,7 +42,7 @@ enyo.kind({
 	  } else {
 		//fallback to  local preview	    
 		  var alert_msg = "Sorry, something went wrong during preview. A simple preview is shown below.";
-		  this.loadlocalPreview(alert_msg, this.post.title,  this.post.description, this.post.mt_keywords, this.post.categories); 
+		  this.loadlocalPreview(alert_msg, this.post.title,  this.post.description + this.post.mt_text_more, this.post.mt_keywords, this.post.categories); 
 	  }
   },
   loadlocalPreview:function(alert_msg, title, content, tags, categories){

@@ -11,6 +11,8 @@ enyo.kind({
 	selectionEnd:0,
 	startNode:null,
 	endNode:null,
+	isInList:false,
+	enterCtr:0,
     post:null
   },
   currentMediaFile : null, //@protected
@@ -87,10 +89,10 @@ enyo.kind({
           { name:'main', kind:'VFlexBox', flex:1, components:[
             { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:'Title' },
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
-			{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
+			//{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
-			{ name: 'contentField', kind: 'enyo.RichText' },
+			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped' },
 			]},
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:'Settings', onclick:'toggleSettings' },
 			] },
@@ -109,6 +111,23 @@ enyo.kind({
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
 	linkBtnClickFunctionBind = enyo.bind(this, "linkHelper");
   },
+  keyTapped:function(inSender, inEvent){
+	//this keycode nonsense is here because the enyo.RichText field will not insert a new bullet in a list when tapping the enter key.
+	if (inEvent.keyCode == 13 && this.isInList) {
+		this.setEnterCtr(this.enterCtr + 1);
+		if (this.enterCtr == 2) {
+			document.execCommand('outdent', false, null);
+			this.setEnterCtr(0);
+			this.setIsInList(false);
+		}
+		else {
+			document.execCommand('inserthtml', false, '<li>');
+		}
+		console.log(this.enterCtr);
+	}
+	else 
+	 this.setEnterCtr(0);
+},
   toggleSettings:function(sender){
     this.$.composer.addRemoveClass('expanded-mode', sender.depressed);
     this.setShowSettings(sender.depressed);
@@ -117,6 +136,12 @@ enyo.kind({
     this.$.settings.setShowing(this.showSettings);
   },
   formatBtnClick:function(type){
+	
+	if (type == 'insertorderedlist' || type == 'insertunorderedlist') {
+		console.log('list: ' + this.isInList);
+		this.setIsInList(!this.isInList);
+	}
+	
 	if (type == 'indent') {
 		var el = document.getElementById('blockquoteButton');
 		var curClass = el.className;
@@ -127,6 +152,9 @@ enyo.kind({
 			document.execCommand(type, false, null);
 		}
 		
+	}
+	else if (type == 'more') {
+		document.execCommand('inserthtml', false, '<!--more--><div class="more"></div><br>');
 	}
 	else {
 		document.execCommand(type, false, null);
@@ -202,7 +230,10 @@ enyo.kind({
     
     // set up the post object
     post.title = this.$.titleField.getValue();
-    post.description = this.$.contentField.getValue();
+	//get rid of the more div if it's there, only need it on the app side
+	var content = this.$.contentField.getHtml();
+	content = content.replace('<div class="more"></div><br>', '');
+    post.description = content;
 
 	var statusIndex = this.$.statusSelector.getValue();
 	var status = 'publish';
@@ -363,8 +394,12 @@ enyo.kind({
 		  console.log("new post obj:", this.post);
 		  // set up the post object
 		  this.$.titleField.setValue(this.post.title);
-		  this.$.contentField.setValue( this.post.description);
-		  
+		  //add the special more div
+		  if (this.post.mt_text_more != '')
+		  	this.$.contentField.setValue(this.post.description + '<!--more--><div class="more"></div><br>' + this.post.mt_text_more);
+		  else
+			this.$.contentField.setValue(this.post.description);
+		  	
 		  if (this.post.post_status == 'publish')
 			  this.$.statusSelector.setValue(1)
 		  else

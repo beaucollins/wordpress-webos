@@ -32,7 +32,7 @@ enyo.kind({
     }
     console.log(this.post);
     this.$.title.setContent(this.post.title);
-    this.$.content.setContent(this.post.description);
+    this.$.content.setContent(this.post.description + this.post.mt_text_more);
     this.$.scroller.setScrollPositionDirect(0,0);
   },
   openPostURL:function(sender){
