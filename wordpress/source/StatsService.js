@@ -24,10 +24,7 @@ enyo.kind({
     this.$.statsPasswordManager.setAccount(this.account);
   }, 
   passwordReady:function(sender){
-    console.log("We have the password now: " + sender.password);
     this.password = sender.password;
-    console.log("account.password = " + this.account.password);
-    console.log("account.account.password = " + this.account.account.password);
     this.getApiKey();
   },
   passwordInvalid:function(sender){
@@ -40,17 +37,23 @@ enyo.kind({
     } else {
         // this.$.apiKeyDiscover.setUsername(this.account.account.username);
         // this.$.apiKeyDiscover.setPassword(this.password);
-        this.$.apiKeyDiscover.call({
+        var credentials = this.account.account.username + ":" + this.account.password;
+        this.$.apiKeyDiscover.call({},{
+          onSuccess:'gotApiKey',
+          onFailure:'failedApiKey',
           headers:{
-            'Authorization' : "Basic " + enyo.string.toBase64(this.account.account.username, this.account.password)
+            'Authorization' : "Basic " + enyo.string.toBase64(credentials),
           }
-        },{onSuccess:'gotApiKey'});
+        });
     }
   },
   gotApiKey:function(sender, response, request) {
     console.log('Got API key: ' + response.userinfo.apikey);
     this.apiKey = response.userinfo.apikey;
     this.doApiReady();
+  },
+  failedApiKey:function(sender, response, request){
+    console.log("Did not get the api key");
   },
   makeRequestProps:function(inProps){
     var props = this.inherited(arguments);
