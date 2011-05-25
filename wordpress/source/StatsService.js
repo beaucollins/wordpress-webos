@@ -16,41 +16,50 @@ enyo.kind({
       account:null,
       callParams:[]
   },
+  events: {
+    onApiReady:'',
+  },
+  accountChanged: function() {
+    console.log('StatsService accountChanged');
+    this.$.statsPasswordManager.setAccount(this.account);
+  }, 
   passwordReady:function(sender){
-      console.log("We have the password now: " + sender.password);
+    console.log("We have the password now: " + sender.password);
+    this.password = sender.password;
+    console.log("account.password = " + this.account.password);
+    console.log("account.account.password = " + this.account.account.password);
+    this.getApiKey();
   },
   passwordInvalid:function(sender){
-      console.log("The password was missing or the XML-RPC api received a 403 fault code");
-      // perhaps prompt for the password
-  },
-  hasApiKey:function() {
-    return (this.account.apiKey != null);
+    console.log("The password was missing or the XML-RPC api received a 403 fault code");
+    // perhaps prompt for the password
   },
   getApiKey:function() {
-    if (this.hasApiKey()) {
-        return this.account.apiKey;
+    if (this.apiKey) {
+        return this.apiKey;
     } else {
         this.$.apiKeyDiscover.setUsername(this.account.account.username);
-        this.$.apiKeyDiscover.setPassword(this.account.account.password);
+        this.$.apiKeyDiscover.setPassword(this.password);
         this.$.apiKeyDiscover.call({},{onSuccess:'gotApiKey'});
     }
   },
   gotApiKey:function(sender, response, request) {
-      this.account.apiKey = response.userinfo.apikey;
-      this.owner.setAccount(this.account);
+    console.log('Got API key: ' + response.userinfo.apikey);
+    this.apiKey = response.userinfo.apikey;
+    this.doApiReady();
   },
   makeRequestProps:function(inProps){
     var props = this.inherited(arguments);
     // we need to force our params here
     props.callParams = this.callParams;
     return enyo.mixin(props);
-    ;
   },
   callStats:function(params, options){
-      params.api_key = this.account.apiKey;
+      params.api_key = this.apiKey;
       params.format = 'json';
       params.blog_id = this.account.account.blogid;
       this.callParams = params;
+      console.log('Calling stats');
       this.call({}, options);
   }
 });

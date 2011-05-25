@@ -5,7 +5,7 @@ enyo.kind({
     account:null
   },
   components: [
-    { name:'statsService', kind:'StatsService'},
+    { name:'statsService', kind:'StatsService', onApiReady:'statsServiceReady'},
     { name:'statsChart', kind:'Pane', height:'210px', components:[
         { name:'statsChartSpinner', kind:'enyo.SpinnerLarge' },
         { name:'statsChartPlot', style:'width: 790px; height: 200px' }
@@ -88,15 +88,14 @@ enyo.kind({
     };
     
     this.$.statsService.setAccount(this.account);
-    if (this.$.statsService.hasApiKey()) {
-        this.$.statsService.callStats({table:'views', period:'days', days:30}, {onSuccess:'gotViews'});
-        this.$.statsService.callStats({table:'referrers', summarize:'1'}, {onSuccess:'gotReferrers'});
-        this.$.statsService.callStats({table:'postviews', summarize:'1'}, {onSuccess:'gotPosts'});
-        this.$.statsService.callStats({table:'searchterms', summarize:'1'}, {onSuccess:'gotKeywords'});
-        this.$.statsService.callStats({table:'clicks', summarize:'1'}, {onSuccess:'gotClicks'});            
-    } else {
-        this.$.statsService.getApiKey();
-    }
+  },
+  statsServiceReady:function() {
+    console.log('Stats service ready, getting stats');
+    this.$.statsService.callStats({table:'views', period:'days', days:30}, {onSuccess:'gotViews'});
+    this.$.statsService.callStats({table:'referrers', summarize:'1'}, {onSuccess:'gotReferrers'});
+    this.$.statsService.callStats({table:'postviews', summarize:'1'}, {onSuccess:'gotPosts'});
+    this.$.statsService.callStats({table:'searchterms', summarize:'1'}, {onSuccess:'gotKeywords'});
+    this.$.statsService.callStats({table:'clicks', summarize:'1'}, {onSuccess:'gotClicks'});
   },
   gotViews:function(sender, response, request) {
     this.$.statsChart.selectView(this.$.statsChartPlot);
