@@ -38,9 +38,13 @@ enyo.kind({
     if (this.apiKey) {
         return this.apiKey;
     } else {
-        this.$.apiKeyDiscover.setUsername(this.account.account.username);
-        this.$.apiKeyDiscover.setPassword(this.password);
-        this.$.apiKeyDiscover.call({},{onSuccess:'gotApiKey'});
+        // this.$.apiKeyDiscover.setUsername(this.account.account.username);
+        // this.$.apiKeyDiscover.setPassword(this.password);
+        this.$.apiKeyDiscover.call({
+          headers:{
+            'Authorization' : "Basic " + enyo.string.toBase64(this.account.account.username, this.account.password)
+          }
+        },{onSuccess:'gotApiKey'});
     }
   },
   gotApiKey:function(sender, response, request) {
