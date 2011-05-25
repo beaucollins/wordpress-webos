@@ -16,7 +16,7 @@ enyo.kind({
     post:null
   },
   currentMediaFile : null, //@protected
-  postCategorieObjs :[true,false,true,false,true,false,true,false,false,false,false],
+  accountCategories : null,
   components:[
   { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onSavePost:'savePostSuccess' },
 	{	name: "uploadMediaFile", 
@@ -209,10 +209,28 @@ enyo.kind({
 		}
 		
   },
+  updateCategoriesField:function(newCategoriesObj) {
+	 console.log("Data for the categories:", newCategoriesObj);	
+	 if(newCategoriesObj == null) {
+		 this.accountCategories = null; 
+		 this.$.categoriesVirtualRepeterField.render();
+	 } else {
+		 this.accountCategories = newCategoriesObj;
+		 this.$.categoriesVirtualRepeterField.render();
+	 }
+  },
   getCategoryItem: function(inSender, inIndex) {
-	  if (inIndex < this.postCategorieObjs.length) {
-		  this.$.categoryCheckbox.setChecked(this.postCategorieObjs[inIndex]);
-		  this.$.categoryLabel.setContent("category " + inIndex);
+	  if (this.accountCategories != null && inIndex < this.accountCategories.length) {  
+		  var currentCategory = this.accountCategories[inIndex];
+		  this.$.categoryLabel.setContent(currentCategory.categoryName);
+		  if(this.post && this.post.categories) {
+			  for(var i= 0; i < this.post.categories.length; i++) {
+				  if(currentCategory.categoryName == this.post.categories[i]) {
+					  this.$.categoryCheckbox.setChecked(true);
+					  break;
+				  }
+			  }
+		  }
 		  return true;
 	  } 
   },
@@ -220,8 +238,8 @@ enyo.kind({
 	  var index = this.$.categoriesVirtualRepeterField.fetchRowIndex();
 	  this.log("The user clicked on item number: " + index);
 	  //this.log(inSender);
-	  this.postCategorieObjs[index] = inSender.getChecked();
-	  this.log(this.postCategorieObjs);
+	 // this.selectedCategories[index] = inSender.getChecked();
+	  //this.post.categories[i]
   },
   savePost:function(inSender){
     // if the composer was given a post model, we'll just use that
@@ -271,15 +289,13 @@ enyo.kind({
     console.log("Draft was saved", post, account);
   },
   showPreview:function() {
-	  var categories = new Array();
-	  for(var i = 0; i< this.postCategorieObjs.length; i++) {
-		  if( this.postCategorieObjs[i] == true)
-			  categories.push("category-"+i);
+	  var categoriesForPreview = new Array();
+	  if(this.post && this.post.categories) {
+		  categoriesForPreview = this.post.categories;
 	  }
-	  
 	  //launches a new window with the preview view
 	  params = {'title' : this.$.titleField.getValue(), 'content' :  this.$.contentField.getValue(), 
-			  'tags': this.$.tagsField.getValue(), 'categories': categories};
+			  'tags': this.$.tagsField.getValue(), 'categories': categoriesForPreview };
 	  options = {};
 	  enyo.mixin(params, options);
 	  enyo.windows.activate("Post Preview", "../wordpress/postPreview.html", params);
@@ -386,6 +402,17 @@ enyo.kind({
   accountChanged:function(){
 	  console.log("Account Changed:", this.account);
 	  this.$.client.setAccount(this.account);
+	  var that = this;
+	  //update the categories field
+	  if(this.account != null) {		  
+		  this.account.categories
+		  .order('categoryName', true)
+		  .list(function(categories){
+			  that.updateCategoriesField(categories);
+		  });
+	  } else {
+		  that.updateCategoriesField(null); 
+	  }
   },
   // this is where fields should be populated with data from the post to be edited
   postChanged:function(){

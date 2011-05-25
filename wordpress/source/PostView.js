@@ -33,6 +33,11 @@ enyo.kind({
     console.log(this.post);
     this.$.title.setContent(this.post.title);
     this.$.content.setContent(this.post.description + this.post.mt_text_more);
+    if(this.post.categories && this.post.categories.length > 0) {
+    	 this.$.categories.setContent( 'Categories: '+ this.post.categories.join(', '));
+	  } 
+    this.$.date.setContent('Date: ' + this.post.date_created_gmt);
+    this.$.author.setContent('Author: ' + this.post.wp_author_display_name);
     this.$.scroller.setScrollPositionDirect(0,0);
   },
   openPostURL:function(sender){
