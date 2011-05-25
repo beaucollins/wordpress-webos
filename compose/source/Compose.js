@@ -210,7 +210,7 @@ enyo.kind({
 		
   },
   updateCategoriesField:function(newCategoriesObj) {
-	 console.log("Data for the categories:", newCategoriesObj);	
+	 //console.log("Data for the categories:", newCategoriesObj);	
 	 if(newCategoriesObj == null) {
 		 this.accountCategories = null; 
 		 this.$.categoriesVirtualRepeterField.render();
@@ -236,16 +236,32 @@ enyo.kind({
   },
   categoryCheckboxClicked: function(inSender) {
 	  var index = this.$.categoriesVirtualRepeterField.fetchRowIndex();
-	  this.log("The user clicked on item number: " + index);
-	  //this.log(inSender);
-	 // this.selectedCategories[index] = inSender.getChecked();
-	  //this.post.categories[i]
+	  this.log("The user clicked on category index: " + index);
+
+	  //get the category name
+	  var catName = this.accountCategories[index].categoryName;
+	  this.log("The user clicked on category name: " + catName);
+
+	  if(this.post.categories == null)
+		  this.post.categories = new Array();
+
+	  var checked = inSender.getChecked();
+
+	  if(checked) {
+		  this.post.categories.push(catName);
+		  this.log("selected the category", catName);
+	  } else {		  
+		  for(var i= 0; i < this.post.categories.length; i++) {
+			  if(catName == this.post.categories[i]) {
+				  this.post.categories.splice(i,1);
+				  this.log("deselected the category", catName);
+				  this.log("new categories array",this.post.categories );
+				  break;
+			  }
+		  }
+	  }
   },
   savePost:function(inSender){
-    // if the composer was given a post model, we'll just use that
-    // otherwise let's instantiate a new post
-    var post = this.post ? this.post : new enyo.application.models.Post();
-    
     // set up the post object
     post.title = this.$.titleField.getValue();
 	//get rid of the more div if it's there, only need it on the app side
@@ -418,7 +434,6 @@ enyo.kind({
   postChanged:function(){
 	  console.log("Post Changed", this.post);
 	  if (this.post) {
-		  console.log("new post obj:", this.post);
 		  // set up the post object
 		  this.$.titleField.setValue(this.post.title);
 		  //add the special more div
@@ -436,7 +451,10 @@ enyo.kind({
 		  if (this.post.post_status == 'pending')
 			  this.$.statusSelector.setValue(3);
 		  else
+		  if (this.post.post_status == 'private')
 			  this.$.statusSelector.setValue(4);
+		  else
+		  this.$.statusSelector.setValue(2);
 		   	
 		  this.$.tagsField.setValue(this.post.mt_keywords);
 		  this.$.passwordField.setValue(this.post.wp_password);
@@ -448,7 +466,6 @@ enyo.kind({
 	  console.log("Compose Client is ready");
   },
   windowParamsChangeHandler: function(inSender, event) {
-    console.log("Params changed", event.params);
     var account_id = event.params.account;
     var post_id = event.params.post;
     var composer = this;
@@ -468,11 +485,13 @@ enyo.kind({
           })
         }else{
           load_account();
+          composer.setPost(new enyo.application.models.Post());
         }
       });
     }else{
       console.log("No post to find, finding account");
       load_account();
+      composer.setPost(new enyo.application.models.Post());
     }
   },
 	tagsClick:function(sender){
