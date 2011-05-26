@@ -33,7 +33,8 @@ enyo.kind({
   },
   getApiKey:function() {
     if (this.apiKey) {
-        return this.apiKey;
+      console.log('gotApiKey: already had api key');
+      this.doApiReady();
     } else {
         // this.$.apiKeyDiscover.setUsername(this.account.account.username);
         // this.$.apiKeyDiscover.setPassword(this.password);
