@@ -19,7 +19,7 @@ enyo.kind({
         { kind:'Control', kind:'HFlexBox', components:[
           { name:'avatar', kind:'Gravatar', className:'avatar-large', defaultImage:'../images/icons/avatar-backup.png', size:'62' },
           { kind:'VFlexBox', flex:1, components:[
-            { name:'authorName' },
+            { name:'authorName', className:'wp-post-title' },
             { kind:'HFlexBox', components:[
               { kind:'Button', caption: 'Reply', onclick:'doReply', className:'enyo-button-blue' },
               { kind:'Button', caption: 'View', onclick:'launchBrowser'},
@@ -31,7 +31,7 @@ enyo.kind({
         ] }
       ]},
       { kind: 'Scroller', flex:1, components:[
-        { name:'body', className:'enyo-item' },
+        { name:'body', className:'enyo-item wp-post-content' },
         { kind:'HFlexBox', className:'enyo-item', components:[
           { content:'On:', className:'row-label' },
           { name:'subject', flex:1}

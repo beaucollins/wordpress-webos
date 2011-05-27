@@ -24,7 +24,7 @@ enyo.kind({
             { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', onCreateDraft:'composeDraft', onAddBlog:'addNewBlog' }
           ]},
           // column for showing what is selected from the source list
-          { name:'main', flex:1, onResize:'resizeSubviews', peekWidth:42, components:[
+          { name:'main', className:'main-pane', flex:1, onResize:'resizeSubviews', peekWidth:42, components:[
               { name:'content', flex:1, kind:'Pane', onSelectView:'setupSubView', components:[
                 { name:'blank', kind:'Control', flex:1 },
                 { name:'comments', kind: 'wp.Comments', flex:1, lazy:false, onReply:'replyToComment' },
