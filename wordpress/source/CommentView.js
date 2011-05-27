@@ -15,22 +15,22 @@ enyo.kind({
       { name:'comment_edit', methodName:'wp.editComment', onSuccess:'updatedComment' }
     ]},
     { name:'comment', flex:1, kind:'VFlexBox', components:[
-      { kind: 'Scroller', flex:1, components:[
-        { name:'header', kind:'Header', components:[
-          { kind:'Control', kind:'HFlexBox', components:[
-            { name:'avatar', kind:'Image', className:'avatar-large', src:'./images/icons/avatar-large.png', width:'62',height:'62' },
-            { kind:'VFlexBox', flex:1, components:[
-              { name:'authorName' },
-              { kind:'HFlexBox', components:[
-                { kind:'Button', caption: 'Reply', onclick:'doReply', className:'enyo-button-blue' },
-                { kind:'Button', caption: 'View', onclick:'launchBrowser'},
-                { name:'authorEmail', caption:'Email', kind:'Button', onclick:'openEmailToAuthor' },
-                { name:'authorURL', caption:'Home Page', kind:'Button', onclick:'openBrowserToAuthor' },
-                { flex:1 }
-              ]}
+      { name:'header', kind:'Header', components:[
+        { kind:'Control', kind:'HFlexBox', components:[
+          { name:'avatar', kind:'Gravatar', className:'avatar-large', defaultImage:'../images/icons/avatar-backup.png', size:'62' },
+          { kind:'VFlexBox', flex:1, components:[
+            { name:'authorName' },
+            { kind:'HFlexBox', components:[
+              { kind:'Button', caption: 'Reply', onclick:'doReply', className:'enyo-button-blue' },
+              { kind:'Button', caption: 'View', onclick:'launchBrowser'},
+              { name:'authorEmail', caption:'Email', kind:'Button', onclick:'openEmailToAuthor' },
+              { name:'authorURL', caption:'Home Page', kind:'Button', onclick:'openBrowserToAuthor' },
+              { flex:1 }
             ]}
-          ] }
-        ]},
+          ]}
+        ] }
+      ]},
+      { kind: 'Scroller', flex:1, components:[
         { name:'body', className:'enyo-item' },
         { kind:'HFlexBox', className:'enyo-item', components:[
           { content:'On:', className:'row-label' },
@@ -116,13 +116,14 @@ enyo.kind({
     this.$.subject.setContent(this.comment.post_title);
     this.$.scroller.setScrollPositionDirect(0,0);
     
-    var avatar = new Image();
-    avatar.onload = enyo.bind(this, function(){
-      this.$.avatar.setSrc(avatar.src);
-    });
-    avatar.src = enyo.application.makeGravatar(this.comment.author_email, {
-      size:62
-    });
+    // var avatar = new Image();
+    // avatar.onload = enyo.bind(this, function(){
+    //   this.$.avatar.setSrc(avatar.src);
+    // });
+    // avatar.src = enyo.application.makeGravatar(this.comment.author_email, {
+    //   size:62
+    // });
+    this.$.avatar.setEmail(this.comment.author_email);
     
 
     this.$.body.setContent(this.comment.content);

@@ -71,7 +71,9 @@ enyo.kind({
     { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', onAcquirePage:'acquireComments', onDiscardPage:'discardComments', components: [
       { name:'item', kind:'Item', tapHighlight:true, onclick:'selectComment', className:'comment-item', layoutKind:'VFlexLayout', components:[
         { name:'header', kind:'HFlexBox', components: [
-          { kind:'Control', className:'comment-left-col', components:[{ name:'avatar', width:'30px', height:'30px', kind:'Image', onerror:'imageLoadError', className:'comment-list-avatar', src:'images/icons/default-avatar.png' }] },
+          { kind:'Control', className:'comment-left-col', components:[
+            { name:'avatar', size:'30', kind:'Gravatar', className:'comment-list-avatar' }
+          ] },
           { kind:'VFlexBox', flex:1, components:[
             { kind:'HFlexBox', components:[
               { name:'author', flex:1, className:'comment-author' },
@@ -97,7 +99,7 @@ enyo.kind({
   },
   setupComment:function(inSender, inIndex){
     if(comment = this.$.dataPage.itemAtIndex(inIndex)){      
-      this.$.avatar.setSrc(enyo.application.makeGravatar(comment.author_email, {size:30}));
+      this.$.avatar.setEmail(comment.author_email, {size:30});
       this.$.author.setContent(comment.author);
       this.$.timestamp.setContent(TimeAgo(comment.date_created_gmt));
       this.$.commentContent.setContent(TruncateText(StripHTML(comment.content)));

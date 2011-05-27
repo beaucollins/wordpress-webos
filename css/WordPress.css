@@ -137,10 +137,17 @@ img {
 	font-weight: normal;
 }
 
+
 .comment-list-avatar {
+  margin: 0 auto;
+}
+
+.comment-list-avatar img {
+  display:block;
   padding: 2px;
   border: 1px solid #ccc;
   background: #fff;
+  margin:-2px;
 }
 
 .comment-content {
