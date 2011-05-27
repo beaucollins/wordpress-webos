@@ -469,8 +469,39 @@ img {
 	text-overflow: ellipsis;
 }
 
-.post-author, .post-date, .post-categories-label, .post-categories {
+.wp-item-meta {
+  padding:10px;
   font-size:14px;
+  border-bottom:1px solid #CCC;
+  background: -webkit-gradient(linear, left top, left bottom, from(#FFF), to(#EFEFEF));
+}
+
+.wp-item-meta-label {
+  text-transform:uppercase;
+  font-weight:lighter;
+  color:#999;
+  padding-right:10px;
+}
+
+.wp-item-meta-content {
+  overflow:hidden;
+  white-space: nowrap;
+  text-overflow:ellipsis;
+}
+
+.wp-disclosure-arrow {
+  width:30px;
+  height:30px;
+  margin:-5px;
+}
+
+.wp-comment-subject {
+  padding-left:20px;
+  background:url(../images/icons/post-tiny.png) no-repeat -3px 0px;
+}
+
+.post-author, .post-date, .post-categories-label, .post-categories {
+  font-size:16px;
   color:#333;
   font-weight:normal;
   text-shadow: #FFF 0 1px 0;

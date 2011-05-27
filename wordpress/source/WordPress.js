@@ -278,7 +278,6 @@ enyo.kind({
   replyToComment:function(sender){
     this.$.replyForm.setComment(sender.comment);
     this.$.replyForm.open();
-    console.log("Reply to comment", sender);
   },
   cancelCommentReply:function(sender){
     this.$.replyForm.close();

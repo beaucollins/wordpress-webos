@@ -5,7 +5,9 @@ enyo.kind({
     onPublish:''
   },
   published: {
-    comment:null
+    comment:null,
+    authorEmail:'',
+    authorName:''
   },
   components:[
     { kind:'Header', className:'enyo-toolbar-light', components:[
@@ -17,6 +19,9 @@ enyo.kind({
       { name:'replyContent', kind:'enyo.RichText', onChange:'updateContent' }
     ]}
   ],
+  create:function(){
+    this.inherited(arguments);
+  },
   open:function(options){
     options = enyo.mixin({
       value:''

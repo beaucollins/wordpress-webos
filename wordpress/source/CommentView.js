@@ -30,12 +30,13 @@ enyo.kind({
           ]}
         ] }
       ]},
+      { kind:'HFlexBox', className:'wp-item-meta', onclick:'launchBrowser', components:[
+        { content:'On:', className:'wp-item-meta-label' },
+        { name:'subject', flex:1, className:'wp-item-meta-content wp-comment-subject' },
+        { className:'wp-disclosure-arrow' }
+      ]},
       { kind: 'Scroller', flex:1, components:[
-        { name:'body', className:'enyo-item wp-post-content' },
-        { kind:'HFlexBox', className:'enyo-item', components:[
-          { content:'On:', className:'row-label' },
-          { name:'subject', flex:1}
-        ]},
+        { name:'body', className:'wp-post-content' },
         // { name:'conversationHeader', className:'enyo-item', content:'Conversation:' },
         // { name:'conversation', kind:'VirtualRepeater', onGetItem:'getReply', components:[
         //   { name:'item', className: 'enyo-item', components:[

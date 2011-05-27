@@ -17,11 +17,11 @@ enyo.kind({
           { name:'date', className:'post-date', flex:1, content:'Date' },
           { name:'author', className:'post-author', content:'Author'}
         ]},
-        { name:'category_row', kind:'HFlexBox', className:'post-categories-row', components:[
-          { content: $L('Categories'), className:'post-categories-label'},
-          { name:'categories', className:'post-categories', content:'Categories' }
-        ]}
       ]}
+    ]},
+    { name:'category_row', kind:'HFlexBox', className:'wp-item-meta', components:[
+      { content: $L('Categories'), className:'wp-item-meta-label'},
+      { name:'categories', content:'Categories' }
     ]},
     { kind:'Scroller', flex:1, components:[
       { name:'content', className:'wp-post-content' }
