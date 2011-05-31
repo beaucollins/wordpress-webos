@@ -122,7 +122,7 @@ enyo.kind({
 		  return true;
   },
   contentFieldTextChange : function(inSender, inEvent) {
-	  this.categoriesChanged == true
+	  this.categoriesChanged = true;
   },
   postChangedByUser :function(){
 
