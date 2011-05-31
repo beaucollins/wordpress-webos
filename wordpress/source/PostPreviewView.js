@@ -92,7 +92,7 @@ enyo.kind({
   windowParamsChangeHandler: function(inSender, inEvent) {
 	  var p = inEvent.params;
 	  this.log("PostPreview Parameters", p);
-	  if(typeof(enyo.windowParams.account) == "undefined") {
+	  if(typeof(enyo.windowParams.post) == "undefined") {
 		  //load local preview	  
 		  var title = enyo.windowParams.title; 
 		  var content = enyo.windowParams.content;

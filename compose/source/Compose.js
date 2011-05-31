@@ -111,6 +111,9 @@ enyo.kind({
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
 	linkBtnClickFunctionBind = enyo.bind(this, "linkHelper");
   },
+  hasChanges :function(){
+	return false;  
+  },
   keyTapped:function(inSender, inEvent){
 	//this keycode nonsense is here because the enyo.RichText field will not insert a new bullet in a list when tapping the enter key.
 	if (inEvent.keyCode == 13 && this.isInList) {
@@ -263,11 +266,11 @@ enyo.kind({
   },
   savePost:function(inSender){
     // set up the post object
-    post.title = this.$.titleField.getValue();
+    this.post.title = this.$.titleField.getValue();
 	//get rid of the more div if it's there, only need it on the app side
 	var content = this.$.contentField.getHtml();
 	content = content.replace('<div class="more"></div><br>', '');
-    post.description = content;
+    this.post.description = content;
 
 	var statusIndex = this.$.statusSelector.getValue();
 	var status = 'publish';
@@ -278,16 +281,16 @@ enyo.kind({
 	else if (statusIndex == 4)
 		status = 'private';
 		
-	post.post_status = status;
+	this.post.post_status = status;
 
-	var tags = this.$.tagsField.getValue()
-	if (tags != '')
-		post.mt_keywords = tags;
-		
+	this.post.mt_keywords = this.$.tagsField.getValue();
+			
 	var postPassword = this.$.passwordField.getValue();
 	if (postPassword != '')
-		post.wp_password = postPassword;
-    
+		this.post.wp_password = postPassword;
+	else
+		this.post.wp_password = null;
+		
 	if (inSender.name == 'postButton') {
 		// save the post via the client
 	    this.$.client.savePost(post);
@@ -305,6 +308,25 @@ enyo.kind({
     console.log("Draft was saved", post, account);
   },
   showPreview:function() {
+	  var isChangedOrFreshlyCreatedDraft = false;
+	  
+	  if(typeof (this.post.postid) == undefined || this.post.postid == '') {
+		  console.log("this is a new post");
+		  isChangedOrFreshlyCreatedDraft = true;
+	  } else if(this.hasChanges()) {
+		  console.log("this post changed");
+		  isChangedOrFreshlyCreatedDraft = true;
+	  }
+	  
+	  //we can starts the classic preview
+	  if(isChangedOrFreshlyCreatedDraft == false) {
+		  //launches a new window with the preview view
+		  console.log("Launching Preview");
+		  params = {'account': this.account, 'post': this.post};
+		  enyo.windows.activate("Post Preview", "../wordpress/postPreview.html", params);
+		  return;
+	  }
+	  
 	  var categoriesForPreview = new Array();
 	  if(this.post && this.post.categories) {
 		  categoriesForPreview = this.post.categories;
@@ -312,8 +334,8 @@ enyo.kind({
 	  //launches a new window with the preview view
 	  params = {'title' : this.$.titleField.getValue(), 'content' :  this.$.contentField.getValue(), 
 			  'tags': this.$.tagsField.getValue(), 'categories': categoriesForPreview };
-	  options = {};
-	  enyo.mixin(params, options);
+	 // options = {};
+	 // enyo.mixin(params, options);
 	  enyo.windows.activate("Post Preview", "../wordpress/postPreview.html", params);
   },
   //Handles the download image
@@ -458,8 +480,7 @@ enyo.kind({
 		   	
 		  this.$.tagsField.setValue(this.post.mt_keywords);
 		  this.$.passwordField.setValue(this.post.wp_password);
-
-	  };
+	  } 
   },
   clientReady:function(sender){
 	  //password has been set from the Key Manager now
