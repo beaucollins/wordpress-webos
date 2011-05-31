@@ -1,6 +1,6 @@
 enyo.kind({
   name:'wp.PostPreviewView',
-  kind:'enyo.Scroller',
+  kind: "enyo.Scroller",
   published: {
     account:null,
     post:null
@@ -12,10 +12,8 @@ enyo.kind({
   },
   components: [
     { name:'previewPasswordManager', kind:'wp.WordPressClient', onPasswordReady:'passwordReady', onPasswordInvalid:'passwordInvalid' },
-	{ name:"loadingScrim",  kind: "Scrim", layoutKind: "VFlexLayout", align: "center", pack: "center", components: [
-		{name: "loadingSpinner", kind: "SpinnerLarge"},
-	]},
     {name: "postPreviewResponse", kind: "HtmlContent"},
+    {name: 'realPreview', kind:'WebView',  style : ' position:absolute;top:0;right:0;left:0;bottom:0;'}
   ],
   passwordReady:function(sender){
      console.log("We have the password now: " + sender.password);
@@ -25,9 +23,9 @@ enyo.kind({
      console.log("The password was missing or the XML-RPC api received a 403 fault code");
   },
   openPostURL:function(password){
-	  this.showScrim(true);
 	  //TODO: check the connection to host here!!!
 	  if (this.post.permaLink && this.post.permaLink.trim() != "" && password != null) {
+		  this.$.postPreviewResponse.setShowing(false);
 		  var loginURL = this.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
 		 // var postdata='log='+this.account.username+'&pwd='+password+'&redirect_to='+this.post.permaLink;
 		  var htmlForm ='<form method="post" action="'+loginURL+'" id="loginform" name="loginform" style="visibility:hidden">'
@@ -35,10 +33,11 @@ enyo.kind({
 		  +'<input type="password" tabindex="20" size="20" value="'+password+'" class="input" id="user_pass" name="pwd"></label>'
 		  +'<input type="submit" tabindex="100" value="Log In" class="button-primary" id="wp-submit" name="wp-submit">'
 		  +'<input type="hidden" value="'+ this.post.permaLink +'" name="redirect_to">'
-		  +'</form>';
+		  +'</form>'
+		  +'<script type="text/javascript">document.forms[0].submit()</script>';
 		  console.log(htmlForm);
-		  this.$.postPreviewResponse.setContent(htmlForm);
-		  loginform.submit();
+		  //this.$.postPreviewResponse.setContent(htmlForm);
+		  this.$.realPreview.setHTML('file://iamnothere.html',htmlForm);
 	  } else {
 		//fallback to  local preview	    
 		  var alert_msg = "Sorry, something went wrong during preview. A simple preview is shown below.";
@@ -46,7 +45,7 @@ enyo.kind({
 	  }
   },
   loadlocalPreview:function(alert_msg, title, content, tags, categories){
-	  this.showScrim(true);
+	  this.$.realPreview.setShowing(false);
 	  if (typeof(title) == "undefined" || enyo.string.trim(title) =="")
 		  title = "(no title)";		  
 	  
@@ -86,7 +85,6 @@ enyo.kind({
 		  content+='</div>';
 	  
 	  content+='</div>';
-	  this.showScrim(false);
 	  this.$.postPreviewResponse.setContent(content);
   },
   windowParamsChangeHandler: function(inSender, inEvent) {
@@ -106,9 +104,5 @@ enyo.kind({
 		  this.post = enyo.windowParams.post;
 		  this.$.previewPasswordManager.setAccount(this.account);
 	  }
-  },
-  showScrim: function(inShowing) {
-	this.$.loadingScrim.setShowing(inShowing);
-	this.$.loadingSpinner.setShowing(inShowing);
   },
 });
