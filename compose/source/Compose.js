@@ -17,6 +17,7 @@ enyo.kind({
   },
   currentMediaFile : null, //@protected
   accountCategories : null,
+  categoriesChanged : false, //true when the user click on categories
   components:[
   { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onSavePost:'savePostSuccess' },
 	{	name: "uploadMediaFile", 
@@ -69,7 +70,7 @@ enyo.kind({
                 ]}                                                                                       
 	    	  ]},
 			{ kind:'Item', components:[
-                { kind:'Drawer', open:false, caption:'Tags', onclick: 'tagsClick', components:[
+                { name:'tagsFieldDrawer', kind:'Drawer', open:false, caption:'Tags', onclick: 'tagsClick', components:[
                   { kind:'Input', name:'tagsField', hint:'Separate tags with commas', inputType:'text' }
                 ] }
               ] },
@@ -111,8 +112,49 @@ enyo.kind({
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
 	linkBtnClickFunctionBind = enyo.bind(this, "linkHelper");
   },
-  hasChanges :function(){
-	return false;  
+  isAPost:function() {
+		/*  console.log("is a Post type", this.post._type instanceof enyo.application.models.Post );
+	  console.log("is a Page type", this.post._type instanceof enyo.application.models.Page );
+	  */
+	  if (this.post && this.post._type === "Page")
+		  return false;
+	  else 
+		  return true;
+  },
+  postChangedByUser :function(){
+
+	  if(this.categoriesChanged == true)
+		  return true;
+	  
+	  if( this.post.title != this.$.titleField.getValue())
+		  return true;
+
+	  var content = this.$.contentField.getHtml();
+	  content = content.replace('<div class="more"></div><br>', '');
+	  if(this.post.description != content)
+		  return true;
+
+	  var statusIndex = this.$.statusSelector.getValue();
+	  var status = 'publish';
+	  if (statusIndex == 2)
+		  status = 'draft';
+	  else if (statusIndex == 3)
+		  status = 'pending'
+	  else if (statusIndex == 4)
+		  status = 'private';
+	  
+	  if(this.isAPost() && this.post.post_status != status)
+		  return true;
+	  else if( this.post.page_status != status)
+		  return true;
+
+	  if(this.isAPost() && this.post.mt_keywords != this.$.tagsField.getValue())
+		  return true;		
+
+	  if(this.post.wp_password !=  this.$.passwordField.getValue())
+		  return true;			
+
+	  return false;  
   },
   keyTapped:function(inSender, inEvent){
 	//this keycode nonsense is here because the enyo.RichText field will not insert a new bullet in a list when tapping the enter key.
@@ -164,7 +206,6 @@ enyo.kind({
 	}
 	
 	this.$.contentField.forceFocus();
-	
   },
   linkHelper:function(){
 	//get the cursor position for l8r
@@ -210,7 +251,6 @@ enyo.kind({
 				document.execCommand('createlink', false, url);
 			}
 		}
-		
   },
   updateCategoriesField:function(newCategoriesObj) {
 	 //console.log("Data for the categories:", newCategoriesObj);	
@@ -263,6 +303,7 @@ enyo.kind({
 			  }
 		  }
 	  }
+	  this.categoriesChanged = true;
   },
   savePost:function(inSender){
     // set up the post object
@@ -310,11 +351,17 @@ enyo.kind({
   showPreview:function() {
 	  var isChangedOrFreshlyCreatedDraft = false;
 	  
-	  if(typeof (this.post.postid) == undefined || this.post.postid == '') {
-		  console.log("this is a new post");
+	  var itemIDName  = 'postid';
+	  if(!this.isAPost()) 
+		  itemIDName = 'page_id';
+
+	  if(typeof (this.post[itemIDName]) == undefined || this.post[itemIDName] == '') {
+		  console.log("this is a new post/page");
 		  isChangedOrFreshlyCreatedDraft = true;
-	  } else if(this.hasChanges()) {
-		  console.log("this post changed");
+	  }
+	  	  
+	  if(this.postChangedByUser()) {
+		  console.log("this post/page changed");
 		  isChangedOrFreshlyCreatedDraft = true;
 	  }
 	  
@@ -333,7 +380,7 @@ enyo.kind({
 	  }
 	  //launches a new window with the preview view
 	  params = {'title' : this.$.titleField.getValue(), 'content' :  this.$.contentField.getValue(), 
-			  'tags': this.$.tagsField.getValue(), 'categories': categoriesForPreview };
+			  'tags': this.isAPost() ? this.$.tagsField.getValue() :'', 'categories': categoriesForPreview };
 	 // options = {};
 	 // enyo.mixin(params, options);
 	  enyo.windows.activate("Post Preview", "../wordpress/postPreview.html", params);
@@ -459,26 +506,40 @@ enyo.kind({
 		  // set up the post object
 		  this.$.titleField.setValue(this.post.title);
 		  //add the special more div
-		  if (this.post.mt_text_more != '')
-		  	this.$.contentField.setValue(this.post.description + '<!--more--><div class="more"></div><br>' + this.post.mt_text_more);
+		 
+		  var textMoreVariableName = 'mt_text_more';
+		  if (!this.isAPost()) { //this is a page
+			  textMoreVariableName = 'text_more';
+		  }
+		  if (this.post[textMoreVariableName] != '')
+			  this.$.contentField.setValue(this.post.description + '<!--more--><div class="more"></div><br>' + this.post[textMoreVariableName]);
 		  else
-			this.$.contentField.setValue(this.post.description);
-		  	
-		  if (this.post.post_status == 'publish')
+			  this.$.contentField.setValue(this.post.description);
+		  
+		  
+		  var statusVariableName = 'post_status';
+		  if (!this.isAPost()) { //this is a page
+			  statusVariableName = 'page_status';
+		  }
+		  if (this.post[statusVariableName] == 'publish')
 			  this.$.statusSelector.setValue(1)
 		  else
-		  if (this.post.post_status == 'draft')
+		  if (this.post[statusVariableName] == 'draft')
 			  this.$.statusSelector.setValue(2);
 		  else
-		  if (this.post.post_status == 'pending')
+		  if (this.post[statusVariableName] == 'pending')
 			  this.$.statusSelector.setValue(3);
 		  else
-		  if (this.post.post_status == 'private')
+		  if (this.post[statusVariableName] == 'private')
 			  this.$.statusSelector.setValue(4);
 		  else
 		  this.$.statusSelector.setValue(2);
-		   	
-		  this.$.tagsField.setValue(this.post.mt_keywords);
+		  
+		  if (!this.isAPost()) { //this is a page
+			  this.$.tagsField.setValue("");
+			  this.$.tagsFieldDrawer.setShowing(false);
+		  }
+		  
 		  this.$.passwordField.setValue(this.post.wp_password);
 	  } 
   },
