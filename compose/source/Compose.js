@@ -93,7 +93,7 @@ enyo.kind({
 			//{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
-			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped' },
+			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange"},
 			]},
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:'Settings', onclick:'toggleSettings' },
 			] },
@@ -121,17 +121,15 @@ enyo.kind({
 	  else 
 		  return true;
   },
+  contentFieldTextChange : function(inSender, inEvent) {
+	  this.categoriesChanged == true
+  },
   postChangedByUser :function(){
 
 	  if(this.categoriesChanged == true)
 		  return true;
 	  
 	  if( this.post.title != this.$.titleField.getValue())
-		  return true;
-
-	  var content = this.$.contentField.getHtml();
-	  content = content.replace('<div class="more"></div><br>', '');
-	  if(this.post.description != content)
 		  return true;
 
 	  var statusIndex = this.$.statusSelector.getValue();
@@ -143,9 +141,8 @@ enyo.kind({
 	  else if (statusIndex == 4)
 		  status = 'private';
 	  
-	  if(this.isAPost() && this.post.post_status != status)
-		  return true;
-	  else if( this.post.page_status != status)
+	  var statusVariableName = this.isAPost() ? 'post_status' : 'page_status';
+	  if(this.post[statusVariableName] != status)
 		  return true;
 
 	  if(this.isAPost() && this.post.mt_keywords != this.$.tagsField.getValue())
@@ -321,10 +318,12 @@ enyo.kind({
 		status = 'pending'
 	else if (statusIndex == 4)
 		status = 'private';
-		
-	this.post.post_status = status;
 
-	this.post.mt_keywords = this.$.tagsField.getValue();
+	var statusVariableName = this.isAPost() ? 'post_status' : 'page_status';
+	this.post[statusVariableName] = status;
+	
+	if(this.isAPost())
+		this.post.mt_keywords = this.$.tagsField.getValue();
 			
 	var postPassword = this.$.passwordField.getValue();
 	if (postPassword != '')
@@ -351,9 +350,7 @@ enyo.kind({
   showPreview:function() {
 	  var isChangedOrFreshlyCreatedDraft = false;
 	  
-	  var itemIDName  = 'postid';
-	  if(!this.isAPost()) 
-		  itemIDName = 'page_id';
+	  var itemIDName = this.isAPost() ? 'postid' : 'page_id';
 
 	  if(typeof (this.post[itemIDName]) == undefined || this.post[itemIDName] == '') {
 		  console.log("this is a new post/page");
@@ -506,21 +503,14 @@ enyo.kind({
 		  // set up the post object
 		  this.$.titleField.setValue(this.post.title);
 		  //add the special more div
-		 
-		  var textMoreVariableName = 'mt_text_more';
-		  if (!this.isAPost()) { //this is a page
-			  textMoreVariableName = 'text_more';
-		  }
+		  
+		  var textMoreVariableName = this.isAPost() ? 'mt_text_more' : 'text_more';
 		  if (this.post[textMoreVariableName] != '')
 			  this.$.contentField.setValue(this.post.description + '<!--more--><div class="more"></div><br>' + this.post[textMoreVariableName]);
 		  else
 			  this.$.contentField.setValue(this.post.description);
 		  
-		  
-		  var statusVariableName = 'post_status';
-		  if (!this.isAPost()) { //this is a page
-			  statusVariableName = 'page_status';
-		  }
+		  var statusVariableName = this.isAPost() ? 'post_status' : 'page_status';
 		  if (this.post[statusVariableName] == 'publish')
 			  this.$.statusSelector.setValue(1)
 		  else
@@ -536,8 +526,10 @@ enyo.kind({
 		  this.$.statusSelector.setValue(2);
 		  
 		  if (!this.isAPost()) { //this is a page
-			  this.$.tagsField.setValue("");
+			  //this.$.tagsField.setValue("");
 			  this.$.tagsFieldDrawer.setShowing(false);
+		  } else {
+			  this.$.tagsField.setValue(this.post.mt_keywords);
 		  }
 		  
 		  this.$.passwordField.setValue(this.post.wp_password);
