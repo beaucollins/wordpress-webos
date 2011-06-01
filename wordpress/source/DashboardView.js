@@ -43,6 +43,6 @@ enyo.kind({
 	  this.$.dashboardPasswordManager.setAccount(this.account);
   },
   loadStopped:function() {
-	console.log('URL: ' + this.$.statsWebView.url);
+	console.log('URL: ' + this.$.realPreview.url);
   },
 });
