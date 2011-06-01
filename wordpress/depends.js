@@ -15,6 +15,7 @@ enyo.depends(
   "source/PostList.js",
   "source/PostView.js",
   "source/PostPreviewView.js",
+  "source/DashboardView.js",
   "source/Drafts.js",
   "source/Stats.js",
   "source/StatsWebView.js",
