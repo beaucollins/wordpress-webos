@@ -537,3 +537,28 @@ img {
 .main-pane, #wordPress_main_client {
   background:#FFF;
 }
+
+/* Stats CSS */
+#wordPress_stats_statsWebView .selector,
+#wordPress_stats_statsWebView h2,
+#chartswitch,
+#statchart-box h3,
+#wpcombar,
+#wordPress_stats_statsWebView #footer,
+#wordPress_stats_statsWebView #general,
+#wordPress_stats_statsWebView #videoplays,
+#wordPress_stats_statsWebView #comments,
+#wordPress_stats_statsWebView #incominglinks,
+#wordPress_stats_statsWebView #authorviews,
+#wordPress_stats_statsWebView .stats-note,
+#wordPress_stats_statsWebView #stats-nuggets,
+#wordPress_stats_statsWebView .metabox-tabs
+{ display: none;}
+
+#wordPress_stats_statsWebView .postbox-container {
+  float: left;
+}
+
+#wordPress_stats_statsWebView {
+  font-size: 0.8em;
+}

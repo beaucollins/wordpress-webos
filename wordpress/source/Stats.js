@@ -7,17 +7,25 @@ enyo.kind({
   components: [
     // { name:'statsService', kind:'StatsService', onApiReady:'statsServiceReady'},
     { name:'statsPasswordManager', kind:'wp.WordPressClient', onPasswordReady:'passwordReady', onPasswordInvalid:'passwordInvalid' },
-    { name:'statsWebView', kind:'wp.StatsWebView', onLoadStopped:'loadStopped', flex:1 }
+    { name:'statsWebService', kind:'WebService', handleAs:'html', onSuccess:'loginSuccess', onFailure:'loginFailure'},
+    { name:'statsPane', kind:'Pane', flex:1, components:[
+      { name:'statsSpinner', kind:'enyo.SpinnerLarge'},
+      { name:'statsWebView' }
+    ]}
   ],
+  create:function(){
+    this.inherited(arguments);
+    this.$.statsSpinner.show();
+  },
   accountChanged:function(){
     if (this.account == null) {
       return;
     };
     
+    this.$.statsPane.selectView(this.$.statsSpinner);
     this.$.statsPasswordManager.setAccount(this.account);
   },
   passwordReady:function(sender){
-     console.log("We have the password now: " + sender.password);
      if (this.account == null) {
        return;
      };
@@ -29,23 +37,26 @@ enyo.kind({
   openPostURL:function(password){
 	  //TODO: check the connection to host here!!!
 	  if (password != null) {
-	    console.log(this.account.account.username);
 		  var loginURL = this.account.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
-		  var statsURL = this.account.account.xmlrpc.replace("/xmlrpc.php", "/wp-admin/admin.php?page=stats");
-		 // var postdata='log='+this.account.username+'&pwd='+password+'&redirect_to='+this.post.permaLink;
-		  var htmlForm ='<h1>Login</h1><form method="post" action="'+loginURL+'" id="loginform" name="loginform" style="visibility:visible">'
-		  +'<input type="text" tabindex="10" size="20" value="'+this.account.account.username+'" class="input" id="user_login" name="log">'
-		  +'<input type="password" tabindex="20" size="20" value="'+password+'" class="input" id="user_pass" name="pwd">'
-		  +'<input type="submit" tabindex="100" value="Log In" class="button-primary" id="wp-submit" name="wp-submit">'
-		  +'<input type="hidden" value="'+ statsURL +'" name="redirect_to">'
-		  +'</form>'
-		  +'<script type="text/javascript">document.forms[0].submit()</script>';
-		  console.log(htmlForm);
-		  this.$.statsWebView.setHTML('file://stats.html',htmlForm);
-      // loginform.submit();
+		  var statsURL = this.account.account.xmlrpc.replace("/xmlrpc.php", "/wp-admin/admin.php?page=stats&noheader=1");
+		  this.$.statsWebService.setUrl(loginURL);
+		  this.$.statsWebService.setMethod('POST');
+		  this.$.statsWebService.call({log:this.account.account.username, pwd:password, redirect_to:statsURL});
 	  }
   },
-  loadStopped:function() {
-    console.log('URL: ' + this.$.statsWebView.url);
+  loginSuccess:function(sender, response, request){
+    this.$.statsWebView.setContent(response);
+    jQuery('#stat-chart').load( this.account.account.xmlrpc.replace('/xmlrpc.php','/wp-includes/charts/flot-stats-data.php'), {
+      "height":210,
+      "page":"stats",
+      "chart_type":"stats-data",
+      "target":"stat-chart",
+      "blog":this.account.account.blogid,
+      "unit":1
+    });
+    this.$.statsPane.selectView(this.$.statsWebView);
+  },
+  loginFailure:function(sender, response, request){
+    console.log('Login failure');
   },
 });
