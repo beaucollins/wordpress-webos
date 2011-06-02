@@ -11,9 +11,9 @@ enyo.kind({
   },
   components:[
     { kind:'Header', className:'enyo-toolbar-light', components:[
-      { name:'replyTitle', content:$L('Reply'), flex:1 },
+      { name:'replyTitle', content:$L('Comment Reply'), flex:1 },
       { kind:'Button', content:$L('Cancel'), onclick:'cancel' },
-      { kind:'Button', content:$L('Publish'), className:'enyo-button-blue', onclick:'doPublish' }
+      { kind:'Button', content:$L('Reply'), className:'enyo-button-blue', onclick:'doPublish' }
     ]},
     { kind:'FadeScroller', height:'100%', components:[
       { name:'replyContent', kind:'enyo.RichText', onChange:'updateContent' }
