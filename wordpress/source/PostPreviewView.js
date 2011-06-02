@@ -29,7 +29,7 @@ enyo.kind({
 		  var loginURL = this.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
 		 // var postdata='log='+this.account.username+'&pwd='+password+'&redirect_to='+this.post.permaLink;
 		  var htmlForm = '<div style="background: #eee; position:absolute;top:0;right:0;left:0;bottom:0;">'
-		  +'<h2 style="color: red;">Loading preview...</h2>'
+		  +'<img src="http://wordpress.com/i/loading/fresh-64.gif"/>'
 		  +'<form method="post" action="'+loginURL+'" id="loginform" name="loginform" style="visibility:hidden">'
 		  +'<input type="text" tabindex="10" size="20" value="'+this.account.username+'" class="input" id="user_login" name="log"></label>'
 		  +'<input type="password" tabindex="20" size="20" value="'+password+'" class="input" id="user_pass" name="pwd"></label>'
@@ -39,7 +39,7 @@ enyo.kind({
 		  +'<script type="text/javascript">document.forms[0].submit()</script>';
 		  console.log(htmlForm);
 		  //this.$.postPreviewResponse.setContent(htmlForm);
-		  this.$.realPreview.setHTML('file://iamnothere.html',htmlForm);
+		  this.$.realPreview.setHTML('http://wordpress.com',htmlForm); //the wordpress.com domain is necessary because we are loading the loading gif from WP.com
 	  } else {
 		//fallback to  local preview	    
 		  var alert_msg = "Sorry, something went wrong during preview. A simple preview is shown below.";

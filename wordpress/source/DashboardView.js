@@ -31,8 +31,8 @@ enyo.kind({
   openPostURL:function(password){
 	  var loginURL = this.account.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
 	  var redirectURL = this.account.account.xmlrpc.replace("/xmlrpc.php", "/wp-admin/");
-	  var htmlForm ='<div style="background: #eee; position:absolute;top:0;right:0;left:0;bottom:0;">'
-	  +'<h2 style="color: red;">Loading dashboard...</h2>'
+	  var htmlForm ='<div style="background:white; position:absolute;top:0;right:0;left:0;bottom:0;">'
+	  +'<img src="http://wordpress.com/i/loading/fresh-64.gif"/>'
 	  +'<form method="post" action="'+loginURL+'" id="loginform" name="loginform" style="visibility:hidden">'
 	  +'<input type="text" tabindex="10" size="20" value="'+this.account.account.username+'" class="input" id="user_login" name="log"></label>'
 	  +'<input type="password" tabindex="20" size="20" value="'+password+'" class="input" id="user_pass" name="pwd"></label>'
@@ -41,7 +41,7 @@ enyo.kind({
 	  +'</form>'
 	  +'<script type="text/javascript">document.forms[0].submit()</script>'
 	  +'</div>';
-	  this.$.realPreview.setHTML('file://iamnothere.html',htmlForm);
+	  this.$.realPreview.setHTML('http://wordpress.com', htmlForm); //the wordpress.com domain is necessary because we are loading the loading gif from WP.com
   },
   windowParamsChangeHandler: function(inSender, inEvent) {
 	  var p = inEvent.params;
