@@ -91,6 +91,7 @@ enyo.kind({
     ] },
     { kind: 'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
+	  { kind: 'Spinner', className: 'wp-list-spinner' },
       { name: 'refreshButton', content:'Refresh', onclick:'refreshComments' }
     ] }
   ],
@@ -151,6 +152,7 @@ enyo.kind({
     console.log("Refresh the list");
     this.$.list.reset();
     this.$.list.refresh();
+	this.$.spinner.hide();
   },
   highlightComment:function(comment){
     this.$.list.select(comment.id);
@@ -193,6 +195,7 @@ enyo.kind({
   },
   refreshComments:function(sender){
     console.log("Account", this.account);
+	this.$.spinner.show();
     this.account.refreshComments();
   }
 });

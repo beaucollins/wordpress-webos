@@ -52,11 +52,11 @@ enyo.kind({
       { kind: 'enyo.Toolbar', components:[
         { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
         { flex:1 },
-		{kind: "Spinner"},
+		{ kind: "Spinner", className: 'wp-list-spinner'},
         { name:'approve', caption: 'Approve', onclick:'markComment' },
         { name:'unapprove', caption: 'Unapprove', onclick:'markComment' },
         { name:'trash', caption: 'Trash', onclick:'markComment' },
-        { name:'spam', caption: 'Spam', onclick:'markComment' },
+        { name:'spam', caption: 'Spam', onclick:'markComment' }
       ] } 
     ] }
   ],
