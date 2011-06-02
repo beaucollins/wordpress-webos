@@ -562,3 +562,7 @@ img {
 #wordPress_stats_statsWebView {
   font-size: 0.8em;
 }
+
+#wordPress_comments_detail_spinner{
+	margin-right: 4px;
+}

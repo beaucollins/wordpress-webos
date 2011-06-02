@@ -52,6 +52,7 @@ enyo.kind({
       { kind: 'enyo.Toolbar', components:[
         { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
         { flex:1 },
+		{kind: "Spinner"},
         { name:'approve', caption: 'Approve', onclick:'markComment' },
         { name:'unapprove', caption: 'Unapprove', onclick:'markComment' },
         { name:'trash', caption: 'Trash', onclick:'markComment' },
@@ -70,6 +71,7 @@ enyo.kind({
     }
   },
   commentChanged:function(){
+	this.$.spinner.hide();
     this.replies = [];
     // this.$.conversationHeader.hide();
     // this.$.conversation.render();
@@ -181,6 +183,7 @@ enyo.kind({
     this.$.palmService.call({target:this.comment.author_url}); 
   },
   markComment:function(sender){
+	this.$.spinner.show();
     var params = [this.account.blogid, this.account.username, this.account.password, this.comment.comment_id];
     if (sender.name == 'trash') {
       this.account.deleteComment(this.comment);
