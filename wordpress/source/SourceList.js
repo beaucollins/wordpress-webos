@@ -63,7 +63,7 @@ enyo.kind({
   setDraftCount:function(count){
     if (this.$.global) {
       this.$.global.setDraftCount(count)
-    }else{
+    }else if (this.$.singleAccountListItem){
       this.$.singleAccountListItem.setDraftCount(count);
     }
   },

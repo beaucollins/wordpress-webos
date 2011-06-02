@@ -19,7 +19,7 @@ enyo.kind({
     { kind:'enyo.Button', content:$L('Cancel'), onclick:'doCancel' }
   ],
   accountChanged:function(){
-    this.$.username.setContent(this.account.account.username);
+    // this.$.username.setContent(this.account.account.username);
   },
   savePassword:function(sender){
     this.doSavePassword(this.$.passwordField.getValue());

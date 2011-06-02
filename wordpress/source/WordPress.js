@@ -14,6 +14,7 @@ enyo.kind({
     { name: 'xmlrpc_client', kind:'XMLRPCService' },
     { name: 'stats_api', kind: 'WebService', method: 'POST', url: 'https://api.wordpress.org/webosapp/update-check/1.0/' },
     { kind:'Pane', flex:1, components:[
+      { name:'blankSlate', kind:'enyo.Control' },
       {
         name: 'panes',
         kind: 'enyo.SlidingPane',
@@ -34,16 +35,17 @@ enyo.kind({
                 { name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
               ]}
           ]}
-      ]},
-      { name: 'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' },
+      ]}
     ]},
     // main sliding pane interface
     { name:'replyForm', scrim:true, onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
     { kind:'AppMenu', components:[
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
     ]},
-    { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' }
-    
+    { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
+    { name:'setupForm', scrim:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
+      { name:'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
+    ]}
   ],
   create:function(){
     this.inherited(arguments);
@@ -171,12 +173,15 @@ enyo.kind({
   accountsChanged:function(){
     // save the accounts
     this.$.sourceList.setAccounts(this.accounts);
+    this.$.pane.setTransitionKind('enyo.transitions.Simple');
     if (this.accounts.length == 0) {
       // we don't have any accounts, force the welcome screen
-      this.$.pane.setTransitionKind('enyo.transitions.Simple');
       this.$.setup.setCancelable(false);
-      this.$.pane.selectView(this.$.setup);
-      this.$.pane.setTransitionKind('enyo.transitions.Fade');
+      this.$.pane.selectView(this.$.blankSlate);
+      this.$.setupForm.setScrim(false);
+      this.$.setupForm.open();
+    }else{
+      this.$.pane.selectView(this.$.panes);
     }
   },
   accountChanged:function(){
@@ -189,7 +194,9 @@ enyo.kind({
   addNewBlog:function(sender){
     if (this.accounts.length > 0) this.$.setup.setCancelable(true);
     this.$.setup.reset();
-    this.$.pane.selectView(this.$.setup);
+    // this.$.pane.selectView(this.$.setup);
+    this.$.setupForm.setScrim(true);
+    this.$.setupForm.open();
   },
   setupBlogs:function(sender, blogs, username, password){
     var that = this;

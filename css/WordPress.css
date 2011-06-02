@@ -534,10 +534,17 @@ img {
   background:#FFF;
 }
 
-.main-pane, #wordPress_main_client {
+.wp-blog-setup-dialog {
+  left:15%;
+  right:15%;
+  bottom:0;
+  top:0;
   background:#FFF;
 }
 
+.main-pane, #wordPress_main_client {
+  background:#FFF;
+}
 /* Stats CSS */
 #wordPress_stats_statsWebView .selector,
 #wordPress_stats_statsWebView h2,
