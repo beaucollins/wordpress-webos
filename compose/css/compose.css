@@ -218,13 +218,17 @@ body {
 
 #compose_contentField a {
 	color: #21759B;
-	}
+}
 
 .more {
 	display: block;
 	height: 1px;
 	width: 100%;
-	border-bottom: 1px dotted #ccc;
+	border-bottom: 1px dotted #ccc	;
+}
+
+#compose_categoryLabel{
+	margin-left: 8px;
 }
 
 /* tags / password text fields 
