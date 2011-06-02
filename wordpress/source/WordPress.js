@@ -44,7 +44,7 @@ enyo.kind({
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
     { name:'setupForm', scrim:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
-      { name:'setup', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
+      { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]}
   ],
   create:function(){
@@ -179,8 +179,11 @@ enyo.kind({
       this.$.setup.setCancelable(false);
       this.$.pane.selectView(this.$.blankSlate);
       this.$.setupForm.setScrim(false);
+      this.$.setupForm.setModal(true);
       this.$.setupForm.open();
     }else{
+      this.$.setupForm.setScrim(true);
+      this.$.setupForm.setModal(false);
       this.$.pane.selectView(this.$.panes);
     }
   },
@@ -200,6 +203,8 @@ enyo.kind({
   },
   setupBlogs:function(sender, blogs, username, password){
     var that = this;
+    this.$.setupForm.close();
+    this.$.setup.reset();
     enyo.map(blogs, function(blog, index, blogs){
       var account = new enyo.application.models.Account(enyo.mixin(blog, { username:username, password:password }));
       enyo.application.persistence.add(account);
@@ -212,10 +217,10 @@ enyo.kind({
     enyo.application.persistence.flush(function(){
       wp.loadAccounts();      
     });
-    this.$.pane.selectView(this.$.panes);
   },
   showPanes:function(){
-    this.$.pane.selectView(this.$.panes);
+    // this.$.pane.selectView(this.$.panes);
+    this.$.setupForm.close();
   },
   // if given a post, then creating a draft based on that post
   // the sender should have an associated account that we will

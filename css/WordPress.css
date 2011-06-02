@@ -282,11 +282,11 @@ img {
 
 /* Setup Screen */
 
-#wordPress_setup_header {
+/*#wordPress_setup_header {
   background:url(../images/wordpress.png) no-repeat center center, url(../images/setup_shadow.png) no-repeat center bottom, url(../images/header_setup.png);
 }
-
-.blog-setup-buttons, .setup-screen {
+*/
+/*.blog-setup-buttons, .setup-screen {
   padding:25px;
   -webkit-box-sizing: border-box;
   max-width:400px;
@@ -295,6 +295,11 @@ img {
   border-radius: 12px;
   height: auto;
   border-top: 1px solid rgba(255,255,255,.15);
+}
+*/
+
+.blog-setup-buttons, .blog-setup-form {
+  margin: 20px 200px;
 }
 
 /* PopUp Animation */

@@ -17,27 +17,25 @@ enyo.kind({
     { kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
     { name:'blogFinder', kind:'wp.BlogDiscover', onSuccess:'showBlogList', onFailure:'apiFailure', onBadURL:'badURL' },
     // a place for the WordPress Logo
-    { name:'header', height:'77px' },
+    { name:'header', kind:'Header', components:[
+      { name:'title', flex:1, content:'Setup Blog'},
+      { kind:'Button', caption:'Cancel', className:'enyo-button-cancel', name:'cancel', onclick:'doCancel' },
+      { kind:'Button', caption:'Set Up', className:'enyo-button-blue', name:'finishSetup', onclick:'setupSelectedBlogs', showing:false }
+    ] },
     { kind:'Pane', flex:1, components:[
       { name: 'blogTypeChooser', className:'blog-setup-buttons', components:[
         { kind: 'enyo.Button', onclick:"createNewBlog", caption: 'Start a new blog at WordPress.com' },
         { kind: 'enyo.Button', onclick:"setupHostedBlog", caption: 'Add blog hosted at WordPress.com' },
-        { kind: 'enyo.Button', onclick:"setupBlog", caption: 'Add self-hosted WordPress blog'},
-        { name:'cancel', kind: 'enyo.Button', onclick:'doCancel', caption: 'Cancel' }
+        { kind: 'enyo.Button', onclick:"setupBlog", caption: 'Add self-hosted WordPress blog'}
       ]},
-      { name:'setupForm', kind:'wp.AccountCredentials', onCancel:'cancelSetup', onSetup:'performSetup', selfHosted:false },
+      { name:'setupForm', kind:'wp.AccountCredentials', className:'blog-setup-form', onCancel:'cancelSetup', onSetup:'performSetup' , selfHosted:false },
+      { name:'blogList', kind:'wp.BlogSetupList', flex:1, onSelectionChanged:'bloglistSelectionChanged', onSelectBlogs:'notifySelected', onCancel:'cancelSetup' },
       { name: 'helpView', className:'blog-setup-buttons', components:[
           {content: "Please visit the FAQ to get answers to common questions. If you're still having trouble, post in the forums."},
 	      { kind: 'enyo.Button', onclick:"readTheFAQ", caption: 'Read the FAQ' },
 	      { kind: 'enyo.Button', onclick:"visitTheForum", caption: 'Visit the Forums'},
 	      { kind: 'enyo.Button', onclick:"sendEmail", caption: 'Send Support E-mail'},
-	      { kind: 'enyo.Button', onclick:'cancelSetup', caption: 'Cancel' }
 	  ]},
-    ]},
-
-    {name: "blogsPopup", kind:'enyo.Popup', showHideMode: "transition", openClassName: "scaleFadeIn", scrim: true, 
-		 modal: true, className: "fastAnimate transitioner", width: "400px",  components:[
-      { name:'blogList', kind:'wp.BlogSetupList', flex:1, lazy:true, onSelectBlogs:'notifySelected', onCancel:'cancelSetup' }
     ]},
 	{name: "errorPopup", kind: "Popup", showHideMode: "transition", openClassName: "scaleFadeIn", scrim: true, 
 		 modal: true, className: "fastAnimate transitioner", width: "400px", components: [
@@ -51,6 +49,7 @@ enyo.kind({
   reset:function(){
     this.$.pane.selectView(this.$.blogTypeChooser);
     this.$.setupForm.reset();
+    this.$.finishSetup.setShowing(false);
     if (this.$.blogList) this.$.blogList.reset();
   },
   createNewBlog:function(){
@@ -68,7 +67,7 @@ enyo.kind({
   cancelSetup:function(){
     this.$.pane.selectView(this.$.blogTypeChooser);
     this.$.setupForm.reset();
-    this.$.blogsPopup.close();
+    // this.$.blogsPopup.close();
     this.$.blogFinder.cancel();
   },
   performSetup:function(sender){
@@ -85,13 +84,20 @@ enyo.kind({
       this.doSelectBlogs(blogs, this.$.setupForm.username, this.$.setupForm.password);
     }else{
       // this.$.scrim.hide();
+      this.$.finishSetup.setShowing(true);
       this.$.blogList.setBlogs(blogs);
-      this.$.blogsPopup.openAtCenter();//selectViewByName('blogList');
+      // this.$.blogsPopup.openAtCenter();//selectViewByName('blogList');
+      this.$.pane.selectView(this.$.blogList);
     }
   },
-  notifySelected:function(sender, blogs){
+  bloglistSelectionChanged:function(sender){
+    var selected = sender.selectedBlogs();
+    this.$.finishSetup.setDisabled((selected.length <= 0));
+  },
+  setupSelectedBlogs:function(sender){
+    var blogs = this.$.blogList.selectedBlogs();
+    console.log("Setup blogs", blogs);
     this.doSelectBlogs(blogs, this.$.setupForm.username, this.$.setupForm.password);
-    this.$.blogsPopup.close();
   },
   badURL:function(sender){
     this.log("Bad URL message");
@@ -167,22 +173,21 @@ enyo.kind({
     blogs:[]
   },
   events: {
-    onCancel:'',
-    onSelectBlogs:''
+    onSelectionChanged:''
   },
   components:[
-    { name:'selection', kind:'wp.utils.SelectionList', onChange:'selectionChanged' },
-    { kind:'VFlexBox', className:'setup-screen', width:'320px', height:'300px', components:[
+    { name:'selection', kind:'wp.utils.SelectionList', onChange:'doSelectionChanged' },
+    { kind:'VFlexBox', flex:1, className:'setup-screen', components:[
       { name:'scroller', kind:'enyo.Scroller', flex:1, components:[
-        { name:'blogs', kind:'VirtualRepeater', onGetItem:'setupBlogRow', components:[
+        { name:'blogs', kind:'VirtualRepeater', flex:1, onGetItem:'setupBlogRow', components:[
           { kind:'Item', layoutKind:'HFlexLayout', components:[
             { name:'blogName', flex:1 },
             { kind:'CheckBox', checked:false, onclick:'blogToggled' }
           ]}
         ]},
       ]},
-      { name:'setup_selected', kind:'enyo.Button', caption:'Set Up', onclick:'setupSelected' },
-      { name:'cancel', kind:'enyo.Button', caption:'Cancel', onclick:'doCancel' }
+      // { name:'setup_selected', kind:'enyo.Button', caption:'Set Up', onclick:'setupSelected' }
+      // { name:'cancel', kind:'enyo.Button', caption:'Cancel', onclick:'doCancel' }
     ]}
   ],
   create:function(){
@@ -213,23 +218,14 @@ enyo.kind({
     this.$.blogs.render();
     this.$.selection.clear();
   },
-  setupSelected:function(){
-    // filter to only selected blogs
+  selectedBlogs:function(){
     var selected = [];
     enyo.forEach(this.blogs, function(item, index){
       if (this.$.selection.isSelected(index)) {
         selected.push(item);
       };
     }, this);
-    
-    this.doSelectBlogs(selected);
-  },
-  selectionChanged:function(sender, selection){
-    if (selection.length == 0) {
-      this.$.setup_selected.setDisabled(true);
-    }else{
-      this.$.setup_selected.setDisabled(false);
-    }
+    return selected;
   }
 });
 
