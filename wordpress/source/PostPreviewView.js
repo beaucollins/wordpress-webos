@@ -13,7 +13,7 @@ enyo.kind({
   components: [
     { name:'previewPasswordManager', kind:'wp.WordPressClient', onPasswordReady:'passwordReady', onPasswordInvalid:'passwordInvalid' },
     {name: "postPreviewResponse", kind: "HtmlContent"},
-    {name: 'realPreview', kind:'WebView',  style : ' position:absolute;top:0;right:0;left:0;bottom:0;'}
+    {name: 'realPreview', kind:'WebView',  style :'background:none; position:absolute;top:0;right:0;left:0;bottom:0;', onLoadStopped:'loadStopped'}
   ],
   passwordReady:function(sender){
      console.log("We have the password now: " + sender.password);
@@ -28,7 +28,9 @@ enyo.kind({
 		  this.$.postPreviewResponse.setShowing(false);
 		  var loginURL = this.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
 		 // var postdata='log='+this.account.username+'&pwd='+password+'&redirect_to='+this.post.permaLink;
-		  var htmlForm ='<form method="post" action="'+loginURL+'" id="loginform" name="loginform" style="visibility:hidden">'
+		  var htmlForm = '<div style="background: #eee; position:absolute;top:0;right:0;left:0;bottom:0;">'
+		  +'<h2 style="color: red;">Loading preview...</h2>'
+		  +'<form method="post" action="'+loginURL+'" id="loginform" name="loginform" style="visibility:hidden">'
 		  +'<input type="text" tabindex="10" size="20" value="'+this.account.username+'" class="input" id="user_login" name="log"></label>'
 		  +'<input type="password" tabindex="20" size="20" value="'+password+'" class="input" id="user_pass" name="pwd"></label>'
 		  +'<input type="submit" tabindex="100" value="Log In" class="button-primary" id="wp-submit" name="wp-submit">'
