@@ -97,7 +97,7 @@ enyo.kind({
   downloadPages:function(){
     this.$.http.callMethod({
       methodName:'wp.getPages',
-      methodParams:[this.account.blogid, this.account.username, this.password, 100]
+      methodParams:[this.account.blogid, this.account.username, this.password, 20]
     }, { url:this.account.xmlrpc, onSuccess:'savePages' });
   },
   updateComment:function(comment){
@@ -143,7 +143,7 @@ enyo.kind({
   downloadPosts:function(){
     this.$.http.callMethod({
       methodName: 'metaWeblog.getRecentPosts',
-      methodParams: [this.account.blogid, this.account.username, this.password, 100]
+      methodParams: [this.account.blogid, this.account.username, this.password, 20]
     }, { url:this.account.xmlrpc, onSuccess:'savePosts' });
     
     this.$.http.callMethod({
