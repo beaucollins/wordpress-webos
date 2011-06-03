@@ -254,9 +254,10 @@ enyo.kind({
   },
   refreshPendingCommentCount:function(){
     var client = this;
-    this.account.comments.filter('status','=','hold').count(function(count){
-      client.setPendingCommentCount(count);
-    });
+    if(this.account.comments)
+	    this.account.comments.filter('status','=','hold').count(function(count){
+	      client.setPendingCommentCount(count);
+	    });
   },
   pendingCommentCountChanged:function(){
     this.doPendingComments(this.pendingCommentCount);
@@ -287,7 +288,6 @@ enyo.kind({
     });
   },
   savePost:function(post){
-		
     var client = this;
     var http = this.$.http;
     var account = this.account;
@@ -299,6 +299,7 @@ enyo.kind({
         methodParams:[post.postid, account.username, account.password, post._data, false]
       }, {onSuccess:'savePostSuccess', post:post});
     }else{
+      this.log("sending the new post to the server");
       return http.callMethod({
         //     mw.method('newPost', 'blog_id', 'username', 'password', 'content', 'publish');
         methodName:'metaWeblog.newPost',
@@ -315,11 +316,12 @@ enyo.kind({
     
     this.$.http.callMethod({
       methodName:'metaWeblog.getPost',
-      methodParams:[post.postid, this.account.username, this.password]
-    }, { url:this.account.xmlrpc, onSuccess:'refreshPost', post:post, update:true })
+      methodParams:[post.postid, account.username, this.password]
+    }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:true })
   },
   savePostSuccess:function(sender, response, request){
-    // if it was a metaWeblog.editPost request response will be boolean true
+	this.log(">>>savePostSuccess");
+	  // if it was a metaWeblog.editPost request response will be boolean true
     // otherwise it will be the new id of the post
     var post = request.post;
     var client = this;
@@ -331,10 +333,11 @@ enyo.kind({
       client.$.http.callMethod({
         methodName:'metaWeblog.getPost',
         methodParams:[post.postid, client.account.username, client.password]
-      }, { url:this.account.xmlrpc, onSuccess:'refreshPost', post:post, update:false })
+      }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:false })
     });
   },
   refreshPost:function(sender, response, request){
+	this.log(">>>refreshPost");
     var post = request.post;
     var client = this;
     var account = this.account;
@@ -342,11 +345,11 @@ enyo.kind({
       post[field] = response[field];
     }
     enyo.application.persistence.flush(function(){
-      this.doSavePost(post, account);
+      client.doSavePost(post, account);
       if (request.update) {
-        this.doUpdatePost(post, account);
+        client.doUpdatePost(post, account);
       }else{
-        this.doNewPost(post, account);
+        client.doNewPost(post, account);
       }
     })
   },

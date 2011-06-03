@@ -326,21 +326,24 @@ enyo.kind({
 		this.post.mt_keywords = this.$.tagsField.getValue();
 			
 	var postPassword = this.$.passwordField.getValue();
+	
 	if (postPassword != '')
 		this.post.wp_password = postPassword;
 	else
 		this.post.wp_password = null;
-		
+	
+	this.log("calling the xmlrpc client...");
 	if (inSender.name == 'postButton') {
 		// save the post via the client
-	    this.$.client.savePost(post);
+	    this.$.client.savePost(this.post);
 	}
 	else {
 		// save the post as a local draft
-		this.$.client.saveDraft(post);
+		this.$.client.saveDraft(this.post);
 	}
   },
   savePostSuccess:function(sender, post, account){
+	this.log(">>> savePostSuccess");
     enyo.windows.addBannerMessage("Post saved successfully", "{}");
     console.log("Post was saved", post, account);
   },
@@ -555,7 +558,7 @@ enyo.kind({
         if (post) {
           composer.setPost(post);
           post.fetch('account', function(account){
-            composer.setAccount(account);
+        	  composer.setAccount(account);
           })
         }else{
           load_account();
