@@ -569,13 +569,13 @@ enyo.kind({
           })
         }else{
           load_account();
-          composer.setPost(new enyo.application.models.Post());
+          composer.setPost(new enyo.application.models.Post({mt_allow_pings:null,mt_allow_comments:null}));
         }
       });
     }else{
       console.log("No post to find, finding account");
       load_account();
-      composer.setPost(new enyo.application.models.Post());
+      composer.setPost(new enyo.application.models.Post({mt_allow_pings:null,mt_allow_comments:null}));
     }
   },
 	tagsClick:function(sender){

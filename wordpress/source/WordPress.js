@@ -72,7 +72,9 @@ enyo.kind({
         onUpdatePage:'refreshPages',
         onPasswordReady:'refreshClient',
         onSaveDraft:'refreshDrafts',
-        onSavePost:'refreshPosts'
+        onSavePost:'refreshPosts',
+        onSaveDraftPage:'refreshDrafts',
+        onSavePage:'refreshPages'
       });
       clients.push(client);
     }, this);

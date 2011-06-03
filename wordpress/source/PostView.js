@@ -40,7 +40,11 @@ enyo.kind({
     var date_format = new enyo.g11n.DateFmt({ format:'medium' });
     console.log(this.post);
     this.$.title.setContent(this.post.title);
-    this.$.content.setContent(this.post.description + this.post.mt_text_more);
+    if(this.post._type === "Page")
+    	this.$.content.setContent(this.post.description + this.post.text_more);
+    else
+    	this.$.content.setContent(this.post.description + this.post.mt_text_more);
+    
     if(this.post.categories && this.post.categories.length > 0) {
       this.$.categories.setContent( this.post.categories.join(', '));
       this.$.category_row.show();
