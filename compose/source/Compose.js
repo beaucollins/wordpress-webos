@@ -19,7 +19,8 @@ enyo.kind({
   accountCategories : null,
   categoriesChanged : false, //true when the user click on categories
   components:[
-  { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onSavePost:'savePostSuccess' },
+  { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onSavePost:'savePostSuccess', onSavePage:'savePostSuccess',
+	  onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},
 	{	name: "uploadMediaFile", 
 		kind: "WebService", 
 		method: "POST", 
@@ -325,30 +326,36 @@ enyo.kind({
 	if(this.isAPost())
 		this.post.mt_keywords = this.$.tagsField.getValue();
 			
-	var postPassword = this.$.passwordField.getValue();
-	
-	if (postPassword != '')
-		this.post.wp_password = postPassword;
-	else
-		this.post.wp_password = null;
+	var postPassword = this.$.passwordField.getValue();	
+	this.post.wp_password = postPassword; //always set the post password otherwise you can't remove post password
 	
 	this.log("calling the xmlrpc client...");
 	if (inSender.name == 'postButton') {
 		// save the post via the client
-	    this.$.client.savePost(this.post);
+		if(this.isAPost())
+			this.$.client.savePost(this.post);
+		else
+			this.$.client.savePage(this.post);
 	}
 	else {
-		// save the post as a local draft
-		this.$.client.saveDraft(this.post);
+		if(this.isAPost())
+			this.$.client.saveDraft(this.post);
+		else
+			this.$.client.saveDraftPage(this.post);
 	}
   },
   savePostSuccess:function(sender, post, account){
-	this.log(">>> savePostSuccess");
-    enyo.windows.addBannerMessage("Post saved successfully", "{}");
-    console.log("Post was saved", post, account);
+	  if(post._type === "Page")
+		  enyo.windows.addBannerMessage("Page saved successfully", "{}");
+	  else
+		  enyo.windows.addBannerMessage("Post saved successfully", "{}");
+	  this.log("Post was saved", post, account);
+	  
+	  window.close();
   },
   saveDraftSuccess:function(sender, post, account){
     console.log("Draft was saved", post, account);
+    window.close(); //to close this window
   },
   showPreview:function() {
 	  var isChangedOrFreshlyCreatedDraft = false;
@@ -526,7 +533,7 @@ enyo.kind({
 		  if (this.post[statusVariableName] == 'private')
 			  this.$.statusSelector.setValue(4);
 		  else
-		  this.$.statusSelector.setValue(2);
+		  this.$.statusSelector.setValue(1); //set the status to publish for new post
 		  
 		  if (!this.isAPost()) { //this is a page
 			  //this.$.tagsField.setValue("");

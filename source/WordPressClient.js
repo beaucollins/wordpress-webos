@@ -27,7 +27,9 @@ enyo.kind({
     onUpdatePage:'',
     onPendingComments:'',
     onSavePost:'',
+    onSavePage:'',
     onSaveDraft:'',
+    onSaveDraftPage:'',
     onNewCategory:'',
     onUpdateCategory:''
   },
@@ -287,25 +289,19 @@ enyo.kind({
       enyo.application.launcher.draftSaved();
     });
   },
-  savePost:function(post){
+  // saves local modifications
+  // Page should be an instance of enyo.application.models.Page
+  saveDraftPage:function(post){
     var client = this;
-    var http = this.$.http;
     var account = this.account;
-    // this posts exists already
-    if (post.postid) {
-      // mw.method('editPost', 'post_id', 'username', 'password', 'content', 'publish');
-      return http.callMethod({
-        methodName:'metaWeblog.editPost',
-        methodParams:[post.postid, account.username, account.password, post._data, false]
-      }, {onSuccess:'savePostSuccess', post:post});
-    }else{
-      this.log("sending the new post to the server");
-      return http.callMethod({
-        //     mw.method('newPost', 'blog_id', 'username', 'password', 'content', 'publish');
-        methodName:'metaWeblog.newPost',
-        methodParams:[account.blogid, account.username, client.password, post._data, false]
-      }, {onSuccess:'savePostSuccess', post:post});
-    };
+    account.pages.add(post);
+    post.local_modifications = true
+    console.log("Save draft Page");
+    enyo.application.persistence.flush(function(){
+      client.doSaveDraftPage(post, account);
+      enyo.windows.addBannerMessage("Draft Page saved", "{}");
+      enyo.application.launcher.draftSaved();
+    });
   },
   updatePostSuccess:function(sender, response, request){
     var post = request.post;
@@ -318,6 +314,43 @@ enyo.kind({
       methodName:'metaWeblog.getPost',
       methodParams:[post.postid, account.username, this.password]
     }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:true })
+  },
+  savePost:function(post){
+	  var client = this;
+	  var http = this.$.http;
+	  var account = this.account;
+	  // this posts exists already
+	  if (post.postid) {
+		  // mw.method('editPost', 'post_id', 'username', 'password', 'content', 'publish');
+		  return http.callMethod({
+			  methodName:'metaWeblog.editPost',
+			  methodParams:[post.postid, account.username, account.password, post._data, false]
+		  }, {onSuccess:'savePostSuccess', post:post});
+	  }else{
+		  this.log("sending the new post to the server");
+		  return http.callMethod({
+			  //     mw.method('newPost', 'blog_id', 'username', 'password', 'content', 'publish');
+			  methodName:'metaWeblog.newPost',
+			  methodParams:[account.blogid, account.username, client.password, post._data, false]
+		  }, {onSuccess:'savePostSuccess', post:post});
+	  };
+  },
+  savePage:function(post){
+	  var client = this;
+	  var http = this.$.http;
+	  var account = this.account;
+	  if (post.page_id) {
+		  return http.callMethod({
+			  methodName:'wp.editPage',
+			  methodParams:[account.blogid, post.page_id, account.username, account.password, post._data, false]
+		  }, {onSuccess:'savePageSuccess', post:post});
+	  }else{
+		  this.log("sending the new page to the server");
+		  return http.callMethod({
+			  methodName:'wp.newPage',
+			  methodParams:[account.blogid, account.username, client.password, post._data, false]
+		  }, {onSuccess:'savePageSuccess', post:post});
+	  };
   },
   savePostSuccess:function(sender, response, request){
 	this.log(">>>savePostSuccess");
@@ -336,25 +369,59 @@ enyo.kind({
       }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:false })
     });
   },
+  savePageSuccess:function(sender, response, request){
+	  this.log(">>>savePageSuccess");
+	  // if it was a metaWeblog.editPost request response will be boolean true
+	  // otherwise it will be the new id of the post
+	  var post = request.post;
+	  var client = this;
+	  var account = this.account;
+	  post.postid = response;
+	  account.pages.add(post);
+	  enyo.windows.addBannerMessage("Pages saved successfully", "{}");
+	  enyo.application.persistence.flush(function(){
+		  client.$.http.callMethod({
+			  methodName:'wp.getPage',
+			  methodParams:[account.blogid, post.page_id, client.account.username, client.password]
+		  }, { url:account.xmlrpc, onSuccess:'refreshPage', post:post, update:false })
+	  });
+  },
   refreshPost:function(sender, response, request){
-	this.log(">>>refreshPost");
-    var post = request.post;
-    var client = this;
-    var account = this.account;
-    for(field in response){
-      post[field] = response[field];
-    }
-    enyo.application.persistence.flush(function(){
-      client.doSavePost(post, account);
-      if (request.update) {
-        client.doUpdatePost(post, account);
-      }else{
-        client.doNewPost(post, account);
-      }
-    })
+	  this.log(">>>refreshPost");
+	  var post = request.post;
+	  var client = this;
+	  var account = this.account;
+	  for(field in response){
+		  post[field] = response[field];
+	  }
+	  enyo.application.persistence.flush(function(){
+		  client.doSavePost(post, account);
+		  if (request.update) {
+			  client.doUpdatePost(post, account);
+		  }else{
+			  client.doNewPost(post, account);
+		  }
+	  })
+  },
+  refreshPage:function(sender, response, request){
+	  this.log(">>>refreshPage");
+	  var post = request.post;
+	  var client = this;
+	  var account = this.account;
+	  for(field in response){
+		  post[field] = response[field];
+	  }
+	  enyo.application.persistence.flush(function(){
+		  client.doSavePage(post, account); //the compose view will be called here
+		  if (request.update) {
+			  client.doUpdatePage(post, account);
+		  }else{
+			  client.doNewPage(post, account);
+		  }
+	  })
   },
   onSavePost:function(sender, response, request){
-    console.log("Saved the post!", response);
+    this.log(">>>Saved the post!", response);
     var post = response;
     this.doSavePost(post, this.account);
   },
