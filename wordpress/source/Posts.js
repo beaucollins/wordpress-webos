@@ -7,7 +7,7 @@ enyo.kind({
   },
   components: [
     { name:'list', width:'350px', components:[
-      { kind:'wp.PostList', flex:1, onSelectPost:'selectPost', onAcquirePage:'acquirePosts', onRefresh:'refreshPosts' }
+      { kind:'wp.PostList', flex:1, onSelectPost:'selectPost', onAcquirePage:'acquirePosts', onRefresh:'refreshPosts', onNewItem:'openNewItemEditor'}
     ]},
     { name:'right', flex:1, components:[
       { kind:'Pane', flex:1, components:[
@@ -61,8 +61,11 @@ enyo.kind({
   refreshPosts:function(){
     this.account.downloadPosts();    
   },
-  openPostEditor:function(sender, post){
+  openPostEditor:function(sender, post){ 
     enyo.application.launcher.openComposer(this.account.account, post);    
+  },
+  openNewItemEditor:function(sender, post){
+	this.log('new Post clicked');
+	enyo.application.launcher.openComposerWithNewItem(this.account.account,"Post");      
   }
-  
 });

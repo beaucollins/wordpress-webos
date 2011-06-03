@@ -118,9 +118,10 @@ enyo.kind({
     };
   },
   refreshPages:function(sender, page, account){
-    if (this.$.content.getView() == this.$.page) {
-      if (this.$.page.account == sender) {
-        this.$.page.refresh();
+	this.refreshDraftCount();
+    if (this.$.content.getView() == this.$.pages) {
+      if (this.$.pages.account == sender) {
+        this.$.pages.refresh();
       }
     };
   },
@@ -224,27 +225,14 @@ enyo.kind({
     // this.$.pane.selectView(this.$.panes);
     this.$.setupForm.close();
   },
-  // if given a post, then creating a draft based on that post
-  // the sender should have an associated account that we will
-  // link up by xmlrpc url for now
-  composeDraft:function(sender, inEvent, post, options){
-    //launches a new window with the compose view
-    this.log("post",post);
-    this.log("options", options);
-    // this.log("params", params);
-    
+  composeDraft:function(sender, inEvent){
     var account;
-    
     if(this.activeAccount){
       account = this.activeAccount.account;
     }else{
       account = this.accounts[0].account;
     }
-    
-	  params = {'account': account.id};
-    enyo.mixin(params, options);
-    console.log("Compose draft", params);
-    enyo.application.launcher.openDraft(params);
+    enyo.application.launcher.openComposerWithNewItem(account,"Post");
   },
   openAppMenuHandler: function() {
     // console.log("Open app menu please");

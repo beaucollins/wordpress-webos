@@ -551,7 +551,8 @@ enyo.kind({
   },
   windowParamsChangeHandler: function(inSender, event) {
     var account_id = event.params.account;
-    var post_id = event.params.post;
+    var post_id = event.params.post; //one between post_id and type should be defined
+    var itemType = event.params.type;
     var composer = this;
     
     var load_account = function(){
@@ -559,6 +560,7 @@ enyo.kind({
         composer.setAccount(account)
       })
     }
+        
     if (post_id) {
       enyo.application.models.Post.load(post_id, function(post){
         console.log("Found a post? ", post);
@@ -572,10 +574,17 @@ enyo.kind({
           composer.setPost(new enyo.application.models.Post({mt_allow_pings:null,mt_allow_comments:null}));
         }
       });
-    }else{
-      console.log("No post to find, finding account");
+            
+    } else {
+      console.log("new item on compose view");
       load_account();
-      composer.setPost(new enyo.application.models.Post({mt_allow_pings:null,mt_allow_comments:null}));
+      if(itemType == 'Post') {
+    	  console.log("Creating a new Post");
+    	  composer.setPost(new enyo.application.models.Post({mt_allow_pings:null,mt_allow_comments:null}));
+      } else {
+    	  console.log("Creating a new Page");
+    	  composer.setPost(new enyo.application.models.Page({mt_allow_pings:null,mt_allow_comments:null}));
+      }
     }
   },
 	tagsClick:function(sender){

@@ -39,16 +39,21 @@ enyo.kind({
     var basePath = enyo.fetchAppRootPath();
     enyo.windows.activate('wordpress', basePath + 'wordpress/index.html', params);
   },
-  openDraft:function(params){
-    var label = "draft-" + this.draftCount;
-    enyo.windows.activate(label, "./compose/index.html", params);
-    this.draftCount ++;
-  },
   openComposer:function(account, post){
     var label = "post-" + post.id;
     var params = {
       account: account.id,
       post: post.id
+    }
+    enyo.windows.activate(label, "./compose/index.html", params);
+  },
+  openComposerWithNewItem:function(account, type){
+    console.log("launching the composer view with new ", type);
+    var label = "draft-" + this.draftCount;
+    this.draftCount ++;
+    var params = {
+      account: account.id,
+      type: type
     }
     enyo.windows.activate(label, "./compose/index.html", params);
   },

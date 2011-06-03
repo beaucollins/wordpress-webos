@@ -97,6 +97,7 @@ enyo.kind({
   },
   // download a sane number of posts
   downloadPages:function(){
+    this.log("start loading pages from server");
     this.$.http.callMethod({
       methodName:'wp.getPages',
       methodParams:[this.account.blogid, this.account.username, this.password, 20]

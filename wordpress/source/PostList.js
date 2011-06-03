@@ -4,7 +4,8 @@ enyo.kind({
   events:{
     onSelectPost:'',
     onAcquirePage:'',
-    onRefresh:''
+    onRefresh:'',
+    onNewItem:''	
   },
   published: {
     account:null
@@ -29,7 +30,8 @@ enyo.kind({
     ] },
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
-      { name: 'refresh', content:'Refresh', onclick:'doRefresh'}
+      { name: 'refresh', content:'Refresh', onclick:'doRefresh'},
+      { name: 'newItem', content:'Add New', onclick:'doNewItem'}
     ] }
   ],
   create:function(){

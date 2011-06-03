@@ -19,7 +19,11 @@ enyo.kind({
     //   this.$.xmlrpc_client.callMethod({methodParams:[this.account.blogid, this.account.username, this.account.password, ((page+1) * this.$.list.pageSize)]}, { page:page });
     // };
   },
-  downloadPosts:function(){
-    this.account.downloadPages();    
+  refreshPosts:function(){
+    this.account.downloadPages();  
+   },
+  openNewItemEditor:function(sender, post){
+	this.log('new Page clicked');
+	enyo.application.launcher.openComposerWithNewItem(this.account.account,"Page");    
   }
 })
