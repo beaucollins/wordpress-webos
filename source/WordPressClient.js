@@ -451,7 +451,7 @@ enyo.kind({
 	  var post = request.post;
 	  var client = this;
 	  var account = this.account;
-	  post.postid = response;
+	  post.page_id = response;
 	  account.pages.add(post);
 	  enyo.windows.addBannerMessage("Pages saved successfully", "{}");
 	  enyo.application.persistence.flush(function(){

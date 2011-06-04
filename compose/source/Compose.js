@@ -349,7 +349,8 @@ enyo.kind({
 		  enyo.windows.addBannerMessage("Page saved successfully", "{}");
 	  else
 		  enyo.windows.addBannerMessage("Post saved successfully", "{}");
-	  this.log("Post was saved", post, account);
+	 
+	  this.log("Item saved", post, account);
 	  
 	  window.close();
   },
