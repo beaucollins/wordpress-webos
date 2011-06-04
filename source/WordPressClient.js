@@ -142,6 +142,25 @@ enyo.kind({
         }
       });
     }, this);
+    
+    //remove pages from the local db that are not on the server anymore!!
+    account.pages.list(function(storedPages){
+    	enyo.forEach(storedPages, function(storedPage){
+    		var presence = false;
+    		for(var i=0; i < pages.length; i++) {
+    			if(storedPage.page_id == pages[i].page_id)
+    				presence=true;
+    		}
+
+    		if(presence == false){
+    			console.log("Not Found: " + storedPage.title);
+    			account.pages.remove(storedPage);
+    			enyo.application.persistence.flush(function(){
+    				//client.doNewPost(p, account);
+    			});
+    		}
+    	}, this);    	 
+    });
   },
   downloadPosts:function(){
     this.$.http.callMethod({
@@ -155,34 +174,51 @@ enyo.kind({
       }, { url:this.account.xmlrpc, onSuccess:'saveCategories' });
   },
   saveCategories:function(sender, response, request){
-	 
-	    var account = this.account;
-	    var categories = response;
-	    var client = this;
-      var category;
-	    enyo.forEach(categories, function(cat){
-	        account.categories.filter('categoryId', '=', cat.categoryId).one(function(existing){
-	          if (!existing) {
-	            var category = new enyo.application.models.Category(cat);
-	            account.categories.add(category);
-	            enyo.application.persistence.flush(function(){
-	              client.doNewCategory(category, account);
-	            });
-	            
-	          }else{
-	        	  for(field in cat){
-	        	    existing[field] = cat[field];
-	        	  }
-	        	  enyo.application.persistence.flush(function(){
-	        	    client.doUpdateCategory(existing, account);
-	        	  })
-	          }
-	        });
-	    }, this);
-	    
+	  var account = this.account;
+	  var categories = response;
+	  var client = this;
+	  var category;
+	  enyo.forEach(categories, function(cat){
+		  account.categories.filter('categoryId', '=', cat.categoryId).one(function(existing){
+			  if (!existing) {
+				  var category = new enyo.application.models.Category(cat);
+				  account.categories.add(category);
+				  enyo.application.persistence.flush(function(){
+					  client.doNewCategory(category, account);
+				  });
+
+			  }else{
+				  for(field in cat){
+					  existing[field] = cat[field];
+				  }
+				  enyo.application.persistence.flush(function(){
+					  client.doUpdateCategory(existing, account);
+				  })
+			  }
+		  });
+	  }, this);
+	  
+	  //remove categories from the local db that are not on the server anymore!!
+	  account.categories.list(function(storedCategories){
+		  enyo.forEach(storedCategories, function(storedCategory){
+			  var presence = false;
+			  for(var i=0; i < categories.length; i++) {
+				  if(storedCategory.categoryId == categories[i].categoryId)
+					  presence=true;
+			  }
+
+			  if(presence == false){
+				  console.log("Not Found: " + storedCategory.categoryName);
+				  account.categories.remove(storedCategory);
+				  //we can flush the db later...
+			  }
+		  }, this);    	 
+		  enyo.application.persistence.flush(function(){
+			  //client.doNewPost(p, account);
+		  });
+	  });
   },
   savePosts:function(sender, response, request){
-
 	var account = this.account;
     var posts = response;
     var client = this;
@@ -213,6 +249,25 @@ enyo.kind({
         }
       });
     }, this);
+
+    //remove posts from the local db that are not on the server anymore!!
+    account.posts.list(function(storedPosts){
+    	 enyo.forEach(storedPosts, function(storedPost){
+    		 var presence = false;
+    		 for(var i=0; i<posts.length; i++) {
+    		   if(storedPost.postid == posts[i].postid)
+    			   presence=true;
+    		 }
+    		 
+    		 if(presence == false){
+    			 console.log("Not Found: " + storedPost.title);
+    			 account.posts.remove(storedPost);
+    	          enyo.application.persistence.flush(function(){
+    	            //client.doNewPost(p, account);
+    	          });
+    		 }
+    	 }, this);    	 
+    });
   },
   refreshComments:function(skip_notifications){
     var options = {};
@@ -254,6 +309,25 @@ enyo.kind({
         }
       });
     });
+    
+    //remove comments from the local db that are not on the server anymore!!
+    account.comments.list(function(storedComments){
+    	enyo.forEach(storedComments, function(storedComment){
+    		var presence = false;
+    		for(var i=0; i < response.length; i++) {
+    			if(storedComment.comment_id == response[i].comment_id)
+    				presence=true;
+    		}
+
+    		if(presence == false){
+    			console.log("Not Found Comment: " + storedComment.comment_id);
+    			account.comments.remove(storedComment);
+    			enyo.application.persistence.flush(function(){
+    				client.refreshPendingCommentCount();
+    			});
+    		}
+    	}, this);    	 
+    });    
   },
   refreshPendingCommentCount:function(){
     var client = this;
@@ -465,16 +539,17 @@ enyo.kind({
     console.log("Comment has an id now", comment.comment_id, comment);
   },
   getComment:function(comment_id){
-    this.$.http.callMethod({
+	this.$.http.callMethod({
       methodName:'wp.getComment',
       methodParams:[this.account.blogid, this.account.username, this.account.password, comment_id]
     }, { url:this.account.xmlrpc, onSuccess:'getCommentSuccess' });
   },
   getCommentSuccess:function(sender, response, success){
+	this.log("getCommentSuccess ", response);
     var account = this.account;
     var client = this;
-    this.account.comments.filter('comment_id', '=', response.comment_id).one(function(comment){
-      if (existing) {
+    account.comments.filter('comment_id', '=', response.comment_id).one(function(comment){
+      if (comment) {
         for(field in response){
           comment[field] = response[field];
         }
@@ -488,8 +563,7 @@ enyo.kind({
           client.doNewComment(comment, account);
         });
       }
+      
     });
   }
-  
-  
 })
