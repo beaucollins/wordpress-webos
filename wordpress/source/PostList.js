@@ -21,17 +21,29 @@ enyo.kind({
     // setting lookAhead to 1 for XMLRPC api performance reasons, because we can't get paged results
     { name:'list', kind:'VirtualList', flex:1, onSetupRow:'setupPost', onAcquirePage:'requestPageWithSize', onDiscardPage:'discardPage', components:[
       { name:'item', kind:'Item', onclick:'selectPost', className:'post-item', components:[
-        { name:'title', className:'post-list-title wp-truncate' },
-        { kind:'HFlexBox', components:[
-          { name:'postDate', flex:1, content:'Date', className:'post-list-timestamp' },
-          { name:'postStatus', content:'Status', className:'status-badge' }
-        ]}
+	      { name:'header', kind:'HFlexBox', components: [
+	          { kind:'VFlexBox', flex:1, components:[
+	            { kind:'HFlexBox', components:[
+	              { name:'title', flex:1, className:'post-list-title wp-truncate' },
+	              { name:'postDate', content:'Date', className:'post-list-timestamp' }
+	            ]},
+	            { kind:'HFlexBox', components:[
+	              { flex:1, kind:"Control" },
+	              { name:'postStatus', content:'Status', className:'status-badge' }
+	            ]}
+	          ]}
+	        ]},
+	       { name:'postExcerpt', content:'Excerpt', className:'list-excerpt' }
       ] }
     ] },
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
+<<<<<<< .mine
+      { kind:'Button', name: 'refresh', content:'Refresh', onclick:'doRefresh'}
+=======
       { name: 'refresh', content:'Refresh', onclick:'doRefresh'},
       { name: 'newItem', content:'Add New', onclick:'doNewItem'}
+>>>>>>> .r156
     ] }
   ],
   create:function(){
@@ -70,11 +82,20 @@ enyo.kind({
       // console.log("Setting up index: ", index, post);
       if (post.title.trim() == '') {
         this.$.title.addClass('untitled');
-        this.$.title.setContent("Untitled");
+        this.$.title.setContent("(No title)");
       }else{
         this.$.title.removeClass('untitled');
         this.$.title.setContent(post.title);
       };
+      
+      var postExcerpt;
+      if (post.description.trim() != '') {
+      	this.$.postExcerpt.setContent((TruncateText(StripHTML(post.description))));
+      }
+      else {
+      	this.$.postExcerpt.setContent('(No content)');
+      	this.$.postExcerpt.addClass('empty');
+      }
       
       var status;
       if (post.postid == 0) {
@@ -83,6 +104,7 @@ enyo.kind({
         status = post.post_status || post.page_status || 'draft';
       }
       this.$.postStatus.setContent($L(this.kPostStatus[status]));
+      this.$.postStatus.addClass("status-"+status);
       this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(index))
       if (post.date_created_gmt) {
         this.$.postDate.setContent(TimeAgo(post.date_created_gmt));        

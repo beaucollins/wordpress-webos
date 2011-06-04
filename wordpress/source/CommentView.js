@@ -17,22 +17,28 @@ enyo.kind({
     { name:'comment', flex:1, kind:'VFlexBox', components:[
       { name:'header', kind:'Header', components:[
         { kind:'Control', kind:'HFlexBox', components:[
-          { name:'avatar', kind:'Gravatar', className:'avatar-large', defaultImage:'../images/icons/avatar-backup.png', size:'62' },
+          { name:'avatar', kind:'Gravatar', className:'avatar-large', defaultImage:'../images/icons/avatar-backup.png', size:'70' },
           { kind:'VFlexBox', flex:1, components:[
             { name:'authorName', className:'wp-post-title' },
+            { kind:'HFlexBox', className:'wp-post-details', components:[
+            	{ kind:'VFlexBox', flex:1, components:[
+            		{ name:'authorURL', className:'wp-post-author', onclick:'openBrowserToAuthor' },
+            		{ name:'authorEmail', className:'wp-post-email', onclick:'openEmailToAuthor' }
+            	]}
+            ]}/*,
             { kind:'HFlexBox', components:[
               { kind:'Button', caption: 'Reply', onclick:'doReply', className:'enyo-button-blue' },
-              { kind:'Button', caption: 'View', onclick:'launchBrowser'},
+              { kind:'Button', caption: 'View', onclick:'launchBrowser'}, <<< rudimentary? - IK 
               { name:'authorEmail', caption:'Email', kind:'Button', onclick:'openEmailToAuthor' },
-              { name:'authorURL', caption:'Home Page', kind:'Button', onclick:'openBrowserToAuthor' },
+              { name:'authorURL', caption:'Site', kind:'Button', onclick:'openBrowserToAuthor' },
               { flex:1 }
-            ]}
+            ]}*/
           ]}
         ] }
       ]},
-      { kind:'HFlexBox', className:'wp-item-meta', onclick:'launchBrowser', components:[
+      { kind:'HFlexBox', className:'wp-item-meta', components:[
         { content:'On:', className:'wp-item-meta-label' },
-        { name:'subject', flex:1, className:'wp-item-meta-content wp-comment-subject' },
+        { name:'subject', flex:1, onclick:'launchBrowser', className:'wp-item-meta-content wp-comment-subject' },
         { className:'wp-disclosure-arrow' }
       ]},
       { kind: 'Scroller', flex:1, components:[
@@ -52,11 +58,12 @@ enyo.kind({
       { kind: 'enyo.Toolbar', components:[
         { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
         { flex:1 },
+        { kind:'Button', caption: 'Reply', onclick:'doReply', className:'enyo-button-blue' },
 		{ kind: "Spinner", className: 'wp-list-spinner'},
-        { name:'approve', caption: 'Approve', onclick:'markComment' },
-        { name:'unapprove', caption: 'Unapprove', onclick:'markComment' },
-        { name:'trash', caption: 'Trash', onclick:'markComment' },
-        { name:'spam', caption: 'Spam', onclick:'markComment' }
+        { kind:'Button', name:'approve', caption: 'Approve', onclick:'markComment' },
+        { kind:'Button', name:'unapprove', caption: 'Unapprove', onclick:'markComment' },
+        { kind:'Button', name:'trash', caption: 'Trash', onclick:'markComment' },
+        { kind:'Button', name:'spam', caption: 'Spam', onclick:'markComment' }
       ] } 
     ] }
   ],
@@ -114,8 +121,9 @@ enyo.kind({
     }else{
       this.$.spam.show();
     }
-
-    // this.$.authorURL.setContent(this.comment.author_url);
+	
+	this.$.authorEmail.setContent(this.comment.author_email);
+    this.$.authorURL.setContent(this.comment.author_url);
     this.$.subject.setContent(this.comment.post_title);
     this.$.scroller.setScrollPositionDirect(0,0);
     

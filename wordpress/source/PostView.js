@@ -20,8 +20,8 @@ enyo.kind({
       ]}
     ]},
     { name:'category_row', kind:'HFlexBox', className:'wp-item-meta', components:[
-      { content: $L('Categories'), className:'wp-item-meta-label'},
-      { name:'categories', content:'Categories' }
+      { name:'categoriesLabel', content: $L('Categories:'), className:'wp-item-meta-label'},
+      { name:'categories', content:'Categories', className:'wp-item-meta-content wp-post-categories' }
     ]},
     { kind:'Scroller', flex:1, components:[
       { name:'content', className:'wp-post-content' }
@@ -29,8 +29,8 @@ enyo.kind({
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
-      { caption: 'Edit', onclick:"openEditor" },
-      { caption: 'Preview', onclick:'openPostURL' }
+      { kind:'Button', caption: 'Edit', onclick:"openEditor" },
+      { kind:'Button', caption: 'Preview', onclick:'openPostURL' }
     ]}
   ],
   postChanged:function(){
@@ -39,6 +39,14 @@ enyo.kind({
     }
     var date_format = new enyo.g11n.DateFmt({ format:'medium' });
     console.log(this.post);
+    
+    if (this.post.categories.length > 1){
+    	this.$.categoriesLabel.setContent($L('Categories:'));
+    }
+    else {
+     	this.$.categoriesLabel.setContent($L('Category:'));
+    }
+    
     this.$.title.setContent(this.post.title);
     if(this.post._type === "Page")
     	this.$.content.setContent(this.post.description + this.post.text_more);

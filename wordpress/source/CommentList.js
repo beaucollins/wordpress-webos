@@ -79,8 +79,9 @@ enyo.kind({
               { name:'author', flex:1, className:'comment-author' },
               { name:'timestamp', className:'comment-timestamp' }
             ]},
-            { kind:'HFlexBox', components:[
-              { flex:1, kind:"Control" },
+            { kind:'VFlexBox', components:[
+              	{ name:'authorURL', className:'comment-author-url' },
+              	{ flex:1, kind:"Control" },
               { name:'status', className:'comment-status-badge', content:"Status" }
             ]}
           ]}
@@ -92,7 +93,7 @@ enyo.kind({
     { kind: 'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
 	  { kind: 'Spinner', className: 'wp-list-spinner' },
-      { name: 'refreshButton', content:'Refresh', onclick:'refreshComments' }
+      { kind:'Button', name: 'refreshButton', content:'Refresh', onclick:'refreshComments', className:"enyo-button-blue" }
     ] }
   ],
   create:function(){
@@ -102,6 +103,7 @@ enyo.kind({
     if(comment = this.$.dataPage.itemAtIndex(inIndex)){      
       this.$.avatar.setEmail(comment.author_email, {size:30});
       this.$.author.setContent(comment.author);
+      this.$.authorURL.setContent(comment.author_url);
       this.$.timestamp.setContent(TimeAgo(comment.date_created_gmt));
       this.$.commentContent.setContent(TruncateText(StripHTML(comment.content)));
       this.$.commentSubject.setContent(comment.post_title);
