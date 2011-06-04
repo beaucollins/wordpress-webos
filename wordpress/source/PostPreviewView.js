@@ -43,16 +43,16 @@ enyo.kind({
 	  } else {
 		//fallback to  local preview	    
 		  var alert_msg = "Sorry, something went wrong during preview. A simple preview is shown below.";
-		  this.loadlocalPreview(alert_msg, this.post.title,  this.post.description + this.post.mt_text_more, this.post.mt_keywords, this.post.categories); 
+		  this.loadlocalPreview(alert_msg, this.post.title,  this.post.description + this.post.mt_text_more, this.post.mt_keywords, this.post.categories, 'Item'); 
 	  }
   },
-  loadlocalPreview:function(alert_msg, title, content, tags, categories){
+  loadlocalPreview:function(alert_msg, title, content, tags, categories, type){
 	  this.$.realPreview.setShowing(false);
 	  if (typeof(title) == "undefined" || enyo.string.trim(title) =="")
 		  title = "(no title)";		  
 	  
 	  if (typeof(content) == "undefined" || enyo.string.trim(content) == "")
-		  content = "No Description available for this Post";
+		  content = "No Description available for this "+ type;
 	  
 	  if(tags && enyo.string.trim(tags) != "") {
 		  tags ='Tags: '+ tags;
@@ -98,8 +98,9 @@ enyo.kind({
 		  var content = enyo.windowParams.content;
 		  var tags = enyo.windowParams.tags;
 		  var categories = enyo.windowParams.categories;
-		  var alert_msg = "Sorry, the post has changed, or it is not published. A simple preview is shown below.";
-		  this.loadlocalPreview(alert_msg, title,content, tags, categories);
+		  var typeString = enyo.windowParams.item_type; //decode the string in the future
+		  var alert_msg = "Sorry, the "+typeString+" has changed, or it is not published. A simple preview is shown below.";
+		  this.loadlocalPreview(alert_msg, title,content, tags, categories, typeString);
 	  } else {
 		  //load remote preview
 		  this.account = enyo.windowParams.account;

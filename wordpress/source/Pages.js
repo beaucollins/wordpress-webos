@@ -3,16 +3,21 @@ enyo.kind({
   kind:'wp.Posts',
   // Not optimal, this api is seriously going to kill the app,
   // are we going to set a max number of posts to donwload somehow?
-  acquirePosts:function(sender, page){
+  acquirePosts:function(sender, page, pageSize){
     if(!this.account) return;
+    if (page < 0) return;
     var that = this;
+    console.log("Page size", pageSize);
     this.account.account
       .pages
       .order('date_created_gmt', false)
-      .limit(this.$.list.pageSize)
-      .skip(page*this.$.list.pageSize)
+      .filter('page_id', '!=', '0')
+      .limit(pageSize)
+      .skip(page*pageSize)
       .list(function(posts){
-        that.$.postList.setPage(page, posts);
+    	  if (posts.length > 0) {
+    		  that.$.postList.setPage(page, posts);
+    	  }
         // that.$.postList.refresh();
       });
     // if (this.account && this.$.dataPage.missingPage(page)) {

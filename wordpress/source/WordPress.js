@@ -121,7 +121,6 @@ enyo.kind({
 	this.refreshDraftCount();
     if (this.$.content.getView() == this.$.pages) {
       if (this.$.pages.account == sender) {
-    	console.log("Refresh pages!")
         this.$.pages.refresh();
       }
     };

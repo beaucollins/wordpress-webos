@@ -46,7 +46,7 @@ enyo.kind({
       ]},
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
-          { content:'New Post', flex:1 },
+          { name:'headerLabelField', content:'New Post', flex:1 },
           { name:'previewButton', kind:'enyo.Button', caption:'Preview', onclick:'showPreview' },
           { name:'draftButton', kind:'enyo.Button', caption:'Save Draft', onclick:'savePost' },
 		  { name:'postButton', kind:'enyo.Button', caption:'Publish', onclick:'savePost' }
@@ -388,7 +388,7 @@ enyo.kind({
 	  }
 	  //launches a new window with the preview view
 	  params = {'title' : this.$.titleField.getValue(), 'content' :  this.$.contentField.getValue(), 
-			  'tags': this.isAPost() ? this.$.tagsField.getValue() :'', 'categories': categoriesForPreview };
+			  'tags': this.isAPost() ? this.$.tagsField.getValue() :'', 'categories': categoriesForPreview, 'item_type': this.isAPost() ? 'Post' : 'Page'};
 	 // options = {};
 	 // enyo.mixin(params, options);
 	  enyo.windows.activate("Post Preview", "../wordpress/postPreview.html", params);
@@ -574,8 +574,10 @@ enyo.kind({
           load_account();
           composer.setPost(new enyo.application.models.Post({mt_allow_pings:null,mt_allow_comments:null}));
         }
+        //upgrade the Header Fiels
+        composer.$.headerLabelField.setContent(composer.isAPost() ? "Edit Post" : "Edit Page");
       });
-            
+      
     } else {
       console.log("new item on compose view");
       load_account();
@@ -586,6 +588,9 @@ enyo.kind({
     	  console.log("Creating a new Page");
     	  composer.setPost(new enyo.application.models.Page({mt_allow_pings:null,mt_allow_comments:null}));
       }
+    
+    //upgrade the Header Fiels
+      this.$.headerLabelField.setContent(this.isAPost() ? "New Post" : "New Page");
     }
   },
 	tagsClick:function(sender){

@@ -50,7 +50,6 @@ enyo.kind({
     this.$.list.select(item.rowIndex);
     this.$.item.addClass('active-selection');
     this.doSelectPost(post, this.account);
-    
   },
   requestPageWithSize:function(sender, page){
     var cached;
@@ -75,7 +74,7 @@ enyo.kind({
     var post;
     if (post = this.$.dataPage.itemAtIndex(index)) {
       console.log("Set up post");
-      // console.log("Setting up index: ", index, post);
+     // console.log("Setting up index: ", index, post);
       if (post.title.trim() == '') {
         this.$.title.addClass('untitled');
         this.$.title.setContent("(No title)");
@@ -94,7 +93,7 @@ enyo.kind({
       }
       
       var status;
-      if (post.postid == 0) {
+      if (post.postid == 0 || post.page_id == 0) {
         status = 'draft';
       }else{
         status = post.post_status || post.page_status || 'draft';
