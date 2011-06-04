@@ -37,13 +37,9 @@ enyo.kind({
       ] }
     ] },
     { kind:'enyo.Toolbar', components:[
-      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
-<<<<<<< .mine
-      { kind:'Button', name: 'refresh', content:'Refresh', onclick:'doRefresh'}
-=======
-      { name: 'refresh', content:'Refresh', onclick:'doRefresh'},
+      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},      
+      { kind:'Button', name: 'refresh', content:'Refresh', onclick:'doRefresh'},
       { name: 'newItem', content:'Add New', onclick:'doNewItem'}
->>>>>>> .r156
     ] }
   ],
   create:function(){
