@@ -1,6 +1,7 @@
 enyo.kind({
   name:"wp.Pages",
   kind:'wp.Posts',
+  className: 'posts-pane',
   // Not optimal, this api is seriously going to kill the app,
   // are we going to set a max number of posts to donwload somehow?
   acquirePosts:function(sender, page, pageSize){

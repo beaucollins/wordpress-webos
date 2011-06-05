@@ -1,6 +1,7 @@
 enyo.kind({
   name: 'wp.Comments',
   kind: 'SlidingPane',
+  className: 'comments-pane',
   published: {
     account:null,
     comment:null
@@ -14,7 +15,7 @@ enyo.kind({
     ]},
     { name: 'right', flex:1, components:[
       { kind:'Pane', flex:1, components:[
-        { name:'blank', kind:'Control' },
+        { name:'blank', kind:'BlankSlate', flex:1 },
         { name:'detail', kind:'wp.CommentView', onReply:'doReply' }
       ]}
     ]}

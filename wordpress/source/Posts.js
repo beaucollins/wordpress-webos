@@ -1,6 +1,7 @@
 enyo.kind({
   name: 'wp.Posts',
   kind: 'SlidingPane',
+  className: 'posts-pane',
   published: {
     account:null,
     methodName:'metaWeblog.getRecentPosts'
@@ -11,7 +12,7 @@ enyo.kind({
     ]},
     { name:'right', flex:1, components:[
       { kind:'Pane', flex:1, components:[
-        { name:'blank', kind:'Control', flex:1 },
+        { name:'blank', kind:'BlankSlate', flex:1 },
         { name:'detail', kind:'wp.PostView', onEdit:'openPostEditor', flex:1 }
       ]}
     ]}
