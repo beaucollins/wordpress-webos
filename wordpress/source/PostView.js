@@ -37,7 +37,6 @@ enyo.kind({
     if (!this.post) {
       return;
     }
-    var date_format = new enyo.g11n.DateFmt({ format:'medium' });
     console.log(this.post);
     
     if (this.post.categories.length > 1){
@@ -61,7 +60,7 @@ enyo.kind({
 	  }
 	  console.log(this.post);
 	  if (this.post.date_created_gmt) {
-      this.$.date.setContent(date_format.format(this.post.date_created_gmt));
+      this.$.date.setContent(FormatDateTimeForDetailView(this.post.date_created_gmt));
     }else{
       this.$.date.setContent("<em>" + $L("not published") + "</em>");
 	  };

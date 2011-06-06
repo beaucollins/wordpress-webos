@@ -24,6 +24,7 @@ enyo.depends(
   "source/BlogDiscover.js",
   "../source/XMLRPCService.js",
   "../source/SimpleHtmlParser.js",
+  "../source/datetime.js",
   "source/DashboardView.js",
   // "Canvas.js",
   "../lib/jquery.min.js",

@@ -23,7 +23,8 @@ enyo.kind({
             { kind:'HFlexBox', className:'wp-post-details', components:[
             	{ kind:'VFlexBox', flex:1, components:[
             		{ name:'authorURL', className:'wp-post-author', onclick:'openBrowserToAuthor' },
-            		{ name:'authorEmail', className:'wp-post-email', onclick:'openEmailToAuthor' }
+            		{ name:'authorEmail', className:'wp-post-email', onclick:'openEmailToAuthor' },
+            		{ name:'commentTimestamp', className:'comment-timestamp' }
             	]}
             ]}/*,
             { kind:'HFlexBox', components:[
@@ -124,6 +125,7 @@ enyo.kind({
 	
 	this.$.authorEmail.setContent(this.comment.author_email);
     this.$.authorURL.setContent(this.comment.author_url);
+    this.$.commentTimestamp.setContent(FormatDateTimeForDetailView(this.comment.date_created_gmt));
     this.$.subject.setContent(this.comment.post_title);
     this.$.scroller.setScrollPositionDirect(0,0);
     
@@ -157,7 +159,7 @@ enyo.kind({
     if(comment){
       this.$.replyAvatar.setSrc(enyo.application.makeGravatar(comment.author_email, {size:30}));
       this.$.replyAuthor.setContent(comment.author);
-      this.$.replyTimestamp.setContent(TimeAgo(comment.date_created_gmt));
+      this.$.replyTimestamp.setContent(FormatDateTimeForDetailView(comment.date_created_gmt));
       this.$.replyContent.setContent(comment.content);
       return true;
     }

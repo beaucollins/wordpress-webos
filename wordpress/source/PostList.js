@@ -102,7 +102,7 @@ enyo.kind({
       this.$.postStatus.addClass("status-"+status);
       this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(index))
       if (post.date_created_gmt) {
-        this.$.postDate.setContent(TimeAgo(post.date_created_gmt));        
+        this.$.postDate.setContent(FormatDateTimeForListView(post.date_created_gmt));        
       }else{
         this.$.postDate.setContent("<em>" + $L("not published") + "</em>");
       }
