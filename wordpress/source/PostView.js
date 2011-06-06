@@ -6,10 +6,12 @@ enyo.kind({
     post:null
   },
   events: {
-    onEdit:''
+    onEdit:'',
+    onDelete:''
   },
   components: [
-    { name:"xmlrpc_client", kind:"XMLRPCService" },
+    { name:'postview_client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onSavePost:'savePostSuccess', onSavePage:'savePostSuccess',
+            		  onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},
     { name:"header", kind:'Header', components:[
       { kind:'VFlexBox', flex:1, components: [
         { name:'title', content:"Title", className:'wp-post-title' },
@@ -30,7 +32,8 @@ enyo.kind({
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
       { kind:'Button', caption: $L('Edit'), onclick:"openEditor" },
-      { kind:'Button', caption: $L('Preview'), onclick:'openPostURL' }
+      { kind:'Button', caption: $L('Preview'), onclick:'openPostURL' },
+      { kind:'Button', caption: $L('Trash'), onclick:"deletePost" },
     ]}
   ],
   postChanged:function(){
@@ -79,5 +82,8 @@ enyo.kind({
   },
   openEditor:function(sender){
     this.doEdit(this.post);
+  },
+  deletePost:function(sender) {
+	  this.doDelete(this.post);
   }
 });

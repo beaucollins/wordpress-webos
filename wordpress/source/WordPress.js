@@ -63,18 +63,20 @@ enyo.kind({
         kind:'wp.WordPressClient',
         account:account,
         onInvalidPassword:'displayPasswordForm',
+        onPasswordReady:'refreshClient',
         onPendingComments:'updateCommentCount',
         onNewComment:'refreshComments',
         onUpdateComment:'refreshComments',
         onNewPost:'refreshPosts',
         onUpdatePost:'refreshPosts',
+        onDeletePost:'refreshPosts',
+        onSavePost:'refreshPosts',
+        onSaveDraft:'refreshDrafts',
         onNewPage:'refreshPages',
         onUpdatePage:'refreshPages',
-        onPasswordReady:'refreshClient',
-        onSaveDraft:'refreshDrafts',
-        onSavePost:'refreshPosts',
         onSaveDraftPage:'refreshDrafts',
-        onSavePage:'refreshPages'
+        onSavePage:'refreshPages',
+        onDeletePage:'refreshPages',
       });
       clients.push(client);
     }, this);
@@ -112,9 +114,8 @@ enyo.kind({
     };
   },
   refreshPosts:function(sender, post, account){
-	 this.log("pippo"); 
+	this.log("pippo"); 
     this.refreshDraftCount();
-    this.log("pippoa"); 
     if (this.$.content.getView() == this.$.posts) {
       if (this.$.posts.account == sender) {
         console.log("Refresh posts!")

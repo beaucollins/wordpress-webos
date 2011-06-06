@@ -13,7 +13,7 @@ enyo.kind({
     { name:'right', flex:1, components:[
       { kind:'Pane', flex:1, components:[
         { name:'blank', kind:'BlankSlate', flex:1 },
-        { name:'detail', kind:'wp.PostView', onEdit:'openPostEditor', flex:1 }
+        { name:'detail', kind:'wp.PostView', onEdit:'openPostEditor', onDelete:'deleteItem', flex:1 }
       ]}
     ]}
   ],
@@ -65,6 +65,10 @@ enyo.kind({
   },
   openPostEditor:function(sender, post){ 
     enyo.application.launcher.openComposer(this.account.account, post);    
+  },
+  deleteItem:function(sender, post){ 
+	  this.log('delete Post clicked');
+	  this.account.deletePost(post);   
   },
   openNewItemEditor:function(sender, post){
 	this.log('new Post clicked');

@@ -21,15 +21,17 @@ enyo.kind({
     onInvalidPassword:'',
     onNewComment:'',
     onUpdateComment:'',
-    onNewPost:'',
-    onUpdatePost:'',
+    onPendingComments:'',
     onNewPage:'',
     onUpdatePage:'',
-    onPendingComments:'',
-    onSavePost:'',
     onSavePage:'',
-    onSaveDraft:'',
     onSaveDraftPage:'',
+    onDeletePage:'',
+    onNewPost:'',
+    onUpdatePost:'',
+    onSavePost:'',
+    onSaveDraft:'',
+    onDeletePost:'',
     onNewCategory:'',
     onUpdateCategory:''
   },
@@ -453,6 +455,24 @@ enyo.kind({
 		  }
 	  })
   },
+  deletePage:function(post){
+	  this.log(">>>deletePage");
+	  var client = this;
+	  var http = this.$.http;
+	  var account = this.account;
+	  if (post.page_id) {
+		  return http.callMethod({
+			  methodName:'wp.deletePage',
+			  methodParams:[account.blogid, account.username, account.password, post.page_id]
+		  }, {onSuccess:'deletePageSuccess', post:post});
+	  }
+  },
+  deletePageSuccess:function(sender, response, request){
+	  this.log(">>>deletePageSuccess");
+	  var client = this;
+	  var account = this.account;
+	  client.doDeletePage(post, account);
+  },
   savePost:function(post){
 	  var client = this;
 	  var http = this.$.http;
@@ -521,8 +541,26 @@ enyo.kind({
 		  }
 	  });
   },
+  deletePost:function(post){
+	  this.log(">>>deletePost");
+	  var client = this;
+	  var http = this.$.http;
+	  var account = this.account;
+	  if (post.postid) {
+		  return http.callMethod({
+			  methodName:'metaWeblog.deletePost',
+			  methodParams:["unused", post.postid, account.username, account.password, false]
+		  }, {onSuccess:'deletePostSuccess' post:post});
+	  }
+  },
+  deletePostSuccess:function(sender, response, request){
+	  this.log(">>>deletePostSuccess");
+	  var client = this;
+	  var account = this.account;
+	  client.doDeletePost(post, account);
+  },
   onSavePost:function(sender, response, request){
-    this.log(">>>AAA Saved the post!", response);
+    this.log(">>>AAA: ping danilo if this function is called somewhere! Saved the post!", response);
     var post = response;
     this.doSavePost(post, this.account);
   },

@@ -31,5 +31,9 @@ enyo.kind({
   openNewItemEditor:function(sender, post){
 	this.log('new Page clicked');
 	enyo.application.launcher.openComposerWithNewItem(this.account.account,"Page");    
-  }
+  },
+  deleteItem:function(sender, post){ 
+	  this.log('delete Page clicked');
+	  this.account.deletePage(post);    
+  },
 })
