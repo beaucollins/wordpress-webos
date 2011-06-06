@@ -1,13 +1,19 @@
 enyo.kind({
   name:'BlankSlate',
-  kind:'enyo.Control',
+  kind:'VFlexBox',
   className:'blank-slate',
   published: {
-    message: $L('Intentionally left blank')
+    message: $L('Select an Item to View')
   },
   components: [
-    { name:'graphic', className:'blank-slate-graphic' },
-    { name:'message', className:'blank-slate-message' }
+	{ name: 'container', flex:1, className:'blank-slate-container', components: [
+      { name:'graphic', className:'blank-slate-graphic' },
+      { name:'message', className:'blank-slate-message' }
+	]},
+	{ name:'list', kind: 'VFlexBox', flex:1 },
+	{ kind:'enyo.Toolbar', components:[
+      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'}
+    ]}
   ],
   create:function(){
     this.inherited(arguments);

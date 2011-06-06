@@ -23,6 +23,7 @@ enyo.kind({
   accountChanged:function(){
     this.$.postList.setAccount(this.account);
     this.$.detail.setAccount(this.account);
+    this.$.pane.selectView(this.$.blank);
   },
   refresh:function(){
     this.$.postList.accountChanged();

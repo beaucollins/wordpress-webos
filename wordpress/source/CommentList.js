@@ -5,7 +5,8 @@ enyo.kind({
   name:'wp.DataPage',
   kind:'Component',
   published: {
-    pageSize:10
+    pageSize:10,
+	selectedRow:null
   },
   create:function(){
     this.inherited(arguments);
@@ -133,6 +134,9 @@ enyo.kind({
     this.$.list.refresh();
   },
   accountChanged:function(){
+	if (this.selectedRow){
+		this.$.list.select(this.selectedRow.rowIndex);
+	}
     this.$.list.punt();
     this.$.dataPage.clear();
     if (this.account == null) {
@@ -145,6 +149,7 @@ enyo.kind({
     sender.setSrc('../images/icons/default-avatar.png');
   },
   selectComment:function(sender, item){
+	this.selectedRow = item;
     var comment = this.$.dataPage.itemAtIndex(item.rowIndex);
     this.$.list.select(comment.id);
     this.$.item.addClass('active-selection');

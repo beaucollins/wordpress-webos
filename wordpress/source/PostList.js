@@ -8,7 +8,8 @@ enyo.kind({
     onNewItem:''	
   },
   published: {
-    account:null
+    account:null,
+	selectedRow:null
   },
   kPostStatus: {
     'publish' : 'Published',
@@ -46,9 +47,10 @@ enyo.kind({
     this.inherited(arguments);
   },
   selectPost:function(sender, item){
+	this.selectedRow = item;
     var post = this.$.dataPage.itemAtIndex(item.rowIndex);
     this.$.list.select(item.rowIndex);
-    this.$.item.addClass('active-selection');
+    this.$.item.removeClass('active-selection');
     this.doSelectPost(post, this.account);
   },
   requestPageWithSize:function(sender, page){
@@ -110,6 +112,9 @@ enyo.kind({
     };
   },
   accountChanged:function(){
+	if (this.selectedRow){
+		this.$.list.select(this.selectedRow.rowIndex);
+	}
     this.$.list.punt();
     this.$.dataPage.clear();
     this.$.list.reset();

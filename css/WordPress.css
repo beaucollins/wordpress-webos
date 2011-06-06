@@ -668,3 +668,30 @@ img {
 .wp-list-spinner{
 	margin-right: 4px;
 }
+
+.blank-slate-container{
+	width:200px;
+	position:absolute;
+	left:50%;
+	top: 50%;
+	margin-top: -170px;
+	margin-left:-100px;
+	display:table;
+}
+
+.blank-slate-graphic{
+	background:url(../images/logo-placeholder.png) no-repeat top center;
+	width: 140px;
+	height: 140px;
+	margin: auto;
+	display: block;
+}
+
+.blank-slate-message{
+	font-size: 15px;
+	display: block;
+	width: 200px;
+	margin: 10px auto 0 auto;
+	color: #464646;
+	text-align: center;
+}
