@@ -487,6 +487,14 @@ img {
 	background-color: #21759B;
 }
 
+.enyo-red-button {
+  background-color: #BC0B0B;
+}
+
+.enyo-blue-button {
+  background: #21759B;
+}
+
 /* Toolbar */
 
 .enyo-toolbar {

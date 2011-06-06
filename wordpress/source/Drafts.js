@@ -22,7 +22,6 @@ enyo.kind({
 	      });
       });
   },
-
   create: function(){
 	  this.inherited(arguments);
 	  this.$.postList.hideNewButton();
@@ -40,5 +39,14 @@ enyo.kind({
   },
   deleteItem:function(sender, post){ 
 	  this.log('delete draft clicked');
+	  var client = this;
+	  if (post._type === "Page")
+		  enyo.application.models.Page.all().remove(post);
+	  else
+		  enyo.application.models.Post.all().remove(post);
+	  
+	  enyo.application.persistence.flush(function(){
+		  client.refreshPosts();
+	  });
   },
 });

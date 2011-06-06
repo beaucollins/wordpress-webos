@@ -380,18 +380,6 @@ enyo.kind({
       enyo.application.launcher.draftSaved();
     });
   },
-  updatePostSuccess:function(sender, response, request){
-    var post = request.post;
-    var client = this;
-    var account = this.account;
-    //reload the post from the api
-    enyo.windows.addBannerMessage($L("Post updated successfully"), "{}");
-    
-    this.$.http.callMethod({
-      methodName:'metaWeblog.getPost',
-      methodParams:[post.postid, account.username, this.password]
-    }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:true })
-  },
   savePage:function(post){
 	  var client = this;
 	  var http = this.$.http;
@@ -471,6 +459,7 @@ enyo.kind({
 	  this.log(">>>deletePageSuccess");
 	  var client = this;
 	  var account = this.account;
+	  var post = request.post;
 	  client.doDeletePage(post, account);
   },
   savePost:function(post){
@@ -557,7 +546,21 @@ enyo.kind({
 	  this.log(">>>deletePostSuccess");
 	  var client = this;
 	  var account = this.account;
+	  var post = request.post;
 	  client.doDeletePost(post, account);
+  },
+  updatePostSuccess:function(sender, response, request){
+	this.log(">>>AAA: ping danilo if this function is called somewhere! Saved the post!", response);
+    var post = request.post;
+    var client = this;
+    var account = this.account;
+    //reload the post from the api
+    enyo.windows.addBannerMessage($L("Post updated successfully"), "{}");
+    
+    this.$.http.callMethod({
+      methodName:'metaWeblog.getPost',
+      methodParams:[post.postid, account.username, this.password]
+    }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:true })
   },
   onSavePost:function(sender, response, request){
     this.log(">>>AAA: ping danilo if this function is called somewhere! Saved the post!", response);

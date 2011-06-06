@@ -10,8 +10,8 @@ enyo.kind({
     onDelete:''
   },
   components: [
-    { name:'postview_client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onSavePost:'savePostSuccess', onSavePage:'savePostSuccess',
-            		  onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},
+ /*   { name:'postview_client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onSavePost:'savePostSuccess', onSavePage:'savePostSuccess',
+            		  onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},*/
     { name:"header", kind:'Header', components:[
       { kind:'VFlexBox', flex:1, components: [
         { name:'title', content:"Title", className:'wp-post-title' },
@@ -31,10 +31,16 @@ enyo.kind({
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
-      { kind:'Button', caption: $L('Edit'), onclick:"openEditor" },
+      { kind:'Button', caption: $L('Edit'), onclick:"openEditor", className:'enyo-blue-button'},
       { kind:'Button', caption: $L('Preview'), onclick:'openPostURL' },
-      { kind:'Button', caption: $L('Trash'), onclick:"deletePost" },
-    ]}
+      { kind:'Button', caption: $L('Trash'), onclick:"askBeforeDelete" , className:'enyo-red-button'},
+    ]},
+	{name: "twoDialog", kind: "Dialog", components: [
+		{className: "enyo-item enyo-first", style: "padding: 12px", content: $L('Are You Sure?')},
+		{className: "enyo-item enyo-last", style: "padding: 12px; font-size: 14px", content: $L('Deleting an Item cannot be undone')},
+		{kind: "Button", caption: $L('Cancel'), onclick:'cancelButtonClick'},
+		{kind: "Button", caption: $L('Delete'), className:'enyo-red-button', onclick:'deletePost'}
+	]},
   ],
   postChanged:function(){
     if (!this.post) {
@@ -83,7 +89,14 @@ enyo.kind({
   openEditor:function(sender){
     this.doEdit(this.post);
   },
+  cancelButtonClick: function() {
+	this.$.twoDialog.toggleOpen();
+  }, 
+  askBeforeDelete:function(sender) {
+	this.$.twoDialog.toggleOpen();
+  },
   deletePost:function(sender) {
+	  this.$.twoDialog.toggleOpen();
 	  this.doDelete(this.post);
   }
 });

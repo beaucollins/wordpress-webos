@@ -92,6 +92,7 @@ enyo.kind({
     sender.downloadPosts();
   },
   refreshDrafts:function(){
+	this.log(">>>Refreshing drafts");  
     this.refreshDraftCount();
     if (this.$.content.getView() == this.$.drafts) {
       this.$.drafts.refresh();
