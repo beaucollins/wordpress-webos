@@ -37,5 +37,8 @@ enyo.kind({
   openPostEditor:function(sender, post){
     console.log("Opening with account: " + post.account);
     enyo.application.launcher.openComposer(post.account, post);
-  }
+  },
+  deleteItem:function(sender, post){ 
+	  this.log('delete draft clicked');
+  },
 });

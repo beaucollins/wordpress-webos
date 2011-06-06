@@ -550,7 +550,7 @@ enyo.kind({
 		  return http.callMethod({
 			  methodName:'metaWeblog.deletePost',
 			  methodParams:["unused", post.postid, account.username, account.password, false]
-		  }, {onSuccess:'deletePostSuccess' post:post});
+		  }, {onSuccess:'deletePostSuccess', post:post});
 	  }
   },
   deletePostSuccess:function(sender, response, request){
