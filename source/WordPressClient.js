@@ -383,7 +383,7 @@ enyo.kind({
     var client = this;
     var account = this.account;
     //reload the post from the api
-    enyo.windows.addBannerMessage("Post updated successfully", "{}");
+    enyo.windows.addBannerMessage($L("Post updated successfully"), "{}");
     
     this.$.http.callMethod({
       methodName:'metaWeblog.getPost',
