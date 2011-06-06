@@ -122,6 +122,9 @@ enyo.kind({
   },
   resize:function(){
     this.$.list.resizeHandler();
+  },
+  hideNewButton:function(){
+	  this.$.newItem.setShowing(false);
   }
 });
 

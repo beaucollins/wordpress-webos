@@ -17,6 +17,10 @@ enyo.kind({
         };
       });
   },
+  create: function(){
+	  this.inherited(arguments);
+	  this.$.postList.hideNewButton();
+  },
   refresh:function(){
     console.log("Refresh!");
     this.$.postList.accountChanged();
@@ -26,6 +30,6 @@ enyo.kind({
   },
   openPostEditor:function(sender, post){
     console.log("Opening with account: " + post.account);
-    enyo.application.launcher.openComposer(post.account, post);    
+    enyo.application.launcher.openComposer(post.account, post);
   }
 });

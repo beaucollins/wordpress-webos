@@ -394,6 +394,7 @@ enyo.kind({
 	  var client = this;
 	  var http = this.$.http;
 	  var account = this.account;
+	  
 	  // this posts exists already
 	  if (post.postid) {
 		  // mw.method('editPost', 'post_id', 'username', 'password', 'content', 'publish');
@@ -434,6 +435,9 @@ enyo.kind({
     var post = request.post;
     var client = this;
     var account = this.account;
+    if(post.local_modifications) {
+    	post.local_modifications = false;
+    }
     post.postid = response;
     account.posts.add(post);
     enyo.windows.addBannerMessage("Post saved successfully", "{}");
@@ -451,6 +455,9 @@ enyo.kind({
 	  var post = request.post;
 	  var client = this;
 	  var account = this.account;
+	  if(post.local_modifications) {
+		  post.local_modifications = false;
+	  }
 	  post.page_id = response;
 	  account.pages.add(post);
 	  enyo.windows.addBannerMessage("Pages saved successfully", "{}");
