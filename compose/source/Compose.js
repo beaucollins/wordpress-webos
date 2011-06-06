@@ -33,70 +33,70 @@ enyo.kind({
 	{kind: "Dialog", components: [
 		{content: "Insert a Link"},
 		{kind: "VFlexBox", components: [
-			{ kind:'Input', name:'linkURL', hint: 'Link URL', onfocus: 'addHTTPToLink', inputType:'text' },
-        	{ kind:'Input', name:'linkName', hint: 'Link name (optional)', inputType:'text' },
-			{kind: "Button", name: 'linkOKBtn', caption: "OK", onclick: "linkOKClick"}
+			{ kind:'Input', name:'linkURL', hint: $L('Link URL'), onfocus: 'addHTTPToLink', inputType:'text' },
+        	{ kind:'Input', name:'linkName', hint: $L('Link name (optional)'), inputType:'text' },
+			{kind: "Button", name: 'linkOKBtn', caption: $L("OK"), onclick: "linkOKClick"}
 		]}
 	]},	
     { name:'desktop', className:'desktop', components:[
       {name:'filePicker', kind: "FilePicker", fileType:["image"], allowMultiSelect:false, onPickFile: "handleResult"},
       {name: "errorDialog", kind: "Dialog", components: [
 	     {name:"errorMessage", style: "padding: 12px", content: ""},
-	     {kind: "Button", caption: "Close", onclick: "closeDialog"}
+	     {kind: "Button", caption: $L("Close"), onclick: "closeDialog"}
       ]},
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
-          { name:'headerLabelField', content:'New Post', flex:1 },
-          { name:'previewButton', kind:'enyo.Button', caption:'Preview', onclick:'showPreview' },
-          { name:'draftButton', kind:'enyo.Button', caption:'Save Draft', onclick:'savePost' },
-		  { name:'postButton', kind:'enyo.Button', caption:'Publish', onclick:'savePost' }
+          { name:'headerLabelField', content:$L('New Post'), flex:1 },
+          { name:'previewButton', kind:'enyo.Button', caption:$L('Preview'), onclick:'showPreview' },
+          { name:'draftButton', kind:'enyo.Button', caption:$L('Save Draft'), onclick:'savePost' },
+		  { name:'postButton', kind:'enyo.Button', caption:$L('Publish'), onclick:'savePost' }
         ] },		
         { kind:'HFlexBox', flex:1, components:[
 		{ name:'settings', kind:'VFlexBox', width:'300px', style:'background:#EEE;', showing:false, components:[
             { kind:'Scroller', flex:1, components:[
               { kind:'Item', components:[
-                {name: 'statusSelector', kind: "ListSelector", label: "Status", value: 1, onChange: "itemChanged", items: [
-					{caption: "Publish", value: 1},
-					{caption: "Draft", value: 2},
-					{caption: "Pending Review", value: 3},
-					{caption: "Private", value: 4},
+                {name: 'statusSelector', kind: "ListSelector", label: $L("Status"), value: 1, onChange: "itemChanged", items: [
+					{caption: $L("Publish"), value: 1},
+					{caption: $L("Draft"), value: 2},
+					{caption: $L("Pending Review"), value: 3},
+					{caption: $L("Private"), value: 4},
 				]}
               ]},
-              {kind: "DividerDrawer", caption: "Categories", open: false, components: [
+              {kind: "DividerDrawer", caption: $L("Categories"), open: false, components: [
 				{name:'categoriesVirtualRepeterField', kind: "VirtualRepeater", onGetItem: "getCategoryItem", components: [
 					{kind: "Item", layoutKind: "HFlexLayout", components: [
 						{name: "categoryCheckbox", kind: "CheckBox", checked: false, onChange: "categoryCheckboxClicked"},
-						{name: "categoryLabel", content: "Get kids to school"}
+						{name: "categoryLabel"}
 					]}
                 ]}                                                                                       
 	    	  ]},
 			{ kind:'Item', components:[
-                { name:'tagsFieldDrawer', kind:'Drawer', open:false, caption:'Tags', onclick: 'tagsClick', components:[
-                  { kind:'Input', name:'tagsField', hint:'Separate tags with commas', inputType:'text' }
+                { name:'tagsFieldDrawer', kind:'Drawer', open:false, caption:$L('Tags'), onclick: 'tagsClick', components:[
+                  { kind:'Input', name:'tagsField', hint:$L('Separate tags with commas'), inputType:'text' }
                 ] }
               ] },
 			{ kind:'Item', components:[
-                { kind:'Drawer', open:false, caption:'Password', onclick: 'passwordClick', components:[
-                  { name: 'passwordField', kind:'Input', hint:'Password', inputType:'password' }
+                { kind:'Drawer', open:false, caption:$L('Password'), onclick: 'passwordClick', components:[
+                  { name: 'passwordField', kind:'Input', hint:$L('Password'), inputType:'password' }
                 ] }
               ] },
 			{ kind:'Item', components:[
-				{ kind:'Drawer', open:false, caption:'Publish Date', components:[
-					{kind: "DatePicker", label: "Date", onChange: "pickerPick"},
-					{kind: "TimePicker", label: "Time", onChange: "pickerPick"}
+				{ kind:'Drawer', open:false, caption:$L('Publish Date'), components:[
+					{kind: "DatePicker", label: $L("Date"), onChange: "pickerPick"},
+					{kind: "TimePicker", label: $L("Time"), onChange: "pickerPick"}
 				] }
             ]}
 			] }
           ]},
           { name:'main', kind:'VFlexBox', flex:1, components:[
-            { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:'Title' },
+            { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:$L('Title') },
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
 			//{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
 			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange"},
 			]},
-	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:'Settings', onclick:'toggleSettings' },
+	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:$L('Settings'), onclick:'toggleSettings' },
 			] },
 		  ] }
         ]}
@@ -346,9 +346,9 @@ enyo.kind({
   },
   savePostSuccess:function(sender, post, account){
 	  if(post._type === "Page")
-		  enyo.windows.addBannerMessage("Page saved successfully", "{}");
+		  enyo.windows.addBannerMessage($L("Page saved successfully"), "{}");
 	  else
-		  enyo.windows.addBannerMessage("Post saved successfully", "{}");
+		  enyo.windows.addBannerMessage($L("Post saved successfully"), "{}");
 	 
 	  this.log("Item saved", post, account);
 	  
@@ -470,17 +470,17 @@ enyo.kind({
 	  this.$.uploadButton.setDisabled(false);
 	  //this.$.postResponse.setContent(inResponse);
 	  console.log("upload failure response = " + inResponse);
-	  this.$.errorMessage.setContent('Something went wrong, please try later!');
+	  this.$.errorMessage.setContent($L('Sorry, something went wrong, please try again later.'));
 	  this.$.errorDialog.open();
 	  currentMediaFile = null;
   },
   showImageFilePicker: function(inSender, inEvent) {
-	 alert("Hey baby, the Image File Picker doesn't work.");
+	 //alert("Hey baby, the Image File Picker doesn't work.");
 	 //this.$.filePicker.fileType=["image"];
 	 //  this.$.filePicker.pickFile();
   },
   showVideoFilePicker: function(inSender, inEvent) {
-	 alert("Hey baby, the Video File Picker doesn't work.");
+	 //alert("Hey baby, the Video File Picker doesn't work.");
 	 //this.$.filePicker.fileType=["video"];
 	//  this.$.filePicker.pickFile();
   },
@@ -574,8 +574,8 @@ enyo.kind({
           load_account();
           composer.setPost(new enyo.application.models.Post({mt_allow_pings:null,mt_allow_comments:null}));
         }
-        //upgrade the Header Fiels
-        composer.$.headerLabelField.setContent(composer.isAPost() ? "Edit Post" : "Edit Page");
+        //upgrade the Header Fields
+        composer.$.headerLabelField.setContent(composer.isAPost() ? $L("Edit Post") : $L("Edit Page"));
       });
       
     } else {
@@ -590,7 +590,7 @@ enyo.kind({
       }
     
     //upgrade the Header Fiels
-      this.$.headerLabelField.setContent(this.isAPost() ? "New Post" : "New Page");
+      this.$.headerLabelField.setContent(this.isAPost() ? $L("New Post") : $L("New Page"));
     }
   },
 	tagsClick:function(sender){

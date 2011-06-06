@@ -94,7 +94,7 @@ enyo.kind({
     { kind: 'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
 	  { kind: 'Spinner', className: 'wp-list-spinner' },
-      { kind:'Button', name: 'refreshButton', content:'Refresh', onclick:'refreshComments', className:"enyo-button-blue" }
+      { kind:'Button', name: 'refreshButton', content:$L('Refresh'), onclick:'refreshComments', className:"enyo-button-blue" }
     ] }
   ],
   create:function(){
@@ -189,7 +189,7 @@ enyo.kind({
   },
   getStatusFilter:function(){
     //  hold, approve, spam, trash
-    
+    //can these be translated? <3 Dan
     return {
       'Pending' : 'hold',
       'Approved' : 'approve',

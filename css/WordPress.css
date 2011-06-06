@@ -220,7 +220,6 @@ img {
 .status-badge.status-publish,
 .comment-status-badge.status-approve {
   color:#006505;
-  display: none;
 }
 
 .status-badge.status-draft,

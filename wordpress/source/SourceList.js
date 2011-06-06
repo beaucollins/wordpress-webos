@@ -15,7 +15,7 @@ enyo.kind({
       { name:'list', kind:'enyo.Repeater', onGetItem:'getAccountItem' }
     ]},
     { kind:'enyo.Toolbar', className:'source-list-command', components:[
-      { kind:'Button', caption:'Add Blog', onclick:'doAddBlog' },
+      { kind:'Button', caption:$L('Add Blog'), onclick:'doAddBlog' },
       { kind:'Button', caption:$L('New Post'), onclick:'doCreateDraft'}
     ] }
   ],

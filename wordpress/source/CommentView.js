@@ -38,7 +38,7 @@ enyo.kind({
         ] }
       ]},
       { kind:'HFlexBox', className:'wp-item-meta', components:[
-        { content:'On:', className:'wp-item-meta-label' },
+        { content:$L('On:'), className:'wp-item-meta-label' },
         { name:'subject', flex:1, onclick:'launchBrowser', className:'wp-item-meta-content wp-comment-subject' },
         { className:'wp-disclosure-arrow' }
       ]},
@@ -61,10 +61,10 @@ enyo.kind({
         { flex:1 },
         { kind:'Button', caption: 'Reply', onclick:'doReply', className:'enyo-button-blue' },
 		{ kind: "Spinner", className: 'wp-list-spinner'},
-        { kind:'Button', name:'approve', caption: 'Approve', onclick:'markComment' },
-        { kind:'Button', name:'unapprove', caption: 'Unapprove', onclick:'markComment' },
-        { kind:'Button', name:'trash', caption: 'Trash', onclick:'markComment' },
-        { kind:'Button', name:'spam', caption: 'Spam', onclick:'markComment' }
+        { kind:'Button', name:'approve', caption: $L('Approve'), onclick:'markComment' },
+        { kind:'Button', name:'unapprove', caption: $L('Unapprove'), onclick:'markComment' },
+        { kind:'Button', name:'trash', caption: $L('Trash'), onclick:'markComment' },
+        { kind:'Button', name:'spam', caption: $L('Spam'), onclick:'markComment' }
       ] } 
     ] }
   ],
@@ -184,7 +184,7 @@ enyo.kind({
   openEmailToAuthor:function(){
     var query = {
       'subject' : this.comment.post_title, 
-      'body' : "Comment Link: " + this.comment.link
+      'body' : $L("Comment Link: ") + this.comment.link
     }
     var target = "mailto:"+this.comment.author_email + "?" + enyo.objectToQuery(query);
     this.$.palmService.call({target:target}); 
@@ -206,7 +206,7 @@ enyo.kind({
     }
   },
   updatedComment:function(sender, response, request){
-    enyo.windows.addBannerMessage("Comment updated", "{}");
+    enyo.windows.addBannerMessage($L("Comment updated"), "{}");
   }
   
 })

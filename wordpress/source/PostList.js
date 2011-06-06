@@ -95,6 +95,7 @@ enyo.kind({
       }
       
       var status;
+	 console.log('post status: ' + post.post_status);
       if (post.postid == 0 || post.page_id == 0) {
         status = 'draft';
       }else{

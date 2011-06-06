@@ -18,23 +18,22 @@ enyo.kind({
     { name:'blogFinder', kind:'wp.BlogDiscover', onSuccess:'showBlogList', onFailure:'apiFailure', onBadURL:'badURL' },
     // a place for the WordPress Logo
     { name:'header', kind:'Header', components:[
-      { name:'title', flex:1, content:'Setup Blog'},
-      { kind:'Button', caption:'Cancel', className:'enyo-button-cancel', name:'cancel', onclick:'doCancel' },
-      { kind:'Button', caption:'Set Up', className:'enyo-button-blue', name:'finishSetup', onclick:'setupSelectedBlogs', showing:false }
+      { name:'title', flex:1, content:$L('Setup Blog')},
+      { kind:'Button', caption:$L('Cancel'), className:'enyo-button-cancel', name:'cancel', onclick:'doCancel' },
+      { kind:'Button', caption:$L('Set Up'), className:'enyo-button-blue', name:'finishSetup', onclick:'setupSelectedBlogs', showing:false }
     ] },
     { kind:'Pane', flex:1, components:[
       { name: 'blogTypeChooser', className:'blog-setup-buttons', components:[
-        { kind: 'enyo.Button', onclick:"createNewBlog", caption: 'Start a new blog at WordPress.com' },
-        { kind: 'enyo.Button', onclick:"setupHostedBlog", caption: 'Add blog hosted at WordPress.com' },
-        { kind: 'enyo.Button', onclick:"setupBlog", caption: 'Add self-hosted WordPress blog'}
+        { kind: 'enyo.Button', onclick:"createNewBlog", caption: $L('Start a new blog at WordPress.com') },
+        { kind: 'enyo.Button', onclick:"setupHostedBlog", caption: $L('Add blog hosted at WordPress.com') },
+        { kind: 'enyo.Button', onclick:"setupBlog", caption: $L('Add self-hosted WordPress blog')}
       ]},
       { name:'setupForm', kind:'wp.AccountCredentials', className:'blog-setup-form', onCancel:'cancelSetup', onSetup:'performSetup' , selfHosted:false },
       { name:'blogList', kind:'wp.BlogSetupList', flex:1, onSelectionChanged:'bloglistSelectionChanged', onSelectBlogs:'notifySelected', onCancel:'cancelSetup' },
       { name: 'helpView', className:'blog-setup-buttons', components:[
-          {content: "Please visit the FAQ to get answers to common questions. If you're still having trouble, post in the forums."},
-	      { kind: 'enyo.Button', onclick:"readTheFAQ", caption: 'Read the FAQ' },
-	      { kind: 'enyo.Button', onclick:"visitTheForum", caption: 'Visit the Forums'},
-	      { kind: 'enyo.Button', onclick:"sendEmail", caption: 'Send Support E-mail'},
+          {content: $L("Please visit the FAQ to get answers to common questions. If you're still having trouble, post in the forums.")},
+	      { kind: 'enyo.Button', onclick:"readTheFAQ", caption: $L('Read the FAQ') },
+	      { kind: 'enyo.Button', onclick:"sendEmail", caption: $L('Send Support E-mail')},
 	  ]},
     ]},
 	{name: "errorPopup", kind: "Popup", showHideMode: "transition", openClassName: "scaleFadeIn", scrim: true, 
@@ -103,8 +102,8 @@ enyo.kind({
     this.log("Bad URL message");
     // this.$.scrim.hide();
     this.$.setupForm.toggleSignUpActivity();
-  	var errorTitle = 'Sorry, can\'t log in';
-  	var errorMessage = 'Please insert a correct blog URL and try again.';
+  	var errorTitle = $L('Sorry, can\'t log in');
+  	var errorMessage = $L('Please insert a valid blog URL and try again.');
   	this.$.needHelpPane.setErrorMessage(errorTitle, errorMessage);
   	this.$.errorPopup.openAtCenter();
   },
@@ -114,15 +113,15 @@ enyo.kind({
     this.$.setupForm.toggleSignUpActivity();
     
     var errorTitle = 'Error';
-    var errorMessage = 'Something went wrong. Please, try again later';	 
+    var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
     if(response.faultString && response.faultString.length > 0) {
     	errorMessage = response.faultString;
     }
     //check the error code
     if(response.faultCode && response.faultCode == 403) {
     	 this.$.setupForm.updatePassword(this, null, '');
-    	 errorTitle = 'Sorry, can\'t log in';
-    	 errorMessage = 'Please update your credentials and try again.';
+    	 errorTitle = $L('Sorry, can\'t log in');
+    	 errorMessage = $L('Please update your credentials and try again.');
     }
     this.$.needHelpPane.setErrorMessage(errorTitle, errorMessage);
     this.$.errorPopup.openAtCenter();
@@ -145,21 +144,17 @@ enyo.kind({
     //we're launching a browser window instead of staying in app
     this.$.palmService.call({target:'http://ios.wordpress.org/faq/'});
   },
-  visitTheForum:function(){
-	//we're launching a browser window instead of staying in app
-    this.$.palmService.call({target:'http://ios.forums.wordpress.org/'});
-  },
   sendEmail:function(){
     this.$.palmService.call({
     	id: "com.palm.app.email",
         params: {
             summary: "WordPress for webOS Help Request",
-            text: "Hello, \n write here the URL of your blog and the error message.",
+            text: $L("Hello, \n (Write here the URL of your blog and the error message.)"),
             recipients: [{
                 type:"email",
                 role:1,
                 value:"support@wordpress.com",
-                contactDisplay:"WordPress for webOS app"
+                contactDisplay:"WordPress for webOS"
             }]
         }
     });
@@ -290,15 +285,15 @@ enyo.kind({
   },
   components: [
     { kind:'Control', className:'setup-screen', components:[
-      { name:'site', kind:'RowGroup', caption:'Site', components: [
-        { name:'url', kind:'Input', autoCapitalize:'lowercase', hint:'URL', changeOnInput:true, onchange:'updateUrl' }
+      { name:'site', kind:'RowGroup', caption:$L('Site'), components: [
+        { name:'url', kind:'Input', autoCapitalize:'lowercase', hint:$L('URL'), changeOnInput:true, onchange:'updateUrl' }
       ] },
       { kind:'RowGroup', caption:'Account', components: [
-        { name:'username', kind:'Input', autoCapitalize:'lowercase', hint:'Username', changeOnInput:true, onchange:'updateUsername' },
-        { name:'password', kind:'Input', hint:'Password', changeOnInput:true, onchange:'updatePassword', inputType:'password' }
+        { name:'username', kind:'Input', autoCapitalize:'lowercase', hint:$L('Username'), changeOnInput:true, onchange:'updateUsername' },
+        { name:'password', kind:'Input', hint:$L('Password'), changeOnInput:true, onchange:'updatePassword', inputType:'password' }
       ]},
-      { name:'signup', kind:'enyo.ActivityButton', className:'enyo-gemstone', caption:'Sign Up', onclick:'setupClicked', disabled:true },
-      { name:'cancel', kind:'enyo.Button', caption:'Cancel', onclick:'cleanup' }
+      { name:'signup', kind:'enyo.ActivityButton', className:'enyo-gemstone', caption:$L('Sign Up'), onclick:'setupClicked', disabled:true },
+      { name:'cancel', kind:'enyo.Button', caption:$L('Cancel'), onclick:'cleanup' }
     ]}
   ],
   create:function(){
@@ -388,12 +383,12 @@ enyo.kind({
 		onNeedHelp: ""
 	},
 	components: [
-		{name:'titleHolder', content: "Enter your password:", style: "font-size: 26px; padding: 6px;" },
+		{name:'titleHolder', content: $L("Enter your password:"), style: "font-size: 26px; padding: 6px;" },
 		{name:'msgHolder', content: "Some pickers"},
 		{kind: "HFlexBox", style: "padding-top: 6px;", components: [
-			{kind: "Button", flex: 1, caption: "Need Help?", onclick: "doNeedHelp"},
+			{kind: "Button", flex: 1, caption: $L("Need Help?"), onclick: "doNeedHelp"},
 			{kind: "Spacer"},
-			{kind: "Button", flex: 1, caption: "Ok", onclick: "doSubmit"},
+			{kind: "Button", flex: 1, caption: $L("OK"), onclick: "doSubmit"},
 		]},
 	],
 	setErrorMessage: function(title, msg) {

@@ -21,7 +21,7 @@ enyo.kind({
     ]},
     { name:'category_row', kind:'HFlexBox', className:'wp-item-meta', components:[
       { name:'categoriesLabel', content: $L('Categories:'), className:'wp-item-meta-label'},
-      { name:'categories', content:'Categories', className:'wp-item-meta-content wp-post-categories' }
+      { name:'categories', content:$L('Categories'), className:'wp-item-meta-content wp-post-categories' }
     ]},
     { kind:'Scroller', flex:1, components:[
       { name:'content', className:'wp-post-content' }
@@ -29,8 +29,8 @@ enyo.kind({
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
-      { kind:'Button', caption: 'Edit', onclick:"openEditor" },
-      { kind:'Button', caption: 'Preview', onclick:'openPostURL' }
+      { kind:'Button', caption: $L('Edit'), onclick:"openEditor" },
+      { kind:'Button', caption: $L('Preview'), onclick:'openPostURL' }
     ]}
   ],
   postChanged:function(){
@@ -40,10 +40,10 @@ enyo.kind({
     console.log(this.post);
     
     if (this.post.categories && this.post.categories.length > 1){
-    	this.$.categoriesLabel.setContent($L('Categories:'));
+    	this.$.categoriesLabel.setContent($L('Categories') + ':');
     }
     else {
-     	this.$.categoriesLabel.setContent($L('Category:'));
+     	this.$.categoriesLabel.setContent($L('Category') + ':');
     }
     
     this.$.title.setContent(this.post.title);

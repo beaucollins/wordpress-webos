@@ -42,26 +42,26 @@ enyo.kind({
 		  this.$.realPreview.setHTML('http://wordpress.com',htmlForm); //the wordpress.com domain is necessary because we are loading the loading gif from WP.com
 	  } else {
 		//fallback to  local preview	    
-		  var alert_msg = "Sorry, something went wrong during preview. A simple preview is shown below.";
+		  var alert_msg = $L("Sorry, something went wrong during preview. A simple preview is shown below.)";
 		  this.loadlocalPreview(alert_msg, this.post.title,  this.post.description + this.post.mt_text_more, this.post.mt_keywords, this.post.categories, 'Item'); 
 	  }
   },
   loadlocalPreview:function(alert_msg, title, content, tags, categories, type){
 	  this.$.realPreview.setShowing(false);
 	  if (typeof(title) == "undefined" || enyo.string.trim(title) =="")
-		  title = "(no title)";		  
+		  title = $L("(no title)");		  
 	  
 	  if (typeof(content) == "undefined" || enyo.string.trim(content) == "")
-		  content = "No Description available for this "+ type;
+		  content = $L("No Description available for this") + ' ' + type;
 	  
 	  if(tags && enyo.string.trim(tags) != "") {
-		  tags ='Tags: '+ tags;
+		  tags = $L('Tags') + ': ' + tags;
 	  } else {
 		  tags = "";
 	  }
 	  
 	  if(categories && categories.length > 0) {
-		  categories ='Categories: '+ categories.join(', ');
+		  categories = $L('Categories') + ': ' + categories.join(', ');
 	  } else {
 		  categories ="";
 	  }
@@ -99,7 +99,7 @@ enyo.kind({
 		  var tags = enyo.windowParams.tags;
 		  var categories = enyo.windowParams.categories;
 		  var typeString = enyo.windowParams.item_type; //decode the string in the future
-		  var alert_msg = "Sorry, the "+typeString+" has changed, or it is not published. A simple preview is shown below.";
+		  var alert_msg = $L('Sorry, the') + ' ' + typeString + ' ' + $L('has changed, or it is not published. A simple preview is shown below.');
 		  this.loadlocalPreview(alert_msg, title,content, tags, categories, typeString);
 	  } else {
 		  //load remote preview

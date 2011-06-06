@@ -93,7 +93,7 @@ enyo.kind({
   discover:function(url, initialHTML){
     // use the published property if no url
     url = url || this.url;
-    if (!url) throw("EndpointDiscover requries a valid url");
+    if (!url) throw($L("EndpointDiscover requries a valid url"));
     if (initialHTML) {
       var edit_url;
       if (edit_url = this.parseEditURI(initialHTML)) {
