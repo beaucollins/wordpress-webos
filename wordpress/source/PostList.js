@@ -40,7 +40,7 @@ enyo.kind({
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},      
       { kind:'Button', name: 'refresh', content:'Refresh', onclick:'doRefresh'},
-      { name: 'newItem', content:'Add New', onclick:'doNewItem'}
+      { kind:'Button', name: 'newItem', content:'Add New', onclick:'doNewItem'}
     ] }
   ],
   create:function(){

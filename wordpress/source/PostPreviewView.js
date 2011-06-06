@@ -42,7 +42,7 @@ enyo.kind({
 		  this.$.realPreview.setHTML('http://wordpress.com',htmlForm); //the wordpress.com domain is necessary because we are loading the loading gif from WP.com
 	  } else {
 		//fallback to  local preview	    
-		  var alert_msg = $L("Sorry, something went wrong during preview. A simple preview is shown below.)";
+		  var alert_msg = $L("Sorry, something went wrong during preview. A simple preview is shown below.");
 		  this.loadlocalPreview(alert_msg, this.post.title,  this.post.description + this.post.mt_text_more, this.post.mt_keywords, this.post.categories, 'Item'); 
 	  }
   },

@@ -96,9 +96,12 @@ enyo.kind({
     };
   },
   refreshDraftCount:function(){
+	console.log("Refreshing the drafts count");  
     var sourceList = this.$.sourceList;
     enyo.application.models.Post.all().filter('local_modifications', '=', 'true').count(function(draft_count){
-      sourceList.setDraftCount(draft_count);
+    	enyo.application.models.Page.all().filter('local_modifications', '=', 'true').count(function(page_draft_count){
+    	      sourceList.setDraftCount(draft_count+page_draft_count);
+    	    });
     });
   },
   refreshComments:function(sender, comment, account){
@@ -109,7 +112,9 @@ enyo.kind({
     };
   },
   refreshPosts:function(sender, post, account){
+	 this.log("pippo"); 
     this.refreshDraftCount();
+    this.log("pippoa"); 
     if (this.$.content.getView() == this.$.posts) {
       if (this.$.posts.account == sender) {
         console.log("Refresh posts!")
