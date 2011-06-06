@@ -383,7 +383,7 @@ enyo.kind({
     var client = this;
     var account = this.account;
     //reload the post from the api
-    enyo.windows.addBannerMessage("Post updated successfully", "{}");
+    enyo.windows.addBannerMessage($L("Post updated successfully"), "{}");
     
     this.$.http.callMethod({
       methodName:'metaWeblog.getPost',
@@ -440,7 +440,7 @@ enyo.kind({
     }
     post.postid = response;
     account.posts.add(post);
-    enyo.windows.addBannerMessage("Post saved successfully", "{}");
+    enyo.windows.addBannerMessage($L("Post saved successfully"), "{}");
     enyo.application.persistence.flush(function(){
       client.$.http.callMethod({
         methodName:'metaWeblog.getPost',
@@ -460,7 +460,7 @@ enyo.kind({
 	  }
 	  post.page_id = response;
 	  account.pages.add(post);
-	  enyo.windows.addBannerMessage("Pages saved successfully", "{}");
+	  enyo.windows.addBannerMessage($L("Page saved successfully"), "{}");
 	  enyo.application.persistence.flush(function(){
 		  client.$.http.callMethod({
 			  methodName:'wp.getPage',
