@@ -70,6 +70,9 @@ body {
 #compose_contentField_input {
 	margin: 10px 10px 10px 6px;
 	padding-right: 20px;
+	max-width: 100%;
+	pointer-events: none;
+	cursor: default;
 }
 
 #compose_advanced {
