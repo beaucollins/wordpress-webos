@@ -358,7 +358,7 @@ enyo.kind({
     var client = this;
     var account = this.account;
     account.posts.add(post);
-    post.local_modifications = true
+    post.local_modifications = true;
     console.log("Save draft");
     enyo.application.persistence.flush(function(){
       client.doSaveDraft(post, account);
@@ -372,7 +372,7 @@ enyo.kind({
     var client = this;
     var account = this.account;
     account.pages.add(post);
-    post.local_modifications = true
+    post.local_modifications = true;
     console.log("Save draft Page");
     enyo.application.persistence.flush(function(){
       client.doSaveDraftPage(post, account);

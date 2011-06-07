@@ -83,7 +83,6 @@ enyo.kind({
     //changes the preview btn label
 	if(this.post.local_modifications) {
 		this.$.previewBtn.setCaption($L('Preview'));
-		 this.log("setting the caption to preview");
 	} else{
 		var statusVariableName = this.post._type == "Page" ? 'page_status' :  'post_status';
 		var status = this.post[statusVariableName];
