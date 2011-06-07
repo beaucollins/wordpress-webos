@@ -460,7 +460,10 @@ enyo.kind({
 	  var client = this;
 	  var account = this.account;
 	  var post = request.post;
-	  client.doDeletePage(post, account);
+	  enyo.application.models.Page.all().remove(post);
+	  enyo.application.persistence.flush(function(){
+		  client.doDeletePage(post, account);
+	  });
   },
   savePost:function(post){
 	  var client = this;

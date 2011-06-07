@@ -24,7 +24,7 @@ enyo.kind({
   },
   openPostURL:function(password){
 	  //TODO: check the connection to host here!!!
-	  if (this.post.permaLink && this.post.permaLink.trim() != "" && password != null) {
+	  if (this.post.local_modifications == false && this.post.permaLink && this.post.permaLink.trim() != "" /* && password != null*/) {
 		  this.$.postPreviewResponse.setShowing(false);
 		  var loginURL = this.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
 		 // var postdata='log='+this.account.username+'&pwd='+password+'&redirect_to='+this.post.permaLink;
@@ -41,9 +41,9 @@ enyo.kind({
 		  //this.$.postPreviewResponse.setContent(htmlForm);
 		  this.$.realPreview.setHTML('http://wordpress.com',htmlForm); //the wordpress.com domain is necessary because we are loading the loading gif from WP.com
 	  } else {
-		//fallback to  local preview	    
+		  //fallback to  local preview	    
 		  var alert_msg = $L("Sorry, something went wrong during preview. A simple preview is shown below.");
-		  this.loadlocalPreview(alert_msg, this.post.title,  this.post.description + this.post.mt_text_more, this.post.mt_keywords, this.post.categories, 'Item'); 
+		  this.prepareItemForLocalPreview(alert_msg);
 	  }
   },
   loadlocalPreview:function(alert_msg, title, content, tags, categories, type){
@@ -89,11 +89,23 @@ enyo.kind({
 	  content+='</div>';
 	  this.$.postPreviewResponse.setContent(content);
   },
+  prepareItemForLocalPreview: function(message){
+	  //fallback to  local preview	    
+	  var alert_msg = message ? message : $L("Sorry, something went wrong during preview. A simple preview is shown below.");
+	  var typeString = this.post._type === "Post" ? 'Post' : 'Page';
+	  var tags = this.post._type === "Post" ? this.post.mt_keywords:'';
+	  
+	  var categoriesForPreview = new Array();
+	  if(this.post && this.post.categories) {
+		  categoriesForPreview = this.post.categories;
+	  }
+	  this.loadlocalPreview(alert_msg, this.post.title,  this.post.description + (this.post._type === "Post"? this.post.mt_text_more : this.post.text_more) , tags, categoriesForPreview, typeString);
+  },
   windowParamsChangeHandler: function(inSender, inEvent) {
 	  var p = inEvent.params;
 	  this.log("PostPreview Parameters", p);
-	  if(typeof(enyo.windowParams.post) == "undefined") {
-		  //load local preview	  
+	  if(typeof(enyo.windowParams.post) == "undefined") { //called from the compose view when an item is modified or it is a new item
+		  
 		  var title = enyo.windowParams.title; 
 		  var content = enyo.windowParams.content;
 		  var tags = enyo.windowParams.tags;
@@ -101,8 +113,13 @@ enyo.kind({
 		  var typeString = enyo.windowParams.item_type; //decode the string in the future
 		  var alert_msg = $L('Sorry, the') + ' ' + typeString + ' ' + $L('has changed, or it is not published. A simple preview is shown below.');
 		  this.loadlocalPreview(alert_msg, title,content, tags, categories, typeString);
+	  } else if (typeof(enyo.windowParams.account) == "undefined" || enyo.windowParams.account == null) { //called from the details panel
+		  //preview of a draft post
+		  this.post = enyo.windowParams.post;
+		  var typeString = this.post._type === "Post" ? 'Post' : 'Page';
+		  var alert_msg = $L('Sorry, the') + ' ' + typeString + ' ' + $L('has changed, or it is not published. A simple preview is shown below.');
+		  this.prepareItemForLocalPreview(alert_msg);
 	  } else {
-		  //load remote preview
 		  this.account = enyo.windowParams.account;
 		  this.post = enyo.windowParams.post;
 		  this.$.previewPasswordManager.setAccount(this.account);

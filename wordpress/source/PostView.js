@@ -83,7 +83,8 @@ enyo.kind({
   openPostURL:function(sender){
 	  //launches a new window with the preview view
 	  console.log("Launching Preview");
-	  params = {'account': this.account.account, 'post': this.post};
+	  var currentAccount = this.account ? this.account.account : null;
+	  params = {'account': currentAccount, 'post': this.post};
 	  enyo.windows.activate("Post Preview", "./postPreview.html", params);
   },
   openEditor:function(sender){
