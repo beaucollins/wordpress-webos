@@ -28,6 +28,7 @@ enyo.kind({
   refresh:function(){
     this.$.postList.accountChanged();
     this.$.detail.postChanged();
+    this.$.pane.selectViewByName('blank'); //on refresh we should put the blank item on the right side
   },
   resize:function(){
     this.inherited(arguments);

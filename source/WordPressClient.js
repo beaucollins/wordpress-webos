@@ -547,7 +547,14 @@ enyo.kind({
 	  var client = this;
 	  var account = this.account;
 	  var post = request.post;
-	  client.doDeletePost(post, account);
+	  if (post._type === "Page")
+		  enyo.application.models.Page.all().remove(post);
+	  else
+		  enyo.application.models.Post.all().remove(post);
+	  
+	  enyo.application.persistence.flush(function(){
+		  client.doDeletePost(post, account);
+	  });
   },
   updatePostSuccess:function(sender, response, request){
 	this.log(">>>AAA: ping danilo if this function is called somewhere! Saved the post!", response);

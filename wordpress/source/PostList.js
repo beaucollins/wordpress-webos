@@ -47,6 +47,7 @@ enyo.kind({
     this.inherited(arguments);
   },
   selectPost:function(sender, item){
+	console.log("selectPost", item);
 	this.selectedRow = item;
     var post = this.$.dataPage.itemAtIndex(item.rowIndex);
     this.$.list.select(item.rowIndex);
@@ -118,7 +119,6 @@ enyo.kind({
     this.$.list.punt();
     this.$.dataPage.clear();
     this.$.list.reset();
-    
   },
   resize:function(){
     this.$.list.resizeHandler();

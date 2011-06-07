@@ -46,7 +46,7 @@ enyo.kind({
     if (!this.post) {
       return;
     }
-    console.log(this.post);
+    console.log("PostView", this.post);
     
     if (this.post.categories && this.post.categories.length > 1){
     	this.$.categoriesLabel.setContent($L('Categories') + ':');
