@@ -705,6 +705,8 @@ img {
 
 #wordPress_posts_detail_content{
 	max-width: 100%;
+	pointer-events: none;
+	cursor: default;
 }
 
 #wordPress_posts_detail_content img{
