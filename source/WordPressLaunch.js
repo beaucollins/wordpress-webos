@@ -40,18 +40,22 @@ enyo.kind({
     enyo.windows.activate('wordpress', basePath + 'wordpress/index.html', params);
   },
   openComposer:function(account, post){
+    var wordpress = enyo.windows.fetchWindow('wordpress');
     var label = "post-" + post.id;
     var params = {
+      wasLaunchedBy: wordpress,
       account: account.id,
       post: post.id
     }
     enyo.windows.activate(label, "./compose/index.html", params);
   },
-  openComposerWithNewItem:function(account, type){
-    console.log("launching the composer view with new ", type);
+  openComposerWithNewItem:function(account, type){	
+	var wordpress = enyo.windows.fetchWindow('wordpress');
+    console.log("Launching the composer view new Item of the type: ", type);
     var label = "draft-" + this.draftCount;
     this.draftCount ++;
     var params = {
+      wasLaunchedBy: wordpress,
       account: account.id,
       type: type
     }

@@ -15,6 +15,7 @@ enyo.kind({
 	enterCtr:0,
     post:null
   },
+  wasLaunchedBy : null, //reference to the window that opened this composer card
   currentMediaFile : null, //@protected
   accountCategories : null,
   categoriesChanged : false, //true when the user click on categories
@@ -351,14 +352,26 @@ enyo.kind({
 		  enyo.windows.addBannerMessage($L("Post saved successfully"), "{}");
 	 
 	  this.log("Item saved", post, account);
-	  
+	  //sending a notification to the opener window
+	  if (this.wasLaunchedBy) { 
+		  if(this.isAPost())
+			  enyo.windows.setWindowParams(this.wasLaunchedBy, {action: "refreshPosts"});
+		  else
+			  enyo.windows.setWindowParams(this.wasLaunchedBy, {action: "refreshPages"});
+	  }
 	  window.close();
   },
   saveDraftSuccess:function(sender, post, account){
     console.log("Draft was saved", post, account);
+    
+    //sending a notification to the opener window
+	if (this.wasLaunchedBy) {
+		enyo.windows.setWindowParams(this.wasLaunchedBy, {action: "refreshDrafts"});
+	}
+      
     window.close(); //to close this window
   },
-  showPreview:function() {
+  showPreview:function() {  
 	  var isChangedOrFreshlyCreatedDraft = false;
 	  
 	  var itemIDName = this.isAPost() ? 'postid' : 'page_id';
@@ -551,7 +564,8 @@ enyo.kind({
 	  console.log("Compose Client is ready");
   },
   windowParamsChangeHandler: function(inSender, event) {
-    var account_id = event.params.account;
+	this.wasLaunchedBy = event.params.wasLaunchedBy;
+	var account_id = event.params.account;
     var post_id = event.params.post; //one between post_id and type should be defined
     var itemType = event.params.type;
     var composer = this;

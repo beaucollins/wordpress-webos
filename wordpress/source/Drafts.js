@@ -27,8 +27,9 @@ enyo.kind({
 	  this.$.postList.hideNewButton();
   },
   refresh:function(){
-    console.log("Refresh!");
+    console.log("Draft Items UI Refresh!");
     this.$.postList.accountChanged();
+    this.$.pane.selectView(this.$.blank);
   },
   refreshPosts:function(){
     this.refresh();

@@ -75,7 +75,6 @@ enyo.kind({
   setupPost:function(sender, index){
     var post;
     if (post = this.$.dataPage.itemAtIndex(index)) {
-      console.log("Set up post");
      // console.log("Setting up index: ", index, post);
       if (post.title.trim() == '') {
         this.$.title.addClass('untitled');
@@ -95,7 +94,7 @@ enyo.kind({
       }
       
       var status;
-	 console.log('post status: ' + post.post_status);
+	
       if (post.postid == 0 || post.page_id == 0) {
         status = 'draft';
       }else{

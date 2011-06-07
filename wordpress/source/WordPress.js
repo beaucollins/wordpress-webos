@@ -115,7 +115,7 @@ enyo.kind({
     };
   },
   refreshPosts:function(sender, post, account){
-	this.log("pippo"); 
+	this.log(">>>refreshPosts");
     this.refreshDraftCount();
     if (this.$.content.getView() == this.$.posts) {
       if (this.$.posts.account == sender) {
@@ -125,6 +125,7 @@ enyo.kind({
     };
   },
   refreshPages:function(sender, page, account){
+	this.log(">>>refreshPages");
 	this.refreshDraftCount();
     if (this.$.content.getView() == this.$.pages) {
       if (this.$.pages.account == sender) {
@@ -306,7 +307,20 @@ enyo.kind({
     
   },
   windowParamsChangeHandler:function(params){
-
+	var p = params;
+	this.log(window.name, p);
+	
+	if (params.action == 'refreshPages') {
+		this.refreshDraftCount();
+		this.$.pages.refresh();
+	};
+	if (params.action == 'refreshPosts') {
+		this.refreshDraftCount();
+//		if (this.$.content.getView() == this.$.posts) {
+			console.log("Refresh posts!")
+			this.$.posts.refresh();
+	//	}
+	};  
     if (params.action == 'refreshComments') {
       this.updateCommentCount();
       if (this.$.content.getView() == this.$.comments) {
