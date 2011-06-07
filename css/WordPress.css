@@ -702,3 +702,11 @@ img {
 	color: #464646;
 	text-align: center;
 }
+
+#wordPress_posts_detail_content{
+	max-width: 100%;
+}
+
+#wordPress_posts_detail_content img{
+	max-width: 100%;
+}
