@@ -32,7 +32,7 @@ enyo.kind({
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
       { kind:'Button', caption: $L('Edit'), onclick:"openEditor", className:'enyo-blue-button'},
-      { kind:'Button', caption: $L('Preview'), onclick:'openPostURL' },
+      { name:'previewBtn', kind:'Button', caption: $L('Preview'), onclick:'openPostURL' },
       { kind:'Button', caption: $L('Trash'), onclick:"askBeforeDelete" , className:'enyo-red-button'},
     ]},
 	{name: "twoDialog", kind: "Dialog", components: [
@@ -79,6 +79,19 @@ enyo.kind({
 	    this.$.author.setContent('');
 	  }
     this.$.scroller.setScrollPositionDirect(0,0);
+    
+    //changes the preview btn label
+	if(this.post.local_modifications) {
+		this.$.previewBtn.setCaption($L('Preview'));
+		 this.log("setting the caption to preview");
+	} else{
+		var statusVariableName = this.post._type == "Page" ? 'page_status' :  'post_status';
+		var status = this.post[statusVariableName];
+		if(status == 'Draft' || status == 'draft') 
+			this.$.previewBtn.setCaption($L('Preview'));
+		else
+			this.$.previewBtn.setCaption($L('View'));
+	}
   },
   openPostURL:function(sender){
 	  //launches a new window with the preview view

@@ -24,7 +24,7 @@ enyo.kind({
   },
   openPostURL:function(password){
 	  //TODO: check the connection to host here!!!
-	  if (this.post.local_modifications == false && this.post.permaLink && this.post.permaLink.trim() != "" /* && password != null*/) {
+	  if (this.post.permaLink && this.post.permaLink.trim() != "" /* && password != null*/) {
 		  this.$.postPreviewResponse.setShowing(false);
 		  var loginURL = this.account.xmlrpc.replace("/xmlrpc.php", "/wp-login.php");
 		 // var postdata='log='+this.account.username+'&pwd='+password+'&redirect_to='+this.post.permaLink;
