@@ -232,6 +232,10 @@ body {
 	margin-left: 8px;
 }
 
+.wp-compose-spinner{
+	margin-left: 10px;
+}
+
 /* tags / password text fields 
 
 #compose_settings .enyo-input {

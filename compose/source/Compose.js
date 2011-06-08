@@ -50,6 +50,7 @@ enyo.kind({
           { name:'headerLabelField', content:$L('New Post'), flex:1 },
           { name:'previewButton', kind:'enyo.Button', caption:$L('Preview'), onclick:'showPreview' },
           { name:'draftButton', kind:'enyo.Button', caption:$L('Save Draft'), onclick:'savePost' },
+		  { kind: 'Spinner', className: 'wp-compose-spinner' },
 		  { name:'postButton', kind:'enyo.Button', caption:$L('Publish'), onclick:'savePost' }
         ] },		
         { kind:'HFlexBox', flex:1, components:[
@@ -309,6 +310,7 @@ enyo.kind({
   },
   savePost:function(inSender){
     // set up the post object
+	this.$.spinner.show();
     this.post.title = this.$.titleField.getValue();
 	//get rid of the more div if it's there, only need it on the app side
 	var content = this.$.contentField.getHtml();
@@ -336,8 +338,7 @@ enyo.kind({
 	
 	var bDate = this.$.datePicker.getValue();
 	var bTime = this.$.datePicker.getValue();
-	this.log("date prese", bDate, bTime);
-	
+	console.log("date prese", bDate, bTime);
 	
 	this.log("calling the xmlrpc client...");
 	
@@ -356,6 +357,7 @@ enyo.kind({
 	}
   },
   savePostSuccess:function(sender, post, account){
+	  this.$.spinner.hide();
 	  if(post._type === "Page")
 		  enyo.windows.addBannerMessage($L("Page saved successfully"), "{}");
 	  else

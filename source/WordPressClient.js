@@ -469,8 +469,7 @@ enyo.kind({
 	  var client = this;
 	  var http = this.$.http;
 	  var account = this.account;
-	  
-	  // this posts exists already
+	  // this post exists already
 	  if (post.postid) {
 		  // mw.method('editPost', 'post_id', 'username', 'password', 'content', 'publish');
 		  return http.callMethod({
