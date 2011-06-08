@@ -53,6 +53,17 @@ enyo.kind({
 		  { name:'postButton', kind:'enyo.Button', caption:$L('Publish'), onclick:'savePost' }
         ] },		
         { kind:'HFlexBox', flex:1, components:[
+          { name:'main', kind:'VFlexBox', flex:1, components:[
+            { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:$L('Title') },
+			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
+			//{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
+			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
+			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
+			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange"},
+			]},
+	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:$L('Settings'), onclick:'toggleSettings' },
+			] },
+		  ] },
 		{ name:'settings', kind:'VFlexBox', width:'300px', style:'background:#EEE;', showing:false, components:[
             { kind:'Scroller', flex:1, components:[
               { kind:'Item', components:[
@@ -83,23 +94,12 @@ enyo.kind({
               ] },
 			{ kind:'Item', components:[
 				{ kind:'Drawer', open:false, caption:$L('Publish Date'), components:[
-					{kind: "DatePicker", label: $L("Date"), onChange: "pickerPick"},
-					{kind: "TimePicker", label: $L("Time"), onChange: "pickerPick"}
+					{kind: "DatePicker", label: $L("Date"), onChange: "datetimePickerPick"},
+					{kind: "TimePicker", label: $L("Time"), onChange: "datetimePickerPick"}
 				] }
             ]}
 			] }
           ]},
-          { name:'main', kind:'VFlexBox', flex:1, components:[
-            { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:$L('Title') },
-			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
-			//{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
-			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
-			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
-			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange"},
-			]},
-	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:$L('Settings'), onclick:'toggleSettings' },
-			] },
-		  ] }
         ]}
       ] }
     ] }
@@ -124,6 +124,9 @@ enyo.kind({
 		  return true;
   },
   contentFieldTextChange : function(inSender, inEvent) {
+	  this.categoriesChanged = true;
+  },
+  datetimePickerPick: function(inSender) {
 	  this.categoriesChanged = true;
   },
   postChangedByUser :function(){
@@ -330,14 +333,21 @@ enyo.kind({
 	var postPassword = this.$.passwordField.getValue();	
 	this.post.wp_password = postPassword; //always set the post password otherwise you can't remove post password
 	
+	
+	var bDate = this.$.datePicker.getValue();
+	var bTime = this.$.datePicker.getValue();
+	this.log("date prese", bDate, bTime);
+	
+	
 	this.log("calling the xmlrpc client...");
+	
 	if (inSender.name == 'postButton') {
 		// save the post via the client
 		if(this.isAPost())
 			this.$.client.savePost(this.post);
 		else
 			this.$.client.savePage(this.post);
-	}
+	} 
 	else {
 		if(this.isAPost())
 			this.$.client.saveDraft(this.post);
@@ -557,6 +567,12 @@ enyo.kind({
 		  }
 		  
 		  this.$.passwordField.setValue(this.post.wp_password);
+		  
+		  if(this.post.date_created_gmt) {
+			  console.log("setting the item date to:", this.post.date_created_gmt);
+			  this.$.datePicker.setValue(this.post.date_created_gmt);
+			  this.$.timePicker.setValue(this.post.date_created_gmt);
+		  }
 	  } 
   },
   clientReady:function(sender){
