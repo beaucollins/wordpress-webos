@@ -703,7 +703,7 @@ img {
 	text-align: center;
 }
 
-#wordPress_posts_detail_content{
+#wordPress_posts_detail_content, #wordPress_comments_detail_body, #wordPress_pages_detail_content{
 	max-width: 100%;
 	pointer-events: none;
 	cursor: default;
