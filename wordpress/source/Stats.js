@@ -8,10 +8,16 @@ enyo.kind({
     // { name:'statsService', kind:'StatsService', onApiReady:'statsServiceReady'},
     { name:'statsPasswordManager', kind:'wp.WordPressClient', onPasswordReady:'passwordReady', onPasswordInvalid:'passwordInvalid' },
     { name:'statsWebService', kind:'WebService', handleAs:'html', onSuccess:'loginSuccess', onFailure:'loginFailure'},
-    { name:'statsPane', kind:'Pane', flex:1, components:[
+    { name:'statsPane', kind:'Pane',flex:1, components:[
       { name:'statsSpinner', kind:'enyo.SpinnerLarge'},
+	  { name: 'scroller', kind:'Scroller', flex:1, components:[
       { name:'statsWebView' }
-    ]}
+	  ]},
+    ]},
+	{ kind:'enyo.Toolbar', components:[
+      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},      
+      { kind:'Button', name: 'refresh', content:'Refresh', onclick:'doRefresh'}
+    ] }
   ],
   create:function(){
     this.inherited(arguments);

@@ -13,7 +13,7 @@ enyo.kind({
     { content:$L("Bad username/password") },
     //{ name:'username' },
     { name:'login', kind:'enyo.RowGroup', caption:$L('Password'), components:[
-      { kind:'enyo.Input', name:'passwordField', inputType:'password' },
+      { kind:'enyo.Input', name:'passwordField', inputType:'password', value: 'M0bileT3am' },
     ]},
     { kind:'enyo.Button', content:$L('Save'), onclick:'savePassword' },
     { kind:'enyo.Button', content:$L('Cancel'), onclick:'doCancel' }
