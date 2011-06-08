@@ -22,7 +22,7 @@ enyo.kind({
         multiViewMinWidth:500,
         components: [
           { name:'left', width:'225px', components:[
-            { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', onCreateDraft:'composeDraft', onAddBlog:'addNewBlog' }
+            { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', /*onCreateDraft:'composeDraft',*/ onAddBlog:'addNewBlog' }
           ]},
           // column for showing what is selected from the source list
           { name:'main', className:'main-pane', flex:1, onResize:'resizeSubviews', peekWidth:42, components:[
@@ -233,7 +233,7 @@ enyo.kind({
     // this.$.pane.selectView(this.$.panes);
     this.$.setupForm.close();
   },
-  composeDraft:function(sender, inEvent){
+/*  composeDraft:function(sender, inEvent){
     var account;
     if(this.activeAccount){
       account = this.activeAccount.account;
@@ -241,7 +241,7 @@ enyo.kind({
       account = this.accounts[0].account;
     }
     enyo.application.launcher.openComposerWithNewItem(account,"Post");
-  },
+  },*/
   openAppMenuHandler: function() {
     // console.log("Open app menu please");
     this.$.appMenu.render();

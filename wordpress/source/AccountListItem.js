@@ -15,7 +15,7 @@ enyo.kind({
       { action:'pages', name:'pages', label:$L('Pages'), icon:'../images/icons/pages-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
       { action:'stats', name:'stats', label:$L('Stats'), icon:'../images/icons/stats-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick' },
       { action:'drafts', name:'drafts', label:$L('Drafts'), icon:'../images/icons/drafts-icon.png', kind: 'wp.ReadCountListItem', onclick:'itemClick', unreadCount:0 },
-      { action:'dashboard', name:'dashboard', label:$L('Dashboard'), icon:'../images/icons/dashboard-icon.png', kind: 'wp.ReadCountListItem', onclick:'openDashBoard'}
+   /*   { action:'dashboard', name:'dashboard', label:$L('Dashboard'), icon:'../images/icons/dashboard-icon.png', kind: 'wp.ReadCountListItem', onclick:'openDashBoard'}*/
     ]}
   ],
   create:function(){
@@ -70,15 +70,14 @@ enyo.kind({
   draftCountChanged:function(){
     this.$.drafts.setUnreadCount(this.draftCount);
   },
-  openDashBoard:function(item, inEvent){
+  /*openDashBoard:function(item, inEvent){
 	  if(!this.account) return;
 	  console.log("Launching Dashboard");
 	  params = {'account': this.account};
 	  enyo.windows.activate("Dashboard", "./dashboardView.html", params);
 	  return;
-  }
+  }*/
 });
-
 enyo.kind({
   name:'wp.SingleAccountListItem',
   kind:'wp.AccountListItem',
