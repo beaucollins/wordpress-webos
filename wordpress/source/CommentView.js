@@ -11,9 +11,6 @@ enyo.kind({
   },
   components:[
     { kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
- /*   { name:'xmlrpc_client', kind: 'XMLRPCService', onSuccess:'appendConversation', components:[
-      { name:'comment_edit', methodName:'wp.editComment', onSuccess:'updatedComment' }
-    ]},*/
     { name:'comment', flex:1, kind:'VFlexBox', components:[
       { name:'header', kind:'Header', components:[
         { kind:'Control', kind:'HFlexBox', components:[
@@ -79,10 +76,9 @@ enyo.kind({
     this.commentChanged();
   },
   accountChanged:function(){
-    if(this.account){
-      //this.$.xmlrpc_client.setUrl(this.account.xmlrpc);
-      //this.$.comment_edit.setUrl(this.account.xmlrpc)
-    }
+  /*  if(this.account){
+
+    }*/
   },
   commentChanged:function(){
 	this.$.spinner.hide();
@@ -228,9 +224,6 @@ enyo.kind({
 	  this.$.reply.setDisabled(true);
 
 	  this.account.deleteComment(this.comment);
-  },
-  updatedComment:function(sender, response, request){
-    enyo.windows.addBannerMessage($L("Comment updated"), "{}");
   },
   cancelButtonClick: function() {
 	this.$.twoDialog.toggleOpen();

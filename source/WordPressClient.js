@@ -567,23 +567,24 @@ enyo.kind({
     }, { url:this.account.xmlrpc, onSuccess:'commentUpdated', comment:comment} );
   },
   commentUpdated:function(sender, response, request){
-    console.log("Comment updated - request:", request);
-    console.log("Comment updated - response:", response);
+    //console.log("Comment updated - request:", request);
+    //console.log("Comment updated - response:", response);
     var client = this;
     enyo.application.persistence.flush(function(){
+      enyo.windows.addBannerMessage($L("Comment updated"), "{}");
       client.doUpdateComment(request.comment);
       client.refreshPendingCommentCount();
     });
   },
   deleteComment:function(comment){
-    console.log("Deleting comment", comment._data);
+ //   console.log("Deleting comment", comment._data);
     this.$.http.callMethod({
       methodName:'wp.deleteComment',
       methodParams: [this.account.blogid, this.account.username, this.password, comment.comment_id]
     }, { url:this.account.xmlrpc, onSuccess:'commentDeleted',  comment:comment} );
   },
   commentDeleted:function(sender, response, request){
-	console.log("Deleting comment", request.comment);
+//	console.log("Deleted comment", request.comment);
     var client = this;
     this.account.comments.remove(request.comment);
     enyo.application.persistence.flush(function(){
