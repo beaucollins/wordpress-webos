@@ -67,6 +67,7 @@ enyo.kind({
         onPendingComments:'updateCommentCount',
         onNewComment:'refreshComments',
         onUpdateComment:'refreshComments',
+        onDeleteComment:'refreshCommentsAfterDelete',
         onNewPost:'refreshPosts',
         onUpdatePost:'refreshPosts',
         onDeletePost:'refreshPosts',
@@ -111,6 +112,14 @@ enyo.kind({
     if (this.$.content.getView() == this.$.comments) {
       if (this.$.comments.account == sender) {
         this.$.comments.refresh();
+      }
+    };
+  },
+  refreshCommentsAfterDelete:function(sender, comment, account){
+    if (this.$.content.getView() == this.$.comments) {
+      if (this.$.comments.account == sender) {
+    	  this.refreshComments();
+    	  this.$.comments.accountChanged();
       }
     };
   },

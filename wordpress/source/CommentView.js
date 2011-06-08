@@ -11,9 +11,9 @@ enyo.kind({
   },
   components:[
     { kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
-    { name:'xmlrpc_client', kind: 'XMLRPCService', onSuccess:'appendConversation', components:[
+ /*   { name:'xmlrpc_client', kind: 'XMLRPCService', onSuccess:'appendConversation', components:[
       { name:'comment_edit', methodName:'wp.editComment', onSuccess:'updatedComment' }
-    ]},
+    ]},*/
     { name:'comment', flex:1, kind:'VFlexBox', components:[
       { name:'header', kind:'Header', components:[
         { kind:'Control', kind:'HFlexBox', components:[
@@ -59,14 +59,20 @@ enyo.kind({
       { kind: 'enyo.Toolbar', components:[
         { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
         { flex:1 },
-        { kind:'Button', caption: 'Reply', onclick:'doReply', className:'enyo-button-blue' },
-		{ kind: "Spinner", className: 'wp-list-spinner'},
+        { kind: "Spinner", className: 'wp-list-spinner'},
+        { kind:'Button', name:'reply', caption: 'Reply', onclick:'doReply', className:'enyo-button-blue' },
         { kind:'Button', name:'approve', caption: $L('Approve'), onclick:'markComment' },
         { kind:'Button', name:'unapprove', caption: $L('Unapprove'), onclick:'markComment' },
-        { kind:'Button', name:'trash', caption: $L('Trash'), onclick:'markComment' },
+        { kind:'Button', name:'trash', caption: $L('Trash'), onclick:'askBeforeDelete' },
         { kind:'Button', name:'spam', caption: $L('Spam'), onclick:'markComment' }
       ] } 
-    ] }
+    ] },
+	{name: "twoDialog", kind: "Dialog", components: [
+ 		{className: "enyo-item enyo-first", style: "padding: 12px", content: $L('Are You Sure?')},
+ 		{className: "enyo-item enyo-last", style: "padding: 12px; font-size: 14px", content: $L('Deleting an Item cannot be undone')},
+ 		{kind: "Button", caption: $L('Cancel'), onclick:'cancelButtonClick'},
+ 		{kind: "Button", caption: $L('Delete'), className:'enyo-red-button', onclick:'deleteComment'}
+ 	]},
   ],
   created:function(){
     this.inherited(arguments);
@@ -74,12 +80,18 @@ enyo.kind({
   },
   accountChanged:function(){
     if(this.account){
-      this.$.xmlrpc_client.setUrl(this.account.xmlrpc);
-      this.$.comment_edit.setUrl(this.account.xmlrpc)
+      //this.$.xmlrpc_client.setUrl(this.account.xmlrpc);
+      //this.$.comment_edit.setUrl(this.account.xmlrpc)
     }
   },
   commentChanged:function(){
 	this.$.spinner.hide();
+	this.$.approve.setDisabled(false);
+	this.$.trash.setDisabled(false);
+	this.$.spam.setDisabled(false);
+	this.$.unapprove.setDisabled(false);
+	this.$.reply.setDisabled(false);
+	
     this.replies = [];
     // this.$.conversationHeader.hide();
     // this.$.conversation.render();
@@ -99,13 +111,14 @@ enyo.kind({
       this.$.authorURL.hide();
     }
     
+    this.log("questa e bella: "+ this.comment.status  );
     if (this.comment.status == 'approve') {
       this.$.approve.hide();
     }else{
       this.$.approve.show();
     }
     
-    if (this.comment.status == 'unapprove') {
+    if (this.comment.status == 'hold') {
       this.$.unapprove.hide();
     }else{
       this.$.unapprove.show();
@@ -194,19 +207,34 @@ enyo.kind({
   },
   markComment:function(sender){
 	this.$.spinner.show();
+	this.$.approve.setDisabled(true);
+	this.$.trash.setDisabled(true);
+	this.$.spam.setDisabled(true);
+	this.$.unapprove.setDisabled(true);
+	this.$.reply.setDisabled(true);
+	
     var params = [this.account.blogid, this.account.username, this.account.password, this.comment.comment_id];
-    if (sender.name == 'trash') {
-      this.account.deleteComment(this.comment);
-      this.$.comment_edit.callMethod({ methodParams:params, methodName:'wp.deleteComment' });
-    }else{
-      this.comment.status = sender.name;
-      this.account.updateComment(this.comment);
-      // this.$.comment_edit.callMethod({ methodParams:params })
-      
-    }
+    this.comment.status = sender.name;
+    this.account.updateComment(this.comment);
+  },
+  deleteComment:function(sender){
+	  this.$.twoDialog.toggleOpen();
+	  this.$.spinner.show();
+	  this.$.approve.setDisabled(true);
+	  this.$.trash.setDisabled(true);
+	  this.$.spam.setDisabled(true);
+	  this.$.unapprove.setDisabled(true);
+	  this.$.reply.setDisabled(true);
+
+	  this.account.deleteComment(this.comment);
   },
   updatedComment:function(sender, response, request){
     enyo.windows.addBannerMessage($L("Comment updated"), "{}");
-  }
-  
+  },
+  cancelButtonClick: function() {
+	this.$.twoDialog.toggleOpen();
+  }, 
+  askBeforeDelete:function(sender) {
+	this.$.twoDialog.toggleOpen();
+  },
 })

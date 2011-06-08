@@ -21,6 +21,7 @@ enyo.kind({
     onInvalidPassword:'',
     onNewComment:'',
     onUpdateComment:'',
+    onDeleteComment:'',
     onPendingComments:'',
     onNewPage:'',
     onUpdatePage:'',
@@ -104,22 +105,6 @@ enyo.kind({
       methodName:'wp.getPages',
       methodParams:[this.account.blogid, this.account.username, this.password, 20]
     }, { url:this.account.xmlrpc, onSuccess:'savePages' });
-  },
-  updateComment:function(comment){
-    // console.log("Edit comment", comment._data);
-    this.$.http.callMethod({
-      methodName:'wp.editComment',
-      methodParams: [this.account.blogid, this.account.username, this.password, comment.comment_id, comment._data],
-      comment:comment
-    }, { url:this.account.xmlrpc, onSuccess:'commentUpdated' } );
-  },
-  commentUpdated:function(sender, response, request){
-    // console.log("Comment updated:", request);
-    var client = this;
-    enyo.application.persistence.flush(function(){
-      client.doUpdateComment(request.comment);
-      client.refreshPendingCommentCount();
-    });
   },
   savePages:function(semder, response, request){
     var account = this.account;
@@ -273,76 +258,6 @@ enyo.kind({
     		 }
     	 }, this);    	 
     });
-  },
-  refreshComments:function(skip_notifications){
-    var options = {};
-    this.$.getComments.callMethod({
-      methodParams:[this.account.blogid, this.account.username, this.password, options]
-    }, { url: this.account.xmlrpc, skip_notifications:skip_notifications } );
-  },
-  checkNewComments:function(sender, response, request){
-    var account = this.account;
-    var client = this;
-    enyo.forEach(response, function(comment){
-      // first see if we have the comment already in this account
-      // check by the comment's id
-      // account.comments.add(new Comment(comment));
-      account.comments.filter('comment_id', '=', comment.comment_id).one(function(existing){
-        if (!existing) {
-          var c = new enyo.application.models.Comment(comment);
-          account.comments.add(c);
-          enyo.application.persistence.flush(function(){
-            if(request.skip_notifications !== true){
-              enyo.application.commentDashboard.notifyComment(c, account)
-            }else{
-              console.log("Skipping notifications");
-            }
-            client.doNewComment(c, account);
-            client.refreshPendingCommentCount();
-          });
-        }else{
-          //let's just update the content
-          // this should work, Persistence doesn't have any documentation for mass assigning properties
-          // console.log("It exists!", existing);
-          for(field in comment){
-            existing[field]=comment[field];
-          }
-          enyo.application.persistence.flush(function(){
-            client.doUpdateComment(existing, account);
-            client.refreshPendingCommentCount();
-          });
-        }
-      });
-    });
-    
-    //remove comments from the local db that are not on the server anymore!!
-    account.comments.list(function(storedComments){
-    	enyo.forEach(storedComments, function(storedComment){
-    		var presence = false;
-    		for(var i=0; i < response.length; i++) {
-    			if(storedComment.comment_id == response[i].comment_id)
-    				presence=true;
-    		}
-
-    		if(presence == false){
-    			console.log("Not Found Comment: " + storedComment.comment_id);
-    			account.comments.remove(storedComment);
-    			enyo.application.persistence.flush(function(){
-    				client.refreshPendingCommentCount();
-    			});
-    		}
-    	}, this);    	 
-    });    
-  },
-  refreshPendingCommentCount:function(){
-    var client = this;
-    if(this.account.comments)
-	    this.account.comments.filter('status','=','hold').count(function(count){
-	      client.setPendingCommentCount(count);
-	    });
-  },
-  pendingCommentCountChanged:function(){
-    this.doPendingComments(this.pendingCommentCount);
   },
   savePassword:function(onSuccess){
     var options = {}
@@ -603,8 +518,7 @@ enyo.kind({
         comment.post_id,
         comment._data
       ] // methodParams
-    }, { url:this.account.xmlrpc, onSuccess:'publishCommentSuccess', comment:comment });
-    
+    }, { url:this.account.xmlrpc, onSuccess:'publishCommentSuccess', comment:comment }); 
   },
   publishCommentSuccess:function(sender, response, request){
     console.log("Success!", response);
@@ -644,5 +558,107 @@ enyo.kind({
       }
       
     });
-  }
+  },
+  updateComment:function(comment){
+    console.log("Edit comment", comment._data);
+    this.$.http.callMethod({
+      methodName:'wp.editComment',
+      methodParams: [this.account.blogid, this.account.username, this.password, comment.comment_id, comment._data]
+    }, { url:this.account.xmlrpc, onSuccess:'commentUpdated', comment:comment} );
+  },
+  commentUpdated:function(sender, response, request){
+    console.log("Comment updated:", request);
+    var client = this;
+    enyo.application.persistence.flush(function(){
+      client.doUpdateComment(request.comment);
+      client.refreshPendingCommentCount();
+    });
+  },
+  deleteComment:function(comment){
+    console.log("Deleting comment", comment._data);
+    this.$.http.callMethod({
+      methodName:'wp.deleteComment',
+      methodParams: [this.account.blogid, this.account.username, this.password, comment.comment_id]
+    }, { url:this.account.xmlrpc, onSuccess:'commentDeleted',  comment:comment} );
+  },
+  commentDeleted:function(sender, response, request){
+	console.log("Deleting comment", request.comment);
+    var client = this;
+    this.account.comments.remove(request.comment);
+    enyo.application.persistence.flush(function(){
+      client.doDeleteComment();
+      client.refreshPendingCommentCount();
+    });
+  },
+  refreshComments:function(skip_notifications){ //call checkNewComments on success
+    var options = {};
+    this.$.getComments.callMethod({
+      methodParams:[this.account.blogid, this.account.username, this.password, options]
+    }, { url: this.account.xmlrpc, skip_notifications:skip_notifications } );
+  },
+  checkNewComments:function(sender, response, request){
+    var account = this.account;
+    var client = this;
+    enyo.forEach(response, function(comment){
+      // first see if we have the comment already in this account
+      // check by the comment's id
+      // account.comments.add(new Comment(comment));
+      account.comments.filter('comment_id', '=', comment.comment_id).one(function(existing){
+        if (!existing) {
+          var c = new enyo.application.models.Comment(comment);
+          account.comments.add(c);
+          enyo.application.persistence.flush(function(){
+            if(request.skip_notifications !== true){
+              enyo.application.commentDashboard.notifyComment(c, account)
+            }else{
+              console.log("Skipping notifications");
+            }
+            client.doNewComment(c, account);
+            client.refreshPendingCommentCount();
+          });
+        }else{
+          //let's just update the content
+          // this should work, Persistence doesn't have any documentation for mass assigning properties
+          // console.log("It exists!", existing);
+          for(field in comment){
+            existing[field]=comment[field];
+          }
+          enyo.application.persistence.flush(function(){
+            client.doUpdateComment(existing, account);
+            client.refreshPendingCommentCount();
+          });
+        }
+      });
+    });
+    
+    //remove comments from the local db that are not on the server anymore!!
+    if(response)
+    account.comments.list(function(storedComments){
+    	enyo.forEach(storedComments, function(storedComment){
+    		var presence = false;
+    		for(var i=0; i < response.length; i++) {
+    			if(storedComment.comment_id == response[i].comment_id)
+    				presence=true;
+    		}
+
+    		if(presence == false){
+    			console.log("Not Found Comment: " + storedComment.comment_id);
+    			account.comments.remove(storedComment);
+    			enyo.application.persistence.flush(function(){
+    				client.refreshPendingCommentCount();
+    			});
+    		}
+    	}, this);    	 
+    });    
+  },
+  refreshPendingCommentCount:function(){
+    var client = this;
+    if(this.account.comments)
+	    this.account.comments.filter('status','=','hold').count(function(count){
+	      client.setPendingCommentCount(count);
+	    });
+  },
+  pendingCommentCountChanged:function(){
+    this.doPendingComments(this.pendingCommentCount);
+  },
 })

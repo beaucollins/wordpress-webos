@@ -18,7 +18,6 @@ enyo.kind({
         { name:'meta', kind:'HFlexBox', components:[
           { name:'date', className:'post-date', flex:1, content:'Date' },
           { name:'author', className:'post-author', content:'Author'},
-          { kind: 'Spinner', className: 'wp-compose-spinner' },
         ]},
       ]}
     ]},
@@ -32,6 +31,7 @@ enyo.kind({
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
+      { kind: 'Spinner', className: 'wp-compose-spinner' },
       { name:'editBtn', kind:'Button', caption: $L('Edit'), onclick:"openEditor", className:'enyo-blue-button'},
       { name:'previewBtn', kind:'Button', caption: $L('Preview'), onclick:'openPostURL' },
       { name:'trashBtn', kind:'Button', caption: $L('Trash'), onclick:"askBeforeDelete" , className:'enyo-red-button'},
