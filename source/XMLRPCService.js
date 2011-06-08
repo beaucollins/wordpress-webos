@@ -175,9 +175,14 @@ XMLRPCBuilder.dateToIso8601 = function(date){
   if (month < 10) month = "0" + month;     
   day = date.getUTCDate();
   if (day < 10) day = "0" + day;     
-  time = date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds();
+  var minutes = date.getUTCMinutes();
+  if (minutes < 10) minutes = "0" + minutes; 
+  var seconds = date.getUTCSeconds();
+  if (seconds < 10) seconds = "0" + seconds;  
+  var hrs = date.getUTCHours()
+  if (hrs < 10) hrs = "0" + hrs;
+  time = hrs + ':' + minutes + ':' + seconds;
   return year + month + day + "T" + time;
-  
 }
 
 XMLRPCBuilder.isNumber = function(param){
