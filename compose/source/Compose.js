@@ -129,6 +129,13 @@ enyo.kind({
   },
   datetimePickerPick: function(inSender) {
 	  this.categoriesChanged = true;
+	  var referenceDate = this.$.datePicker.getValue();
+	  var bTime = this.$.timePicker.getValue();
+	  var h = bTime.getHours();
+	  var m = bTime.getMinutes();
+	  referenceDate.setHours(h);
+	  referenceDate.setMinutes(m);
+	  this.log("new date", referenceDate.getDate(), referenceDate.toUTCString());	
   },
   postChangedByUser :function(){
 
@@ -335,13 +342,16 @@ enyo.kind({
 	var postPassword = this.$.passwordField.getValue();	
 	this.post.wp_password = postPassword; //always set the post password otherwise you can't remove post password
 	
-	
-	var bDate = this.$.datePicker.getValue();
-	var bTime = this.$.datePicker.getValue();
-	console.log("date prese", bDate, bTime);
-	
+	var referenceDate = this.$.datePicker.getValue();
+	var bTime = this.$.timePicker.getValue();
+	var h = bTime.getHours();
+	var m = bTime.getMinutes();
+	referenceDate.setHours(h);
+	referenceDate.setMinutes(m);
+	this.log("Item date", referenceDate.getDate(), referenceDate.toUTCString());	
+	this.post.date_created_gmt = referenceDate;
+
 	this.log("calling the xmlrpc client...");
-	
 	if (inSender.name == 'postButton') {
 		// save the post via the client
 		if(this.isAPost())

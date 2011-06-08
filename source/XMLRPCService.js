@@ -185,7 +185,11 @@ XMLRPCBuilder.isNumber = function(param){
 }
 
 XMLRPCBuilder.isDate = function(param) {
-  return param instanceof Date;
+  if (param == null) return false;
+  //console.log(">>> XMLRPCBuilder.isDate testing the paramter datatype: ", param,  typeof(param));  
+
+  //console.log("hey: ", param.__proto__.constructor.name ); //this does the trick
+  return (param instanceof Date || param.__proto__ instanceof Date || param.__proto__.constructor.name == 'Date');
 }
 
 XMLRPCBuilder.isString = function(param){
