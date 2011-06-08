@@ -567,7 +567,8 @@ enyo.kind({
     }, { url:this.account.xmlrpc, onSuccess:'commentUpdated', comment:comment} );
   },
   commentUpdated:function(sender, response, request){
-    console.log("Comment updated:", request);
+    console.log("Comment updated - request:", request);
+    console.log("Comment updated - response:", response);
     var client = this;
     enyo.application.persistence.flush(function(){
       client.doUpdateComment(request.comment);

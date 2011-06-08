@@ -111,7 +111,6 @@ enyo.kind({
       this.$.authorURL.hide();
     }
     
-    this.log("questa e bella: "+ this.comment.status  );
     if (this.comment.status == 'approve') {
       this.$.approve.hide();
     }else{
@@ -213,8 +212,10 @@ enyo.kind({
 	this.$.unapprove.setDisabled(true);
 	this.$.reply.setDisabled(true);
 	
-    var params = [this.account.blogid, this.account.username, this.account.password, this.comment.comment_id];
     this.comment.status = sender.name;
+    if(this.comment.status =='unapprove')
+    	 this.comment.status = 'hold';
+    
     this.account.updateComment(this.comment);
   },
   deleteComment:function(sender){
