@@ -146,6 +146,7 @@ enyo.kind({
     }, this);
     
     //remove pages from the local db that are not on the server anymore!!
+    if(pages)
     account.pages.list(function(storedPages){
     	enyo.forEach(storedPages, function(storedPage){
     		var presence = false;
@@ -201,6 +202,7 @@ enyo.kind({
 	  }, this);
 	  
 	  //remove categories from the local db that are not on the server anymore!!
+	 if(categories)
 	  account.categories.list(function(storedCategories){
 		  enyo.forEach(storedCategories, function(storedCategory){
 			  var presence = false;
@@ -253,6 +255,7 @@ enyo.kind({
     }, this);
 
     //remove posts from the local db that are not on the server anymore!!
+    if(posts)
     account.posts.list(function(storedPosts){
     	 enyo.forEach(storedPosts, function(storedPost){
     		 var presence = false;

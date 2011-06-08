@@ -581,7 +581,6 @@ enyo.kind({
 		  this.$.passwordField.setValue(this.post.wp_password);
 		  
 		  if(this.post.date_created_gmt) {
-			  console.log("setting the item date to:", this.post.date_created_gmt);
 			  this.$.datePicker.setValue(this.post.date_created_gmt);
 			  this.$.timePicker.setValue(this.post.date_created_gmt);
 		  }

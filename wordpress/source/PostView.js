@@ -17,7 +17,8 @@ enyo.kind({
         { name:'title', content:"Title", className:'wp-post-title' },
         { name:'meta', kind:'HFlexBox', components:[
           { name:'date', className:'post-date', flex:1, content:'Date' },
-          { name:'author', className:'post-author', content:'Author'}
+          { name:'author', className:'post-author', content:'Author'},
+          { kind: 'Spinner', className: 'wp-compose-spinner' },
         ]},
       ]}
     ]},
@@ -31,9 +32,9 @@ enyo.kind({
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
-      { kind:'Button', caption: $L('Edit'), onclick:"openEditor", className:'enyo-blue-button'},
+      { name:'editBtn', kind:'Button', caption: $L('Edit'), onclick:"openEditor", className:'enyo-blue-button'},
       { name:'previewBtn', kind:'Button', caption: $L('Preview'), onclick:'openPostURL' },
-      { kind:'Button', caption: $L('Trash'), onclick:"askBeforeDelete" , className:'enyo-red-button'},
+      { name:'trashBtn', kind:'Button', caption: $L('Trash'), onclick:"askBeforeDelete" , className:'enyo-red-button'},
     ]},
 	{name: "twoDialog", kind: "Dialog", components: [
 		{className: "enyo-item enyo-first", style: "padding: 12px", content: $L('Are You Sure?')},
@@ -47,6 +48,11 @@ enyo.kind({
       return;
     }
     console.log("PostView", this.post);
+
+    this.$.spinner.hide();
+	this.$.editBtn.setDisabled(false);
+	this.$.previewBtn.setDisabled(false);
+	this.$.trashBtn.setDisabled(false);
     
     if (this.post.categories && this.post.categories.length > 1){
     	this.$.categoriesLabel.setContent($L('Categories') + ':');
@@ -110,6 +116,10 @@ enyo.kind({
   },
   deletePost:function(sender) {
 	  this.$.twoDialog.toggleOpen();
+	  this.$.spinner.show();
+	  this.$.editBtn.setDisabled(true);
+	  this.$.previewBtn.setDisabled(true);
+	  this.$.trashBtn.setDisabled(true);
 	  this.doDelete(this.post);
   }
 });
