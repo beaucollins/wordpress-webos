@@ -16,7 +16,7 @@ enyo.kind({
     ]},
 	{ kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},      
-      { kind:'Button', name: 'refresh', content:'Refresh', onclick:'doRefresh'}
+      { kind:'Button', name: 'refresh', content:'Refresh', onclick:'refreshStats'}
     ] }
   ],
   create:function(){
@@ -40,6 +40,11 @@ enyo.kind({
   passwordInvalid:function(sender){
      console.log("The password was missing or the XML-RPC api received a 403 fault code");
   },
+  refreshStats:function(sender){
+     this.$.statsSpinner.show();
+	 this.$.statsWebView.setContent('');
+	 this.openPostURL(this.account.password);
+  },
   openPostURL:function(password){
 	  //TODO: check the connection to host here!!!
 	  if (password != null) {
@@ -51,7 +56,9 @@ enyo.kind({
 	  }
   },
   loginSuccess:function(sender, response, request){
+	this.$.statsSpinner.hide();
     this.$.statsWebView.setContent(response);
+	jQuery("head").append($("<link rel='stylesheet' href='../css/stats-styles.css' type='text/css' media='screen' />"));
     jQuery('#stat-chart').load( this.account.account.xmlrpc.replace('/xmlrpc.php','/wp-includes/charts/flot-stats-data.php'), {
       "height":210,
       "page":"stats",
@@ -60,6 +67,8 @@ enyo.kind({
       "blog":this.account.account.blogid,
       "unit":1
     });
+	jQuery.getScript( '../lib/stats-tabs.js' );
+	
     this.$.statsPane.selectView(this.$.statsWebView);
   },
   loginFailure:function(sender, response, request){

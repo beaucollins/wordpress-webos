@@ -2,7 +2,6 @@
 
 #wordPress_stats_statsSpinner{
 	/*bigass spinner*/
-	
 }
 
 #wordPress_stats_statsWebView .selector,
@@ -18,7 +17,7 @@
 #wordPress_stats_statsWebView #authorviews,
 #wordPress_stats_statsWebView .stats-note,
 #wordPress_stats_statsWebView #stats-nuggets,
-#wordPress_stats_statsWebView .metabox-tabs
+#wordPress_stats_statsWebView .postbox li.link
 { display: none;}
 
 #wordPress_stats_statsWebView .postbox-container {
@@ -34,11 +33,11 @@
 	padding: 0 20px 20px 20px;
 }
 
-#wordPress_stats_statsWebView a{
+#wordPress_stats_statsWebView .label a{
 	color: #21759B;
 }
 
-#wordPress_stats_statsWebView a:hover,#wordPress_stats_statsWebView a:active,#wordPress_stats_statsWebView a:focus {
+#wordPress_stats_statsWebView .label a:hover,#wordPress_stats_statsWebView .label a:active,#wordPress_stats_statsWebView .label a:focus {
 color: #d54e21;
 }
 
@@ -52,6 +51,69 @@ color: #d54e21;
 
 #wordPress_stats_statsWebView .more {
 	display: none;
+}
+
+/* metaboxes */
+ul.metabox-tabs {
+    margin-bottom: 5px;
+    padding: 0 10px 0 10px;
+}
+ul.metabox-tabs {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+#general ul.metabox-tabs {
+    margin-left: -10px;
+    margin-right: -10px;
+}
+ul.metabox-tabs {
+    height: 24px;
+    margin-top: -29px !important;
+	background: transparent;
+	border-bottom: 1px solid #dfdfdf;
+    box-shadow: 0 1px 0 0 #fff;
+}
+ul.metabox-tabs li {
+    list-style: none;
+    display: inline;
+    font-size: 11px;
+}
+ul.metabox-tabs li.tab a {
+    display: block;
+    float: left;
+    margin-right: 4px;
+
+    padding: 5px 6px;
+    filter:alpha(opacity=50);
+    opacity: .5;
+    -webkit-opacity: .5;
+    color: #000;
+    border-radius: 2px 2px 0 0;
+    -webkit-border-radius: 2px 2px 0 0;
+    font-weight: bold;
+    text-decoration: none;
+    zoom: 1;
+}
+ul.metabox-tabs li.tab a {
+    /* for some reason, opacity doesn't work in IE */
+    -webkit-box-shadow: inset 0 1px 0 white;
+    box-shadow: inset 0 1px 0 white;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border-left: 1px solid #dfdfdf;
+    border-right: 1px solid #dfdfdf;
+    border-top: 1px solid #dfdfdf;
+    height: 13px;
+}
+ul.metabox-tabs li.tab a.active,
+ul.metabox-tabs li.tab a:hover {
+    background: #fff;
+    opacity: 1;
+    -webkit-opacity: 1;
+	color: #454545 !important;
+	background-color: transparent;
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#fefefe),to(#f4f4f4)) !important;
+    height: 15px;
 }
 
 /**
@@ -126,15 +188,13 @@ td.more, th.more {
 
 #stat-chart-container {
     padding: 10px;
-	background-color: #F4F4F4;
 }
 
 #statchart-box {
     background: #fff;
     border-radius: 6px;
     position: relative;
-    margin-right: 1px;
-        border: 1px solid #dfdfdf;
+    border: 1px solid #dfdfdf;
     }
 #statchart-box, .postbox-container, .postbox, #side-sortables, #normal-sortables {
     box-sizing: border-box;
@@ -207,15 +267,9 @@ body.version-MU #incominglinks li:nth-child(even) {
     font-weight: bold;
 }
 
-
-/**
- * Metaboxes 
- */
-
 .postbox .inside {
     padding: 10px;
     margin: 0 !important;
-    *margin: -10px 0 0 0 !important;
 }
 .postbox .inside h3 {
     color: #333333 !important;
@@ -391,7 +445,7 @@ box-shadow: 0 1px 0 #fff;
 font-size: 15px;
 font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
 font-weight: normal;
-padding: 7px 10px;
+padding: 7px 10px 30px;
 margin: 0;
 line-height: 1;
 }
