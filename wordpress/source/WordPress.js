@@ -33,6 +33,7 @@ enyo.kind({
                 { name:'pages', kind: 'wp.Pages', flex:1, lazy:true },
                 { name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
                 { name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
+				{ name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
               ]}
           ]}
       ]},
@@ -45,7 +46,7 @@ enyo.kind({
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
     { name:'setupForm', lazy: false, scrim:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
-  //    { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
+      { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]}
   ],
   create:function(){
@@ -188,6 +189,7 @@ enyo.kind({
   resizeSubviews: function(){
     if (this.$.comments) this.$.comments.resize();
     if (this.$.posts) this.$.posts.resize();
+	if (this.$.stats) this.$.stats.resizeChart();
   },
   backHandler: function(sender, e){
     this.$.panes.back(e);

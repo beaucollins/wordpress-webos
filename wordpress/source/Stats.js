@@ -40,6 +40,19 @@ enyo.kind({
   passwordInvalid:function(sender){
      console.log("The password was missing or the XML-RPC api received a 403 fault code");
   },
+  resizeChart:function(sender){
+	this.loadChartData();
+  },
+  loadChartData:function(){
+	jQuery('#stat-chart').load( this.account.account.xmlrpc.replace('/xmlrpc.php','/wp-includes/charts/flot-stats-data.php'), {
+      "height":210,
+      "page":"stats",
+      "chart_type":"stats-data",
+      "target":"stat-chart",
+      "blog":this.account.account.blogid,
+      "unit":1
+    });
+  },
   refreshStats:function(sender){
      this.$.statsSpinner.show();
 	 this.$.statsWebView.setContent('');
@@ -59,16 +72,8 @@ enyo.kind({
 	this.$.statsSpinner.hide();
     this.$.statsWebView.setContent(response);
 	jQuery("head").append($("<link rel='stylesheet' href='../css/stats-styles.css' type='text/css' media='screen' />"));
-    jQuery('#stat-chart').load( this.account.account.xmlrpc.replace('/xmlrpc.php','/wp-includes/charts/flot-stats-data.php'), {
-      "height":210,
-      "page":"stats",
-      "chart_type":"stats-data",
-      "target":"stat-chart",
-      "blog":this.account.account.blogid,
-      "unit":1
-    });
+    this.loadChartData();
 	jQuery.getScript( '../lib/stats-tabs.js' );
-	
     this.$.statsPane.selectView(this.$.statsWebView);
   },
   loginFailure:function(sender, response, request){
