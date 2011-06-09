@@ -14,19 +14,19 @@ enyo.kind({
             		  onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},*/
     { name:"header", kind:'Header', components:[
       { kind:'VFlexBox', flex:1, components: [
-        { name:'title', content:"Title", className:'wp-post-title' },
+        { name:'title', content:"Title", className:'wp-post-title', allowHtml: 'true' },
         { name:'meta', kind:'HFlexBox', components:[
-          { name:'date', className:'post-date', flex:1, content:'Date' },
-          { name:'author', className:'post-author', content:'Author'},
+          { name:'date', className:'post-date', flex:1, content:'Date', allowHtml: 'true' },
+          { name:'author', className:'post-author', content:'Author', allowHtml: 'true'},
         ]},
       ]}
     ]},
     { name:'category_row', kind:'HFlexBox', className:'wp-item-meta', components:[
-      { name:'categoriesLabel', content: $L('Categories:'), className:'wp-item-meta-label'},
+      { name:'categoriesLabel', content: $L('Categories:'), className:'wp-item-meta-label',},
       { name:'categories', content:$L('Categories'), className:'wp-item-meta-content wp-post-categories' }
     ]},
     { kind:'Scroller', flex:1, components:[
-      { name:'content', className:'wp-post-content' }
+      { name:'content', className:'wp-post-content', allowHtml: 'true' }
     ] },
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},

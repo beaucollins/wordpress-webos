@@ -16,12 +16,12 @@ enyo.kind({
         { kind:'Control', kind:'HFlexBox', components:[
           { name:'avatar', kind:'Gravatar', className:'avatar-large', defaultImage:'../images/icons/avatar-backup.png', size:'70' },
           { kind:'VFlexBox', flex:1, components:[
-            { name:'authorName', className:'wp-post-title' },
+            { name:'authorName', className:'wp-post-title', allowHtml: 'true' },
             { kind:'HFlexBox', className:'wp-post-details', components:[
             	{ kind:'VFlexBox', flex:1, components:[
-            		{ name:'authorURL', className:'wp-post-author', onclick:'openBrowserToAuthor' },
-            		{ name:'authorEmail', className:'wp-post-email', onclick:'openEmailToAuthor' },
-            		{ name:'commentTimestamp', className:'comment-timestamp' }
+            		{ name:'authorURL', className:'wp-post-author', onclick:'openBrowserToAuthor', allowHtml: 'true' },
+            		{ name:'authorEmail', className:'wp-post-email', onclick:'openEmailToAuthor', allowHtml: 'true' },
+            		{ name:'commentTimestamp', className:'comment-timestamp', allowHtml: 'true' }
             	]}
             ]}/*,
             { kind:'HFlexBox', components:[
@@ -36,11 +36,11 @@ enyo.kind({
       ]},
       { kind:'HFlexBox', className:'wp-item-meta', components:[
         { content:$L('On:'), className:'wp-item-meta-label' },
-        { name:'subject', flex:1, onclick:'launchBrowser', className:'wp-item-meta-content wp-comment-subject' },
+        { name:'subject', flex:1, onclick:'launchBrowser', className:'wp-item-meta-content wp-comment-subject', allowHtml: 'true' },
         { className:'wp-disclosure-arrow' }
       ]},
       { kind: 'Scroller', flex:1, components:[
-        { name:'body', className:'wp-post-content' },
+        { name:'body', className:'wp-post-content', allowHtml: 'true' },
         // { name:'conversationHeader', className:'enyo-item', content:'Conversation:' },
         // { name:'conversation', kind:'VirtualRepeater', onSetupRow:'getReply', components:[
         //   { name:'item', className: 'enyo-item', components:[

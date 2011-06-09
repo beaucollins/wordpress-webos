@@ -25,7 +25,7 @@ enyo.kind({
 	      { name:'header', kind:'HFlexBox', components: [
 	          { kind:'VFlexBox', flex:1, components:[
 	            { kind:'HFlexBox', components:[
-	              { name:'title', flex:1, className:'post-list-title wp-truncate' },
+	              { name:'title', flex:1, className:'post-list-title wp-truncate', allowHtml: 'true' },
 	              { name:'postDate', content:'Date', className:'post-list-timestamp' }
 	            ]},
 	            { kind:'HFlexBox', components:[
@@ -34,7 +34,7 @@ enyo.kind({
 	            ]}
 	          ]}
 	        ]},
-	       { name:'postExcerpt', content:'Excerpt', className:'list-excerpt' }
+	       { name:'postExcerpt', content:'Excerpt', className:'list-excerpt', allowHtml: 'true' }
       ] }
     ] },
     { kind:'enyo.Toolbar', components:[

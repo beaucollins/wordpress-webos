@@ -77,18 +77,18 @@ enyo.kind({
           ] },
           { kind:'VFlexBox', flex:1, components:[
             { kind:'HFlexBox', components:[
-              { name:'author', flex:1, className:'comment-author' },
+              { name:'author', flex:1, className:'comment-author', allowHtml: 'true' },
               { name:'timestamp', className:'comment-timestamp' }
             ]},
             { kind:'VFlexBox', components:[
-              	{ name:'authorURL', className:'comment-author-url' },
+              	{ name:'authorURL', className:'comment-author-url', allowHtml: 'true' },
               	{ flex:1, kind:"Control" },
               { name:'status', className:'comment-status-badge', content:"Status" }
             ]}
           ]}
         ]},
-        { name:'commentContent', className: 'comment-content' },
-        { name:'commentSubject', className: 'comment-subject' }
+        { name:'commentContent', className: 'comment-content', allowHtml: 'true' },
+        { name:'commentSubject', className: 'comment-subject', allowHtml: 'true' }
       ]}
     ] },
     { kind: 'enyo.Toolbar', components:[
