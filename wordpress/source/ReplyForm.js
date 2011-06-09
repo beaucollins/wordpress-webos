@@ -23,12 +23,13 @@ enyo.kind({
     this.inherited(arguments);
   },
   open:function(options){
-    options = enyo.mixin({
-      value:''
-    }, options)
-    this.$.replyContent.setContent(options.value);
-    this.inherited(arguments);
-    this.$.replyContent.forceFocus();
+    this.inherited(arguments);  
+  },
+  // because popups are lazily created, initialize properties that effect components 
+  // in componentsReady rather than create.
+  componentsReady: function() {
+	  this.inherited(arguments);
+	  this.$.replyContent.forceFocus();
   },
   getValue:function(){
     return this.$.replyContent.getValue();

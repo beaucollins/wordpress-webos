@@ -30,6 +30,7 @@ enyo.kind({
     	onSuccess: "onUploadMediaFileSuccess", 
     	onFailure: "onUploadMediaFileFailure",
     },
+    {kind: "ApplicationEvents", onWindowParamsChange: "windowParamsChangeHandler"},
     {name: "canvasUsedToUploadTheImage", kind: "ImgUploadCanvas", onImageLoaded:"sendFile"},
 	{kind: "Dialog", components: [
 		{content: "Insert a Link"},
@@ -591,6 +592,7 @@ enyo.kind({
 	  console.log("Compose Client is ready");
   },
   windowParamsChangeHandler: function(inSender, event) {
+	this.log("Compose windowParamsChangeHandler");
 	this.wasLaunchedBy = event.params.wasLaunchedBy;
 	var account_id = event.params.account;
     var post_id = event.params.post; //one between post_id and type should be defined

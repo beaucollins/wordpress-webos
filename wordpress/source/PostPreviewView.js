@@ -11,6 +11,7 @@ enyo.kind({
 	 this.inherited(arguments);
   },
   components: [
+    {kind: "ApplicationEvents", onWindowParamsChange: "windowParamsChangeHandler"},
     { name:'previewPasswordManager', kind:'wp.WordPressClient', onPasswordReady:'passwordReady', onPasswordInvalid:'passwordInvalid' },
     {name: "postPreviewResponse", kind: "HtmlContent"},
     {name: 'realPreview', kind:'WebView',  style :'background:none; position:absolute;top:0;right:0;left:0;bottom:0;', onLoadStopped:'loadStopped'}
