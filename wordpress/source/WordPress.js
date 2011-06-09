@@ -1,3 +1,4 @@
+
 /*
  WordPress application root
 */
@@ -14,7 +15,7 @@ enyo.kind({
     { name: 'xmlrpc_client', kind:'XMLRPCService' },
     { name: 'stats_api', kind: 'WebService', method: 'POST', url: 'https://api.wordpress.org/webosapp/update-check/1.0/' },
     { kind:'Pane', flex:1, components:[
-      { name:'blankSlate', kind:'enyo.Control' },
+      { name:'blankSlate', flex:1, kind:'enyo.Control' },
       {
         name: 'panes',
         kind: 'enyo.SlidingPane',
@@ -43,7 +44,11 @@ enyo.kind({
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
+<<<<<<< HEAD
     { name:'setupForm', lazy: false, scrim:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog',  onBeforeOpen: "beforeNewBlogDialogOpen", components:[
+=======
+    { name:'setupForm', scrim:true, lazy:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
+>>>>>>> fixing the setupForm.open when there are no accounts
       { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]}
   ],
@@ -51,9 +56,13 @@ enyo.kind({
     this.inherited(arguments);
     // create a signing key
     // should this only be done when needed or can it be called whenever?
-    this.loadAccounts();
     enyo.windowParamsChangeHandler = enyo.bind(this, 'windowParamsChangeHandler');
     // this.runStats();
+  },
+  ready:function(){
+    console.log("Ready");
+    this.loadAccounts();
+    
   },
   loadAccounts: function(){
     this.log("Load accounts", enyo.application.accountManager.accounts);
@@ -208,16 +217,20 @@ enyo.kind({
 	  this.$.setup.reset();
   },
   accountsChanged:function(){
-    this.log("accountsChanged");
-	  // save the accounts
-    this.$.sourceList.setAccounts(this.accounts);
-    this.$.pane.setTransitionKind('enyo.transitions.Simple');
     if (this.accounts.length == 0) {
+      this.$.pane.setTransitionKind('enyo.transitions.Simple');
       // we don't have any accounts, force the welcome screen
-      this.$.pane.selectView(this.$.setup2);
-      //this.$.setupForm.open();
-      
+       enyo.nextTick(this, function(){
+         this.$.setupForm.setScrim(false);
+         this.$.setupForm.setModal(true);
+         this.$.setupForm.open();
+         this.$.setup.setCancelable(false);
+         
+       });
     }else{
+      this.$.sourceList.setAccounts(this.accounts);
+      this.$.setupForm.setScrim(true);
+      this.$.setupForm.setModal(false);
       this.$.pane.selectView(this.$.panes);
     }
   },
