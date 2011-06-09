@@ -36,7 +36,7 @@ enyo.kind({
               ]}
           ]}
       ]},
-      { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
+      { name:'setup2', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]},
     // main sliding pane interface
     { name:'replyForm', scrim:true, onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
@@ -44,7 +44,7 @@ enyo.kind({
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
-    { name:'setupForm', lazy: false, scrim:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
+    { name:'setupForm', lazy: false, scrim:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog',  onBeforeOpen: "beforeNewBlogDialogOpen", components:[
       { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]}
   ],
@@ -196,21 +196,29 @@ enyo.kind({
   backHandler: function(sender, e){
     this.$.panes.back(e);
   },
+  beforeNewBlogDialogOpen: function() {
+	  this.log("beforeNewBlogDialogOpen");
+	  if (this.accounts.length == 0) {
+		  this.$.setupForm.setScrim(false);
+		  this.$.setupForm.setModal(true);
+		  this.$.setup.setCancelable(false);
+	  }else{
+		  this.$.setupForm.setScrim(true);
+		  this.$.setupForm.setModal(false);
+	  }
+	  this.$.setup.reset();
+  },
   accountsChanged:function(){
-    // save the accounts
+    this.log("accountsChanged");
+	  // save the accounts
     this.$.sourceList.setAccounts(this.accounts);
     this.$.pane.setTransitionKind('enyo.transitions.Simple');
     if (this.accounts.length == 0) {
       // we don't have any accounts, force the welcome screen
-      //this.$.pane.selectView(this.$.blankSlate);
-       this.$.pane.selectView(this.$.setup);
-    /*  this.$.setupForm.setScrim(false);
-      this.$.setupForm.setModal(true);
-      this.$.setupForm.open();
-      this.$.setup.setCancelable(false);*/
+      this.$.pane.selectView(this.$.setup2);
+      //this.$.setupForm.open();
+      
     }else{
-      this.$.setupForm.setScrim(true);
-      this.$.setupForm.setModal(false);
       this.$.pane.selectView(this.$.panes);
     }
   },
@@ -222,16 +230,11 @@ enyo.kind({
     // show the comment view
   },
   addNewBlog:function(sender){
-    if (this.accounts.length > 0) this.$.setup.setCancelable(true);
-    this.$.setup.reset();
-    // this.$.pane.selectView(this.$.setup);
-    this.$.setupForm.setScrim(true);
     this.$.setupForm.open();
   },
   setupBlogs:function(sender, blogs, username, password){
     var that = this;
     this.$.setupForm.close();
-    this.$.setup.reset();
     enyo.map(blogs, function(blog, index, blogs){
       var account = new enyo.application.models.Account(enyo.mixin(blog, { username:username, password:password }));
       enyo.application.persistence.add(account);
@@ -333,7 +336,6 @@ enyo.kind({
 	if (params.action == 'refreshPosts') {
 		this.refreshDraftCount();
 //		if (this.$.content.getView() == this.$.posts) {
-			console.log("Refresh posts!")
 			this.$.posts.refresh();
 	//	}
 	};  
