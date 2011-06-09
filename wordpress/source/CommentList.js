@@ -55,6 +55,7 @@ enyo.kind({
   published: {
     account: null,
     filterItem:null,
+    selectedRow:null
   },
   events: {
     onAcquireComments:"",
@@ -149,21 +150,24 @@ enyo.kind({
     sender.setSrc('../images/icons/default-avatar.png');
   },
   selectComment:function(sender, item){
+	this.log("Selected Comment: ", item);
 	this.selectedRow = item;
     var comment = this.$.dataPage.itemAtIndex(item.rowIndex);
-    this.$.list.select(comment.id);
+    this.$.list.select(item.rowIndex);
     this.$.item.addClass('active-selection');
     this.doSelectComment(comment, this.account);
   },
-  refresh:function(){
-    console.log("Refresh the list");
+  refreshed:function(){
+    this.log("Refreshed the list");
+    this.selectedRow = null
+    this.$.list.getSelection().clear();
     this.$.list.reset();
     this.$.list.refresh();
 	this.$.spinner.hide();
   },
   highlightComment:function(comment){
     this.$.list.select(comment.id);
-    console.log("Selected", this.$.list);
+    this.log("Selected", this.$.list);
     this.refresh();
   },
   showFilterOptions:function(sender){
@@ -189,7 +193,7 @@ enyo.kind({
   },
   getStatusFilter:function(){
     //  hold, approve, spam, trash
-    //can these be translated? <3 Dan
+    //can these be translated? <3 Dan.
     return {
       'Pending' : 'hold',
       'Approved' : 'approve',
@@ -201,7 +205,7 @@ enyo.kind({
     this.$.list.resizeHandler();
   },
   refreshComments:function(sender){
-    console.log("Account", this.account);
+    this.log("Account", this.account);
 	this.$.spinner.show();
     this.account.refreshComments();
   }

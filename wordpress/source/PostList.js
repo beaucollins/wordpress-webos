@@ -47,11 +47,10 @@ enyo.kind({
     this.inherited(arguments);
   },
   selectPost:function(sender, item){
-	console.log("selectPost", item);
+	this.log("selected item: ", item);
 	this.selectedRow = item;
     var post = this.$.dataPage.itemAtIndex(item.rowIndex);
     this.$.list.select(item.rowIndex);
-    this.$.item.removeClass('active-selection');
     this.doSelectPost(post, this.account);
   },
   requestPageWithSize:function(sender, page){
@@ -63,7 +62,12 @@ enyo.kind({
     }
   },
   refresh:function(){
-    this.$.list.reset();    
+	this.log("refresh");
+	this.selectedRow = null;
+	this.$.list.getSelection().clear();
+    this.$.list.punt();
+    this.$.dataPage.clear();
+    this.$.list.reset();
     this.$.list.refresh();
   },
   setPage:function(pageNumber, items){
@@ -119,6 +123,7 @@ enyo.kind({
     this.$.list.punt();
     this.$.dataPage.clear();
     this.$.list.reset();
+    this.$.list.refresh();
   },
   resize:function(){
     this.$.list.resizeHandler();

@@ -80,7 +80,7 @@ enyo.kind({
         onUpdatePost:'refreshPosts',
         onDeletePost:'refreshPosts',
         onSaveDraft:'refreshDrafts',
-        onRefreshPosts:'refreshDrafts',
+        onRefreshPosts:'refreshPosts',
         
         onNewPage:'refreshPages',
         onUpdatePage:'refreshPages',
@@ -137,7 +137,6 @@ enyo.kind({
     this.refreshDraftCount();
     if (this.$.content.getView() == this.$.posts) {
       if (this.$.posts.account == sender) {
-        console.log("Refresh posts!")
         this.$.posts.refresh();
       }
     };

@@ -47,7 +47,7 @@ enyo.kind({
     if (!this.post) {
       return;
     }
-    console.log("PostView", this.post);
+    //this.log("received this item:", this.post);
 
     this.$.spinner.hide();
 	this.$.editBtn.setDisabled(false);
@@ -73,8 +73,8 @@ enyo.kind({
 	  }else{
 	    this.$.category_row.hide();
 	  }
-	  console.log(this.post);
-	  if (this.post.date_created_gmt) {
+	
+	if (this.post.date_created_gmt) {
       this.$.date.setContent(FormatDateTimeForDetailView(this.post.date_created_gmt));
     }else{
       this.$.date.setContent("<em>" + $L("not published") + "</em>");

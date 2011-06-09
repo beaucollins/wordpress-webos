@@ -11,7 +11,7 @@ enyo.kind({
   },
   components: [
     { name: 'list', width:'350px', components:[
-      { name:'comment_list', kind:'wp.CommentList', flex:1, onSelectComment:'showComment' }
+      { name:'comment_list', kind:'wp.CommentList', flex:1, onSelectComment:'showComment', onRefreshComment:''}
     ]},
     { name: 'right', flex:1, components:[
       { kind:'Pane', flex:1, components:[
@@ -44,8 +44,9 @@ enyo.kind({
     this.setComment(comment);
   },
   refresh:function(){
-    this.$.comment_list.refresh();
+    this.$.comment_list.refreshed();
     this.$.detail.commentChanged();
+    this.$.pane.selectView(this.$.blank);
   }
   // findComments:function(sender, query){
   //   var that = this;
