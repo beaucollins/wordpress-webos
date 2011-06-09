@@ -219,7 +219,6 @@ enyo.kind({
     console.log("Save draft");
     enyo.application.persistence.flush(function(){
       client.doSaveDraft(post, account);
-      enyo.windows.addBannerMessage("Draft saved", "{}");
       enyo.application.launcher.draftSaved();
     });
   },
@@ -233,7 +232,6 @@ enyo.kind({
     console.log("Save draft Page");
     enyo.application.persistence.flush(function(){
       client.doSaveDraftPage(post, account);
-      enyo.windows.addBannerMessage("Draft Page saved", "{}");
       enyo.application.launcher.draftSaved();
     });
   },
@@ -323,7 +321,6 @@ enyo.kind({
 	  }
 	    
 	  account.pages.add(post);
-	  enyo.windows.addBannerMessage("Pages saved successfully", "{}");
 	  enyo.application.persistence.flush(function(){
 		  client.$.http.callMethod({
 			  methodName:'wp.getPage',
@@ -410,7 +407,6 @@ enyo.kind({
     }
     
     account.posts.add(post);
-    enyo.windows.addBannerMessage("Post saved successfully", "{}");
     enyo.application.persistence.flush(function(){
       client.$.http.callMethod({
         methodName:'metaWeblog.getPost',

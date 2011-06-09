@@ -33,7 +33,6 @@ enyo.kind({
                 { name:'pages', kind: 'wp.Pages', flex:1, lazy:true },
                 { name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
                 { name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
-				{ name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
               ]}
           ]}
       ]},
@@ -153,7 +152,6 @@ enyo.kind({
     this.$.sourceList.updateCommentCounts();
   },
   performAccountAction: function(sender, action, account){
-	this.log("ciao");
     this.setAccount(sender);
     this.activeAccount = account;
     if (action == 'comments') {

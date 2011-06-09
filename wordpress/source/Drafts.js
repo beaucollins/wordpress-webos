@@ -2,7 +2,7 @@ enyo.kind({
   name:'wp.Drafts',
   kind:'wp.Posts',
   acquirePosts:function(sender, page, pageSize){
-    console.log("Reading drafts:", page, pageSize);
+//    console.log("Reading drafts:", page, pageSize);
     if (page < 0) return;
     var that = this;
     enyo.application.models.Post.all().filter('local_modifications', '=', 'true')
@@ -17,7 +17,6 @@ enyo.kind({
 	     // .limit(pageSize)
 	     // .skip(page*pageSize)
 	      .list(function(pages){
-	        console.log("Received posts: ", pages);
 	        that.$.postList.setPage(page, posts.concat(pages)); 
 	      });
       });
