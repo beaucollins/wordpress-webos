@@ -35,7 +35,8 @@ enyo.kind({
                 { name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
               ]}
           ]}
-      ]}
+      ]},
+      { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]},
     // main sliding pane interface
     { name:'replyForm', scrim:true, onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
@@ -43,8 +44,8 @@ enyo.kind({
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
-    { name:'setupForm', scrim:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
-      { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
+    { name:'setupForm', lazy: false, scrim:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
+  //    { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]}
   ],
   create:function(){
@@ -56,7 +57,7 @@ enyo.kind({
     // this.runStats();
   },
   loadAccounts: function(){
-    // console.log("Load accounts", enyo.application.accountManager.accounts);
+    this.log("Load accounts", enyo.application.accountManager.accounts);
     var client, clients = [];
     enyo.forEach(enyo.application.accountManager.accounts, function(account){
       client = this.createComponent({
@@ -147,6 +148,7 @@ enyo.kind({
     this.$.sourceList.updateCommentCounts();
   },
   performAccountAction: function(sender, action, account){
+	this.log("ciao");
     this.setAccount(sender);
     this.activeAccount = account;
     if (action == 'comments') {
@@ -170,7 +172,7 @@ enyo.kind({
     };
   },
   setupSubView:function(sender, view){
-    console.log("Setup Sub View", view);
+    this.log("Setup Sub View", view);
     var account;
     if ( view.name == 'posts' || view.name == 'pages' || view.name == 'stats') {
       account = this.account ? this.account : this.activeAccount;
@@ -196,11 +198,12 @@ enyo.kind({
     this.$.pane.setTransitionKind('enyo.transitions.Simple');
     if (this.accounts.length == 0) {
       // we don't have any accounts, force the welcome screen
-      this.$.setup.setCancelable(false);
-      this.$.pane.selectView(this.$.blankSlate);
-      this.$.setupForm.setScrim(false);
+      //this.$.pane.selectView(this.$.blankSlate);
+       this.$.pane.selectView(this.$.setup);
+    /*  this.$.setupForm.setScrim(false);
       this.$.setupForm.setModal(true);
       this.$.setupForm.open();
+      this.$.setup.setCancelable(false);*/
     }else{
       this.$.setupForm.setScrim(true);
       this.$.setupForm.setModal(false);

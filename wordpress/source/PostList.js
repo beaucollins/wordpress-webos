@@ -39,8 +39,8 @@ enyo.kind({
     ] },
     { kind:'enyo.Toolbar', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},      
-      { kind:'Button', name: 'refresh', content:'Refresh', onclick:'doRefresh'},
-      { kind:'Button', name: 'newItem', content:'Add New', onclick:'doNewItem'}
+      { kind:'Button', name: 'refresh', content:$L("Refresh"), onclick:'doRefresh'},
+      { kind:'Button', name: 'newItem', content:$L("Add New"), onclick:'doNewItem'}
     ] }
   ],
   create:function(){
@@ -79,7 +79,7 @@ enyo.kind({
      // console.log("Setting up index: ", index, post);
       if (post.title.trim() == '') {
         this.$.title.addClass('untitled');
-        this.$.title.setContent("(No title)");
+        this.$.title.setContent( $L("(No title)") );
       }else{
         this.$.title.removeClass('untitled');
         this.$.title.setContent(post.title);
@@ -90,7 +90,7 @@ enyo.kind({
       	this.$.postExcerpt.setContent((TruncateText(StripHTML(post.description))));
       }
       else {
-      	this.$.postExcerpt.setContent('(No content)');
+      	this.$.postExcerpt.setContent( $L("(No content)") );
       	this.$.postExcerpt.addClass('empty');
       }
       

@@ -76,7 +76,7 @@ enyo.kind({
 				]}
               ]},
               {kind: "DividerDrawer", caption: $L("Categories"), open: false, components: [
-				{name:'categoriesVirtualRepeterField', kind: "VirtualRepeater", onGetItem: "getCategoryItem", components: [
+				{name:'categoriesVirtualRepeterField', kind: "VirtualRepeater", onSetupRow: "getCategoryItem", components: [
 					{kind: "Item", layoutKind: "HFlexLayout", components: [
 						{name: "categoryCheckbox", kind: "CheckBox", checked: false, onChange: "categoryCheckboxClicked"},
 						{name: "categoryLabel"}
@@ -413,7 +413,7 @@ enyo.kind({
 		  //launches a new window with the preview view
 		  console.log("Launching Preview");
 		  params = {'account': this.account, 'post': this.post};
-		  enyo.windows.activate("Post Preview", "../wordpress/postPreview.html", params);
+		  enyo.windows.activate("../wordpress/postPreview.html", "Post Preview", params);
 		  return;
 	  }
 	  
@@ -426,7 +426,7 @@ enyo.kind({
 			  'tags': this.isAPost() ? this.$.tagsField.getValue() :'', 'categories': categoriesForPreview, 'item_type': this.isAPost() ? 'Post' : 'Page'};
 	 // options = {};
 	 // enyo.mixin(params, options);
-	  enyo.windows.activate("Post Preview", "../wordpress/postPreview.html", params);
+	  enyo.windows.activate("../wordpress/postPreview.html", "Post Preview", params);
   },
   //Handles the download image
   uploadMedia: function() {  

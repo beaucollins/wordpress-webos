@@ -11,7 +11,7 @@ enyo.kind({
   },
   components: [
     { kind:'enyo.Scroller', flex:1, components:[
-      { name:'list', kind:'enyo.Repeater', onGetItem:'getAccountItem' }
+      { name:'list', kind:'enyo.Repeater', onSetupRow:'getAccountItem' }
     ]},
     { kind:'enyo.Toolbar', className:'source-list-command', components:[
       { kind:'Button', caption:$L('Add Blog'), onclick:'doAddBlog' }
@@ -82,7 +82,7 @@ enyo.kind({
     // turn of the account list items that aren't this account
     this.forEachAccountControl(function(accountControl){
       if(accountControl.account != account){
-        accountControl.clearSelection();
+        //accountControl.clearSelection();
       }
     }, this);
     

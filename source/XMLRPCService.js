@@ -165,7 +165,7 @@ XMLRPCBuilder.prototype.encode = function(param){
     };
     return struct + "</struct>";
   }
-  throw("Don't know how to encode " + param.constructor + ": " + enyo.json.to(param));
+  throw("Don't know how to encode " + param.constructor + ": " + enyo.json.stringify(param));
 }
 
 XMLRPCBuilder.dateToIso8601 = function(date){

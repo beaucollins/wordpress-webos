@@ -74,7 +74,7 @@ enyo.kind({
 	  if(!this.account) return;
 	  console.log("Launching Dashboard");
 	  params = {'account': this.account};
-	  enyo.windows.activate("Dashboard", "./dashboardView.html", params);
+	  enyo.windows.activate("./dashboardView.html", "Dashboard", params);
 	  return;
   }*/
 });

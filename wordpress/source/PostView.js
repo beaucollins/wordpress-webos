@@ -103,7 +103,7 @@ enyo.kind({
 	  console.log("Launching Preview");
 	  var currentAccount = this.account ? this.account.account : null;
 	  params = {'account': currentAccount, 'post': this.post};
-	  enyo.windows.activate("Post Preview", "./postPreview.html", params);
+	  enyo.windows.activate("./postPreview.html", "Post Preview", params);
   },
   openEditor:function(sender){
     this.doEdit(this.post);

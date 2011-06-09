@@ -76,18 +76,18 @@ enyo.kind({
   },
   keystoreSuccess:function(sender, response, request){
     // console.log("Keystore Success!");
-    // console.log(enyo.json.to(response));
+    // console.log(enyo.json.stringify(response));
   },
   keystoreFailure:function(sender, response, request){
     // console.log("Keystore Failure!");
-    // console.log(enyo.json.to(response));
+    // console.log(enyo.json.stringify(response));
   },
   missingPassword:function(sender, response, request){
-    // console.log("Missing password bitches!: " + enyo.json.to(response));
+    // console.log("Missing password bitches!: " + enyo.json.stringify(response));
     this.$.removeKey.call({keyname:this.passwordKeyName()});
   },
   setPasswordFromKey:function(sender, response, request){
-    // console.log("Got the password from the key: " + enyo.json.to(response));
+    // console.log("Got the password from the key: " + enyo.json.stringify(response));
     this.account.password = enyo.string.fromBase64(response.keydata)
     this.setPassword(this.account.password);
     // console.log("We're ready!" + this.password);
@@ -503,7 +503,7 @@ enyo.kind({
   },
   wordpressApiFailure:function(sender, response, request){
     // console.log("API Failure!");
-    // console.log(enyo.json.to(response));
+    // console.log(enyo.json.stringify(response));
     this.$.removeKey.call({keyname:this.passwordKeyName()});
   },
   newComment:function(comment){

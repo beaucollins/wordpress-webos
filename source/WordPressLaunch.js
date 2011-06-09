@@ -20,15 +20,13 @@ enyo.kind({
     this.scheduleTimer();
     
     var paramString = window.PalmSystem && PalmSystem.launchParams || "{}";
-		var params = enyo.json.from(paramString);
-    
+		var params = enyo.json.parse(paramString);	 
 		enyo.application.accountManager.loadAccounts(function(){
 		  launcher.relaunch(params);
 		});
 		
   },
   relaunch:function(params){
-    
     if (params.action == 'checkComments') {
       this.checkForComments();
       return;
@@ -37,7 +35,7 @@ enyo.kind({
   },
   openWordPress:function(params){
     var basePath = enyo.fetchAppRootPath();
-    enyo.windows.activate('wordpress', basePath + 'wordpress/index.html', params);
+    enyo.windows.activate(basePath + 'wordpress/index.html', 'wordpress', params);
   },
   openComposer:function(account, post){
     var wordpress = enyo.windows.fetchWindow('wordpress');
@@ -47,7 +45,7 @@ enyo.kind({
       account: account.id,
       post: post.id
     }
-    enyo.windows.activate(label, "./compose/index.html", params);
+    enyo.windows.activate("./compose/index.html", label, params);
   },
   openComposerWithNewItem:function(account, type){	
 	var wordpress = enyo.windows.fetchWindow('wordpress');
@@ -59,24 +57,24 @@ enyo.kind({
       account: account.id,
       type: type
     }
-    enyo.windows.activate(label, "./compose/index.html", params);
+    enyo.windows.activate("./compose/index.html", label, params);
   },
   scheduleTimer:function(){
     this.$.setTimer.call({
       'key':'org.wordpress.webos.comment_timer',
       'in':'00:10:00', // 10 minutes, 5 minutes is the minimum and 24 hours is the maximum
       'uri':'palm://com.palm.applicationManager/launch',
-      'params': enyo.json.to({
+      'params': enyo.json.stringify({
         'id':'org.wordpress.webos',
         'params' : { 'action' : 'checkComments' }
       })
     })
   },
   timeoutSet:function(sender, response, request){
-    console.log("Timeout is set: " + enyo.json.to(response));
+    console.log("Timeout is set: " + enyo.json.stringify(response));
   },
   genericFailure:function(sender, response){
-    console.log("Error" + enyo.json.to(response));
+    console.log("Error" + enyo.json.stringify(response));
   },
   checkForComments:function(){
     var windows = enyo.windows.getWindows();

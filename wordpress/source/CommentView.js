@@ -42,7 +42,7 @@ enyo.kind({
       { kind: 'Scroller', flex:1, components:[
         { name:'body', className:'wp-post-content' },
         // { name:'conversationHeader', className:'enyo-item', content:'Conversation:' },
-        // { name:'conversation', kind:'VirtualRepeater', onGetItem:'getReply', components:[
+        // { name:'conversation', kind:'VirtualRepeater', onSetupRow:'getReply', components:[
         //   { name:'item', className: 'enyo-item', components:[
         //     { name:'reployHeader', kind:'HFlexBox', components: [
         //       { kind:'Control', className:'comment-left-col', components:[{ name:'replyAvatar', width:'30px', height:'30px', kind:'Image', onerror:'imageLoadError', className:'comment-list-avatar', src:'images/icons/default-avatar.png' }] },

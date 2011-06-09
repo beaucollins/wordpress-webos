@@ -174,7 +174,7 @@ enyo.kind({
     { name:'selection', kind:'wp.utils.SelectionList', onChange:'doSelectionChanged' },
     { kind:'VFlexBox', flex:1, className:'setup-screen', components:[
       { name:'scroller', kind:'enyo.Scroller', flex:1, components:[
-        { name:'blogs', kind:'VirtualRepeater', flex:1, onGetItem:'setupBlogRow', components:[
+        { name:'blogs', kind:'VirtualRepeater', flex:1, onSetupRow:'setupBlogRow', components:[
           { kind:'Item', layoutKind:'HFlexLayout', components:[
             { name:'blogName', flex:1 },
             { kind:'CheckBox', checked:false, onclick:'blogToggled' }
