@@ -44,11 +44,7 @@ enyo.kind({
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
-<<<<<<< HEAD
-    { name:'setupForm', lazy: false, scrim:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog',  onBeforeOpen: "beforeNewBlogDialogOpen", components:[
-=======
-    { name:'setupForm', scrim:true, lazy:true, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
->>>>>>> fixing the setupForm.open when there are no accounts
+    { name:'setupForm', scrim:true, lazy:false, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
       { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]}
   ],
