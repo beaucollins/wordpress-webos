@@ -66,20 +66,24 @@ enyo.kind({
         account:account,
         onInvalidPassword:'displayPasswordForm',
         onPasswordReady:'refreshClient',
+        
         onPendingComments:'updateCommentCount',
         onNewComment:'refreshComments',
         onUpdateComment:'refreshComments',
         onDeleteComment:'refreshCommentsAfterDelete',
+        onRefreshComments:'refreshComments',
+        
         onNewPost:'refreshPosts',
         onUpdatePost:'refreshPosts',
         onDeletePost:'refreshPosts',
-        onSavePost:'refreshPosts',
         onSaveDraft:'refreshDrafts',
+        onRefreshPosts:'refreshDrafts',
+        
         onNewPage:'refreshPages',
         onUpdatePage:'refreshPages',
         onSaveDraftPage:'refreshDrafts',
-        onSavePage:'refreshPages',
         onDeletePage:'refreshPages',
+        onRefreshPages:'refreshPages',
       });
       clients.push(client);
     }, this);

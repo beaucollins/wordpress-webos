@@ -23,16 +23,20 @@ enyo.kind({
     onUpdateComment:'',
     onDeleteComment:'',
     onPendingComments:'',
+    onRefreshComments:'',
+    
     onNewPage:'',
     onUpdatePage:'',
-    onSavePage:'',
     onSaveDraftPage:'',
     onDeletePage:'',
+    onRefreshPages: '',
+    
     onNewPost:'',
     onUpdatePost:'',
-    onSavePost:'',
     onSaveDraft:'',
     onDeletePost:'',
+    onRefreshPosts: '',
+    
     onNewCategory:'',
     onUpdateCategory:''
   },
@@ -98,58 +102,6 @@ enyo.kind({
     // this should probably only be done when the account is added
     this.refreshComments();
   },
-  // download a sane number of posts
-  downloadPages:function(){
-    this.log("start loading pages from server");
-    this.$.http.callMethod({
-      methodName:'wp.getPages',
-      methodParams:[this.account.blogid, this.account.username, this.password, 20]
-    }, { url:this.account.xmlrpc, onSuccess:'savePages' });
-  },
-  savePages:function(semder, response, request){
-    var account = this.account;
-    var pages = response;
-    var client = this;
-    enyo.forEach(pages, function(page){
-      account.pages.filter('page_id', '=', page.page_id).one(function(existing){
-        if (!existing) {
-          var p = new enyo.application.models.Page(page);
-          account.pages.add(p);
-          enyo.application.persistence.flush(function(){
-            client.doNewPage(p, account);
-          });
-        }else{
-          
-          for(field in page){
-            existing[field] = page[field];
-          }
-          enyo.application.persistence.flush(function(){
-            client.doUpdatePage(existing, account);
-          });
-        }
-      });
-    }, this);
-    
-    //remove pages from the local db that are not on the server anymore!!
-    if(pages)
-    account.pages.list(function(storedPages){
-    	enyo.forEach(storedPages, function(storedPage){
-    		var presence = false;
-    		for(var i=0; i < pages.length; i++) {
-    			if(storedPage.page_id == pages[i].page_id)
-    				presence=true;
-    		}
-
-    		if(presence == false){
-    			console.log("Not Found: " + storedPage.title);
-    			account.pages.remove(storedPage);
-    			enyo.application.persistence.flush(function(){
-    				//client.doNewPost(p, account);
-    			});
-    		}
-    	}, this);    	 
-    });
-  },
   downloadPosts:function(){
     this.$.http.callMethod({
       methodName: 'metaWeblog.getRecentPosts',
@@ -171,93 +123,80 @@ enyo.kind({
 			  if (!existing) {
 				  var category = new enyo.application.models.Category(cat);
 				  account.categories.add(category);
-				  enyo.application.persistence.flush(function(){
-					  client.doNewCategory(category, account);
-				  });
-
 			  }else{
 				  for(field in cat){
 					  existing[field] = cat[field];
 				  }
-				  enyo.application.persistence.flush(function(){
-					  client.doUpdateCategory(existing, account);
-				  })
 			  }
 		  });
 	  }, this);
 	  
 	  //remove categories from the local db that are not on the server anymore!!
-	 if(categories)
-	  account.categories.list(function(storedCategories){
-		  enyo.forEach(storedCategories, function(storedCategory){
-			  var presence = false;
-			  for(var i=0; i < categories.length; i++) {
-				  if(storedCategory.categoryId == categories[i].categoryId)
-					  presence=true;
-			  }
-
-			  if(presence == false){
-				  console.log("Not Found: " + storedCategory.categoryName);
-				  account.categories.remove(storedCategory);
-				  //we can flush the db later...
-			  }
-		  }, this);    	 
-		  enyo.application.persistence.flush(function(){
-			  //client.doNewPost(p, account);
-		  });
-	  });
+	 if(categories) {
+		 account.categories.list(function(storedCategories){
+			 enyo.forEach(storedCategories, function(storedCategory){
+				 var presence = false;
+				 for(var i=0; i < categories.length; i++) {
+					 if(storedCategory.categoryId == categories[i].categoryId)
+						 presence=true;
+				 }
+				 if(presence == false){
+					 console.log("Not Found: " + storedCategory.categoryName);
+					 account.categories.remove(storedCategory);
+				 }
+			 }, this);    	 
+			 enyo.application.persistence.flush(function(){ });
+		 });
+	 } else {
+		 enyo.application.persistence.flush(function(){ });
+	 }
   },
   savePosts:function(sender, response, request){
-	var account = this.account;
-    var posts = response;
-    var client = this;
-    enyo.forEach(posts, function(post){
-      // first find the post by id
-      // if the post doesn't exist create a new one
-      account.posts.filter('postid', '=', post.postid).one(function(existing){
-        if (!existing) {
-          // create it and save it
-          var p = new enyo.application.models.Post(post);
-          account.posts.add(p);
-          enyo.application.persistence.flush(function(){
-            client.doNewPost(p, account);
-          });
-        }else{
-          
-          // update the post
-          if (!existing.local_modifications) {
-            for(field in post){
-              existing[field] = post[field];
-            }
+	  var account = this.account;
+	  var posts = response;
+	  var client = this;
+	  enyo.forEach(posts, function(post){
+		  // first find the post by id
+		  // if the post doesn't exist create a new one
+		  account.posts.filter('postid', '=', post.postid).one(function(existing){
+			  if (!existing) {
+				  // create it and save it
+				  var p = new enyo.application.models.Post(post);
+				  account.posts.add(p);
+			  } else {
+				  // update the post
+				  if (!existing.local_modifications) {
+					  for(field in post){
+						  existing[field] = post[field];
+					  }
+				  };
+			  }
+		  });
+	  }, this);
 
-            enyo.application.persistence.flush(function(){
-              client.doUpdatePost(existing, account);
-            });
-          };
-          
-        }
-      });
-    }, this);
-
-    //remove posts from the local db that are not on the server anymore!!
-    if(posts)
-    account.posts.list(function(storedPosts){
-    	 enyo.forEach(storedPosts, function(storedPost){
-    		 var presence = false;
-    		 for(var i=0; i<posts.length; i++) {
-    		   if(storedPost.postid == posts[i].postid)
-    			   presence=true;
-    		 }
-    		 
-    		 if(presence == false){
-    			 console.log("Not Found: " + storedPost.title);
-    			 account.posts.remove(storedPost);
-    	          enyo.application.persistence.flush(function(){
-    	            //client.doNewPost(p, account);
-    	          });
-    		 }
-    	 }, this);    	 
-    });
+	  //remove posts from the local db that are not on the server anymore!!
+	  if(posts) {
+		  account.posts.list(function(storedPosts){
+			  enyo.forEach(storedPosts, function(storedPost){
+				  var presence = false;
+				  for(var i=0; i<posts.length; i++) {
+					  if(storedPost.postid == posts[i].postid)
+						  presence=true;
+				  }
+				  if(presence == false){
+					  console.log("Not Found: " + storedPost.title);
+					  account.posts.remove(storedPost);
+				  }
+			  }, this);
+			  enyo.application.persistence.flush(function(){
+				  client.doRefreshPosts(null, account);
+			  });
+		  });
+	  } else {
+		  enyo.application.persistence.flush(function(){
+			  client.doRefreshPosts(null, account);
+		  });
+	  }
   },
   savePassword:function(onSuccess){
     var options = {}
@@ -297,6 +236,54 @@ enyo.kind({
       enyo.windows.addBannerMessage("Draft Page saved", "{}");
       enyo.application.launcher.draftSaved();
     });
+  },
+  // download a sane number of posts
+  downloadPages:function(){
+    this.log("start loading pages from server");
+    this.$.http.callMethod({
+      methodName:'wp.getPages',
+      methodParams:[this.account.blogid, this.account.username, this.password, 20]
+    }, { url:this.account.xmlrpc, onSuccess:'savePages' });
+  },
+  savePages:function(sender, response, request){
+    var account = this.account;
+    var pages = response;
+    var client = this;
+
+    enyo.forEach(pages, function(page){
+      account.pages.filter('page_id', '=', page.page_id).one(function(existing){
+        if (!existing) {
+          var p = new enyo.application.models.Page(page);
+          account.pages.add(p);
+        }else{     
+          for(field in page)
+            existing[field] = page[field];
+        }
+      });
+    }, this);
+    //remove pages from the local db that are not on the server anymore!!
+    if(pages) {    	
+    	account.pages.list(function(storedPages){
+    		enyo.forEach(storedPages, function(storedPage){
+    			var presence = false;
+    			for(var i=0; i < pages.length; i++) {
+    				if(storedPage.page_id == pages[i].page_id)
+    					presence=true;
+    			}
+    			if(presence == false){
+    				console.log("Not Found: " + storedPage.title);
+    				account.pages.remove(storedPage);
+    			}
+    		}, this);
+    		enyo.application.persistence.flush(function(){
+    			client.doRefreshPages(null,  account);
+    		});
+    	});
+    } else {
+    	enyo.application.persistence.flush(function(){
+			client.doRefreshPages(null, account);
+		});
+    }
   },
   savePage:function(post){
 	  var client = this;
@@ -353,7 +340,6 @@ enyo.kind({
 		  post[field] = response[field];
 	  }
 	  enyo.application.persistence.flush(function(){
-		  client.doSavePage(post, account); //the compose view will be called here
 		  if (request.update) {
 			  client.doUpdatePage(post, account);
 		  }else{
@@ -442,7 +428,6 @@ enyo.kind({
 	  }
 	  
 	  enyo.application.persistence.flush(function(){
-		  client.doSavePost(post, account);
 		  if (request.update) {
 			  client.doUpdatePost(post, account);
 		  }else{
@@ -609,15 +594,11 @@ enyo.kind({
         if (!existing) {
           var c = new enyo.application.models.Comment(comment);
           account.comments.add(c);
-          enyo.application.persistence.flush(function(){
-            if(request.skip_notifications !== true){
-              enyo.application.commentDashboard.notifyComment(c, account)
-            }else{
-              console.log("Skipping notifications");
-            }
-            client.doNewComment(c, account);
-            client.refreshPendingCommentCount();
-          });
+          if(request.skip_notifications !== true){
+        	  enyo.application.commentDashboard.notifyComment(c, account)
+          }else{
+        	  console.log("Skipping notifications");
+          }
         }else{
           //let's just update the content
           // this should work, Persistence doesn't have any documentation for mass assigning properties
@@ -625,33 +606,36 @@ enyo.kind({
           for(field in comment){
             existing[field]=comment[field];
           }
-          enyo.application.persistence.flush(function(){
-            client.doUpdateComment(existing, account);
-            client.refreshPendingCommentCount();
-          });
+
         }
       });
     });
     
     //remove comments from the local db that are not on the server anymore!!
-    if(response)
-    account.comments.list(function(storedComments){
-    	enyo.forEach(storedComments, function(storedComment){
-    		var presence = false;
-    		for(var i=0; i < response.length; i++) {
-    			if(storedComment.comment_id == response[i].comment_id)
-    				presence=true;
-    		}
-
-    		if(presence == false){
-    			console.log("Not Found Comment: " + storedComment.comment_id);
-    			account.comments.remove(storedComment);
-    			enyo.application.persistence.flush(function(){
-    				client.refreshPendingCommentCount();
-    			});
-    		}
-    	}, this);    	 
-    });    
+    if(response) {
+    	account.comments.list(function(storedComments){
+    		enyo.forEach(storedComments, function(storedComment){
+    			var presence = false;
+    			for(var i=0; i < response.length; i++) {
+    				if(storedComment.comment_id == response[i].comment_id)
+    					presence=true;
+    			}
+    			if(presence == false){
+    				console.log("Not Found Comment: " + storedComment.comment_id);
+    				account.comments.remove(storedComment);
+    			}
+    		}, this);    	 
+    		enyo.application.persistence.flush(function(){
+    			client.doRefreshComments(null, account);
+    			client.refreshPendingCommentCount();
+    		});
+    	});    
+    } else {
+    	enyo.application.persistence.flush(function(){
+    		client.doRefreshComments(null, account);
+    		client.refreshPendingCommentCount();
+    	});
+    }
   },
   refreshPendingCommentCount:function(){
     var client = this;

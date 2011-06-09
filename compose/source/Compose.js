@@ -20,8 +20,8 @@ enyo.kind({
   accountCategories : null,
   categoriesChanged : false, //true when the user click on categories
   components:[
-  { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onSavePost:'savePostSuccess', onSavePage:'savePostSuccess',
-	  onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},
+  { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
+	  onNewPage:'savePostSuccess', onUpdatePage:'savePostSuccess', onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},
 	{	name: "uploadMediaFile", 
 		kind: "WebService", 
 		method: "POST", 
