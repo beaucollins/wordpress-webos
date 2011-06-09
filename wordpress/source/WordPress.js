@@ -35,8 +35,7 @@ enyo.kind({
                 { name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
               ]}
           ]}
-      ]},
-      { name:'setup2', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
+      ]}
     ]},
     // main sliding pane interface
     { name:'replyForm', scrim:true, onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
