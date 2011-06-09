@@ -83,4 +83,5 @@
 "URL" : "URL",
 "Username" : "Username",
 "View" : "View",
+'Password for #{username} on blog #{blogName}' : 'Password for #{username} on blog #{blogName}'
 }
