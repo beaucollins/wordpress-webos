@@ -57,7 +57,7 @@ enyo.kind({
         { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
         { flex:1 },
         { kind: "Spinner", className: 'wp-list-spinner'},
-        { kind:'Button', name:'reply', caption:  $L('Reply');, onclick:'doReply', className:'enyo-button-blue' },
+        { kind:'Button', name:'reply', caption:  $L('Reply'), onclick:'doReply', className:'enyo-button-blue' },
         { kind:'Button', name:'approve', caption: $L('Approve'), onclick:'markComment' },
         { kind:'Button', name:'unapprove', caption: $L('Unapprove'), onclick:'markComment' },
         { kind:'Button', name:'trash', caption: $L('Trash'), onclick:'askBeforeDelete' },
