@@ -11,7 +11,7 @@ enyo.kind({
     { name:'statsPane', kind:'Pane',flex:1, components:[
       { name:'statsSpinner', kind:'enyo.SpinnerLarge'},
 	  { name: 'scroller', kind:'Scroller', flex:1, components:[
-      { name:'statsWebView' }
+      { name:'statsWebView', allowHtml:'true' }
 	  ]},
     ]},
 	{ kind:'enyo.Toolbar', components:[
