@@ -50,7 +50,9 @@ enyo.kind({
     // attempt to setup the blavatar if there is a valid one
     var blavatar = new Image();
     blavatar.onload = enyo.bind(this, function(){
-      this.$.header.setIcon(blavatar.src);
+      if(this.$ && this.$.header){
+        this.$.header.setIcon(blavatar.src);
+      }
     });
     blavatar.src = enyo.application.makeBlavatar(account.xmlrpc, {
       size:30
