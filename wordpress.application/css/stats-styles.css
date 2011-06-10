@@ -71,7 +71,6 @@ ul.metabox-tabs {
     margin-top: -29px !important;
 	background: transparent;
 	border-bottom: 1px solid #dfdfdf;
-    box-shadow: 0 1px 0 0 #fff;
 }
 ul.metabox-tabs li {
     list-style: none;
@@ -82,7 +81,6 @@ ul.metabox-tabs li.tab a {
     display: block;
     float: left;
     margin-right: 4px;
-
     padding: 5px 6px;
     filter:alpha(opacity=50);
     opacity: .5;
@@ -96,8 +94,6 @@ ul.metabox-tabs li.tab a {
 }
 ul.metabox-tabs li.tab a {
     /* for some reason, opacity doesn't work in IE */
-    -webkit-box-shadow: inset 0 1px 0 white;
-    box-shadow: inset 0 1px 0 white;
     -webkit-border-radius: 3px;
     border-radius: 3px;
     border-left: 1px solid #dfdfdf;
@@ -105,8 +101,7 @@ ul.metabox-tabs li.tab a {
     border-top: 1px solid #dfdfdf;
     height: 13px;
 }
-ul.metabox-tabs li.tab a.active,
-ul.metabox-tabs li.tab a:hover {
+ul.metabox-tabs li.tab .active {
     background: #fff;
     opacity: 1;
     -webkit-opacity: 1;
@@ -437,8 +432,6 @@ background-image: -webkit-linear-gradient(top,#f4f4f4,#e9e9e9);
 background-image: linear-gradient(top,#f4f4f4,#e9e9e9);
 border-bottom-color: #dfdfdf;
 text-shadow: #fff 0 1px 0;
--webkit-box-shadow: 0 1px 0 #fff;
-box-shadow: 0 1px 0 #fff;
 }
 
 #poststuff h3, .metabox-holder h3 {
@@ -486,8 +479,6 @@ background-color: #F4F4F4;
 }
 .postbox, #titlediv, #poststuff .postarea, .stuffbox {
 border-color: #DFDFDF;
--webkit-box-shadow: inset 0 1px 0 white;
-box-shadow: inset 0 1px 0 white;
 -khtml-border-radius: 3px;
 -webkit-border-radius: 3px;
 border-radius: 3px;
