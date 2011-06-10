@@ -165,6 +165,9 @@ enyo.kind({
     this.$.list.refresh();
 	this.$.spinner.hide();
   },
+  stopSpinner:function() {
+	this.$.spinner.hide();
+  },
   highlightComment:function(comment){
     this.$.list.select(comment.id);
     this.log("Selected", this.$.list);

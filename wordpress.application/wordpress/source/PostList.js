@@ -38,13 +38,21 @@ enyo.kind({
       ] }
     ] },
     { kind:'enyo.Toolbar', components:[
-      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},      
-      { kind:'Button', name: 'refresh', content:$L("Refresh"), onclick:'doRefresh'},
+      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'}, 
+	  { kind: 'Spinner', className: 'wp-list-spinner' },
+      { kind:'Button', name: 'refresh', content:$L("Refresh"), onclick:'refreshList'},
       { kind:'Button', name: 'newItem', content:$L("Add New"), onclick:'doNewItem'}
     ] }
   ],
   create:function(){
     this.inherited(arguments);
+  },
+  refreshList:function(sender){
+	 this.$.spinner.show();
+	 this.doRefresh();
+  },
+  stopSpinner:function() {
+	 this.$.spinner.hide();
   },
   selectPost:function(sender, item){
 	this.log("selected item: ", item);
@@ -62,7 +70,8 @@ enyo.kind({
     }
   },
   refresh:function(){
-	this.log("refresh");
+	this.log("refreshed!");
+	this.$.spinner.hide();
 	this.selectedRow = null;
 	this.$.list.getSelection().clear();
     this.$.list.punt();

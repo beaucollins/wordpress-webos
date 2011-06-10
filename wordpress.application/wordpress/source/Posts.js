@@ -24,6 +24,9 @@ enyo.kind({
     this.$.postList.setAccount(this.account);
     this.$.detail.setAccount(this.account);
   },
+  stopSpinner:function() {
+	this.$.postList.stopSpinner();
+  },
   refresh:function(){
     this.$.postList.refresh();
     this.$.detail.postChanged();

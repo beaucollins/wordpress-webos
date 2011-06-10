@@ -48,6 +48,7 @@ enyo.kind({
     { name:'setupForm', scrim:true, lazy:false, kind:'enyo.Toaster', className:'wp-blog-setup-dialog',  onBeforeOpen:'beforeNewBlogDialogOpen', components:[
       { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]},
+    
 	//Global errors handling interface components
     {name: "globalErrorPopup", kind: "Popup",  lazy:false, showHideMode: "transition",  openClassName: "scaleFadeIn", scrim: true, 
 		 modal: true, className: "fastAnimate transitioner wp-blog-setup-dialog", width: "400px", components: [
@@ -126,6 +127,12 @@ enyo.kind({
     this.log("error: ", errorTitle, errorMessage);
     this.$.globalNeedHelpPane.setErrorMessage(errorTitle, errorMessage);
     this.$.globalErrorPopup.openAtCenter();
+    
+    
+    //stop the loading spinners
+    this.$.posts.stopSpinner();
+    this.$.comments.stopSpinner();
+    this.$.pages.stopSpinner();
   },
   closeGlobalErrorPopup: function(inSender) {
 	  this.$.globalErrorPopup.close();

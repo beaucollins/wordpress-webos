@@ -47,7 +47,10 @@ enyo.kind({
     this.$.comment_list.refreshed();
     this.$.detail.commentChanged();
     this.$.pane.selectView(this.$.blank);
-  }
+  },
+  stopSpinner:function() {
+	this.$.comment_list.stopSpinner();
+  },
   // findComments:function(sender, query){
   //   var that = this;
   //   console.log("Find comments!", query);
