@@ -106,15 +106,17 @@ enyo.kind({
     this.doPasswordReady();
   },
   // apiFault, either bad username/pass or API disabled
-  apiFault:function(sender, request, response){
-	this.log("apiFault",request, response);
+  apiFault:function(sender, response, request){
+	this.log("apiFault", response, request);
+	//if the response is null we can read the error status and the error message within the XHR obj. see WordPress.js
 	  //if(this.cancelled == true) return;
-    this.doFailure(request, response);
+    this.doFailure(response, request);
   },
-  badURL:function(sender, request, response){
-	  this.log("_badURL",request, response);
+  badURL:function(sender, response, request){
+	  this.log("_badURL", response, request);
+	//if the response is null we can read the error status and the error message within the XHR obj. see WordPress.js
 	 // if(this.cancelled == true) return;
-	 this.doBadURL(request, response);
+	 this.doBadURL(response, request);
   },
   downloadComments:function(){
     // we should page through comments until there are no more, or to a sane amount of comments

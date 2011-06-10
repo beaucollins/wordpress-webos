@@ -103,10 +103,12 @@ enyo.kind({
 		this.fault = true;
 		this.faultMessage = "No Response from the Server";
 		this.faultCode = 0;
+		//this.response = parser.toObject(); //we can create an error obj here
 	  } else {
 		this.fault = true;
 		this.faultMessage = inXHR.statusText ? inXHR.statusText : "Something went wrong";
 		this.faultCode = inXHR.status;
+		//this.response = parser.toObject(); //an error obj here
 	  }
   }
 });

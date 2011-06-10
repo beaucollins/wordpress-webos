@@ -45,7 +45,7 @@ enyo.kind({
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
-    { name:'setupForm', scrim:true, lazy:false, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
+    { name:'setupForm', scrim:true, lazy:false, kind:'enyo.Toaster', className:'wp-blog-setup-dialog',  onBeforeOpen:'beforeNewBlogDialogOpen', components:[
       { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]},
 	//Global errors handling interface components
@@ -109,8 +109,8 @@ enyo.kind({
     this.commentChanged();
     this.refreshDraftCount();
   },
-  connectionError:function(sender, request, response){
-	this.log("connectionError",request, response);
+  connectionError:function(sender, response, request){
+	this.log("connectionError", response, request);
     
     var errorTitle = 'Error';
     var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
@@ -265,7 +265,6 @@ enyo.kind({
          this.$.setupForm.setModal(true);
          this.$.setupForm.open();
          this.$.setup.setCancelable(false);
-         
        });
     }else{
       this.$.sourceList.setAccounts(this.accounts);
@@ -282,6 +281,7 @@ enyo.kind({
     // show the comment view
   },
   addNewBlog:function(sender){
+	this.$.setup.reset();
     this.$.setupForm.open();
   },
   setupBlogs:function(sender, blogs, username, password){
@@ -428,4 +428,3 @@ enyo.kind({
   }
   
 });
-
