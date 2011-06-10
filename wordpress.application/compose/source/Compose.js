@@ -20,7 +20,8 @@ enyo.kind({
   accountCategories : null,
   categoriesChanged : false, //true when the user click on categories
   components:[
-  { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
+  { kind:'FilePicker', fileType:'image', onPickFile:'uploadPickedFile' },
+  { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onUploadComplete:'uploadComplete', onUploadFailed:'uploadFailed',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
 	  onNewPage:'savePostSuccess', onUpdatePage:'savePostSuccess', onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},
 	{	name: "uploadMediaFile", 
 		kind: "WebService", 
@@ -49,6 +50,7 @@ enyo.kind({
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
           { name:'headerLabelField', content:$L('New Post'), flex:1 },
+          { name:'attachButton', kind:'enyo.Button', caption:$L('Attach File'), onclick:'uploadTest' },
           { name:'previewButton', kind:'enyo.Button', caption:$L('Preview'), onclick:'showPreview' },
           { name:'draftButton', kind:'enyo.Button', caption:$L('Save Draft'), onclick:'savePost' },
 		  { kind: 'Spinner', className: 'wp-compose-spinner' },
@@ -641,6 +643,39 @@ enyo.kind({
 	},
 	passwordClick:function(sender){
 		this.$.passwordField.forceFocus();
+	},
+	pickFile:function(sender){
+	  this.$.filePicker.pickFile();
+	},
+	
+  // if an upload was successfull
+	uploadComplete:function(sender, response){
+	  console.log("Upload Complete");
+	  console.log(enyo.json.stringify(response));
+	},
+	
+	uploadFailed:function(sender, response){
+	  console.log("Upload failed");
+	  console.log(enyo.json.stringify(response));
+	},
+	// files is an array but there's currently only ever one file picked
+	uploadPickedFile:function(sender, files){
+	  
+	  var file = files[0];
+    // file has these properties
+	  //   {
+    //  fullPath: // Absolute File Path.
+    //  iconPath: // Absolute File Path with ExtractFS prefix.
+    //  attachmentType: // File Type (image, document, audio, video)
+    //  size: // File Size in Bytes.
+    // }
+    
+	  
+	  this.$.client.uploadFile(file.fullPath);
+	},
+	uploadTest:function(sender){
+	  // we're just going to use one of the wallpapers
+	  this.$.client.uploadFile("/media/internal/wallpapers/03.jpg");
 	}
 });
  

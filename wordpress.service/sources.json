@@ -1,0 +1,12 @@
+[{
+    "library": {
+        "name": "foundations",
+        "version": "1.0"
+    }
+},
+{
+    "source": "ServiceAssistant.js"
+},
+{
+    "source": "CommandAssistant.js"
+}]

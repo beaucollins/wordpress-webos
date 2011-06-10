@@ -38,7 +38,10 @@ enyo.kind({
     onRefreshPosts: '',
     
     onNewCategory:'',
-    onUpdateCategory:''
+    onUpdateCategory:'',
+    
+    onUploadComplete:'',
+    onUploadFailed:''
   },
   kind: 'Component',
   components: [
@@ -49,7 +52,8 @@ enyo.kind({
       { name: 'fetchKey', method:'fetchKey', onFailure:'missingPassword', onSuccess:'setPasswordFromKey' },
       { name: 'storeKey', method:'store', onSuccess:'doPasswordReady' },
       { name: 'removeKey', method:'remove', onSuccess:'doInvalidPassword', onFailure:'doInvalidPassword' }
-    ] }
+    ] },
+    { name:'uploader', kind:'PalmService', service:'palm://org.wordpress.webos.uploader/', method:'upload', onSuccess:'uploadCompleted', onFailure:'uploadFailed'}
   ],
   create:function(){
     this.inherited(arguments);
@@ -643,4 +647,38 @@ enyo.kind({
   pendingCommentCountChanged:function(){
     this.doPendingComments(this.pendingCommentCount);
   },
+  uploadFile:function(filePath){
+    
+    // blogName: 'TEXT',
+    // blogid: 'INT',
+    // isAdmin: 'BOOLEAN',
+    // url: 'TEXT',
+    // username: 'TEXT',
+    // xmlrpc: 'TEXT'
+    
+    this.$.uploader.call({
+      endpoint:this.account.xmlrpc,
+      username:this.account.username,
+      password:this.password,
+      file:filePath,
+      blogId:this.account.blogid
+    });
+  },
+  uploadCompleted:function(sender, response, request){
+    console.log("Upload completed!");
+    // parse the response XML here
+    var response_object = XMLRPCParser.parse(response.xml);
+    console.log(enyo.json.stringify(response_object));
+    if(response_object.fault){
+      this.doUploadFailed(response_object);
+    }else{
+      this.doUploadComplete(response_object);
+    }
+    
+  },
+  uploadFailed:function(sender, response, request){
+    console.log("Upload failed");
+    console.log(enyo.json.stringify(response));
+    this.doUploadFailed();
+  }
 })

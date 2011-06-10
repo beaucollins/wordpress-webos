@@ -1,0 +1,15 @@
+{
+"id": "org.wordpress.webos.uploader",
+"description": "Base64 Upload Service",
+"activityTimeout" : 30,
+"services": [{
+    "name": "org.wordpress.webos.uploader",
+    "description": "base64 uploader",
+    "assistant" : "ServiceAssistant",
+    "commands": [{
+        "name" : "upload",
+        "assistant" : "CommandAssistant",
+        "public" : true
+        }]
+     }]
+}
