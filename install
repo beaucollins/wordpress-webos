@@ -1,8 +1,11 @@
+INSTALL & LAUNCH:
 #!/bin/bash
-palm-package palm-package wordpress.application wordpress.service wordpress.package
+palm-package wordpress.application wordpress.service wordpress.package
 palm-install org.wordpress.webos*.ipk
 palm-launch org.wordpress.webos
 
+REMOVE THE APP:
+palm-install -r org.wordpress.webos
 
 ---
-palm-package wordpress.* && palm-install org.wordpress.webos.* && palm-launch org.wordpress.webos && palm-log -f org.wordpress.webos
+palm-package wordpress.* && palm-install org.wordpress.webos*.ipk && palm-launch org.wordpress.webos && palm-log -f org.wordpress.webos

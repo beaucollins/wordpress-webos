@@ -24,7 +24,7 @@ enyo.kind({
   { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onUploadComplete:'uploadComplete', onUploadFailed:'uploadFailed',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
 	  onNewPage:'savePostSuccess', onUpdatePage:'savePostSuccess', onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},
 	{	name: "uploadMediaFile", 
-		kind: "WebService", 
+		kind: "WebService",  
 		method: "POST", 
     	handleAs:'text',
     	contentType:'text/xml',

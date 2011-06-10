@@ -249,10 +249,12 @@ enyo.kind({
 	  if (this.accounts.length == 0) {
 		  this.$.setupForm.setScrim(false);
 		  this.$.setupForm.setModal(true);
+		  this.$.setupForm.setDismissWithClick(false);
 		  this.$.setup.setCancelable(false);
 	  }else{
 		  this.$.setupForm.setScrim(true);
 		  this.$.setupForm.setModal(false);
+		  this.$.setupForm.setDismissWithClick(true);
 	  }
 	  this.$.setup.reset();
   },
