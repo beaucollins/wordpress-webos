@@ -69,7 +69,7 @@ enyo.kind({
     var items = this.$.list.getControls(), item;
     for (var i=0; i < items.length; i++) {
       item = items[i];
-      //if(item.children[0].updateCommentCount) item.children[0].updateCommentCount();
+     // if(item.children[0].updateCommentCount) item.children[0].updateCommentCount();
       if(item.updateCommentCount) item.updateCommentCount(); //starting from enyo 0.10 the repeater no longer wraps its items in an extra control.
     };
   },
@@ -83,7 +83,7 @@ enyo.kind({
     // turn of the account list items that aren't this account
     this.forEachAccountControl(function(accountControl){
       if(accountControl.account != account){
-        //accountControl.clearSelection();
+        accountControl.clearSelection();
       }
     }, this);
     
