@@ -28,7 +28,7 @@ enyo.kind({
   getAccountItem: function(inSender, inIndex){
     var item;
     if (this.accounts.length == 1 && inIndex == 0) {
-      return [{kind:'wp.SingleAccountListItem', account:this.accounts[0], onSelect:'selectAccountAction'}];
+      return [{kind:'wp.SingleAccountListItem', account:this.accounts[0], onSelect:'selectAccountAction', name:'singleAccountListItem'}];
     }else if (this.accounts.length > 1) {
       if (inIndex == 0) {
         return [{kind:'wp.GlobalListItem', onSelect:'selectAccountAction', name:'global'}];
@@ -60,7 +60,7 @@ enyo.kind({
   },
   setDraftCount:function(count){
     if (this.$.global) {
-      this.$.global.setDraftCount(count)
+      this.$.global.setDraftCount(count);
     }else if (this.$.singleAccountListItem){
       this.$.singleAccountListItem.setDraftCount(count);
     }
@@ -69,7 +69,8 @@ enyo.kind({
     var items = this.$.list.getControls(), item;
     for (var i=0; i < items.length; i++) {
       item = items[i];
-      if(item.children[0].updateCommentCount) item.children[0].updateCommentCount();
+      //if(item.children[0].updateCommentCount) item.children[0].updateCommentCount();
+      if(item.updateCommentCount) item.updateCommentCount(); //starting from enyo 0.10 the repeater no longer wraps its items in an extra control.
     };
   },
   selectAccountAction: function(inSender, inEvent){
@@ -95,12 +96,11 @@ enyo.kind({
     wrappers.forEach(function (wrapper, index, objBeingTraversed) {
       //having to do .getControls()[0] here is a hack to work around the fact that the Repeater creates an extra level of div for us
       //if it didn't do that, the foldersObjWrapper would be the foldersObj
-      var accountControl = wrapper.getControls()[0];
-      
+      // var accountControl = wrapper.getControls()[0];
+    	
+    	var accountControl = wrapper; //starting from enyo 0.10 the repeater no longer wraps its items in an extra control.
       callBack.call(context, accountControl, index, objBeingTraversed);
     }, context);
     
   }
 });
-
-

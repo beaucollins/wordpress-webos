@@ -26,15 +26,20 @@ enyo.kind({
 	  this.$.postList.hideNewButton();
   },
   refresh:function(){
-    console.log("Draft Items UI Refresh!");
+    this.log("Draft Items UI Refresh!");
     this.$.postList.accountChanged();
     this.$.postList.refresh();
     this.$.detail.postChanged();
     this.$.pane.selectViewByName('blank'); //on refresh we should put the blank item on the right side
-    
   },
   refreshPosts:function(){
-    this.refresh();
+    //this.refresh();
+	  //we don't have an account, so we should call the main window here
+	  var wordpress = enyo.windows.fetchWindow('wordpress');
+	  if (wordpress) {
+		  // tell it we have updated comments
+		  enyo.windows.setWindowParams(wordpress, {'action':'refreshDrafts'});
+	  };
   },
   openPostEditor:function(sender, post){
     console.log("Opening with account: " + post.account);

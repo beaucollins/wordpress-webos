@@ -160,7 +160,7 @@ enyo.kind({
     };
   },
   refreshDraftCount:function(){
-	console.log("Refreshing the drafts count");  
+	this.log("Refreshing the drafts count");  
     var sourceList = this.$.sourceList;
     enyo.application.models.Post.all().filter('local_modifications', '=', 'true').count(function(draft_count){
     	enyo.application.models.Page.all().filter('local_modifications', '=', 'true').count(function(page_draft_count){
