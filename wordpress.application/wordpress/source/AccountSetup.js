@@ -36,7 +36,7 @@ enyo.kind({
 	      { kind: 'enyo.Button', onclick:"sendEmail", caption: $L('Send Support E-mail')},
 	  ]},
     ]},
-	{name: "errorPopup", kind: "Popup", showHideMode: "transition", openClassName: "scaleFadeIn", scrim: true, 
+	{name: "errorPopup", kind: "Popup", showHideMode: "transition", openClassName: "scaleFadeIn", scrim: true, lazy:false,
 		 modal: true, className: "fastAnimate transitioner", width: "400px", components: [
 		{name: 'needHelpPane', kind: "wp.NeedHelpPrompt", onNeedHelp: "needHelp", onSubmit: "closePopup"}
 	]},
@@ -114,11 +114,11 @@ enyo.kind({
     
     var errorTitle = 'Error';
     var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
-    if(response.faultString && response.faultString.length > 0) {
+    if(response && response.faultString && response.faultString.length > 0) {
     	errorMessage = response.faultString;
     }
     //check the error code
-    if(response.faultCode && response.faultCode == 403) {
+    if(response && response.faultCode && response.faultCode == 403) {
     	 this.$.setupForm.updatePassword(this, null, '');
     	 errorTitle = $L('Sorry, can\'t log in');
     	 errorMessage = $L('Please update your credentials and try again.');
@@ -134,30 +134,17 @@ enyo.kind({
     }
   },
   closePopup: function(inSender) {
-	inSender.manager.close();
+	  this.$.errorPopup.close();
   },
   needHelp: function(inSender) {
 	this.closePopup(inSender);
 	this.$.pane.selectView(this.$.helpView);
   },
   readTheFAQ:function(){
-    //we're launching a browser window instead of staying in app
-    this.$.palmService.call({target:'http://ios.wordpress.org/faq/'});
+	  enyo.application.launcher.readTheFAQ();
   },
   sendEmail:function(){
-    this.$.palmService.call({
-    	id: "com.palm.app.email",
-        params: {
-            summary: "WordPress for webOS Help Request",
-            text: $L("Hello, \n (Write here the URL of your blog and the error message.)"),
-            recipients: [{
-                type:"email",
-                role:1,
-                value:"support@wordpress.com",
-                contactDisplay:"WordPress for webOS"
-            }]
-        }
-    });
+	  enyo.application.launcher.sendEmailToSupport();
   },
 });
 

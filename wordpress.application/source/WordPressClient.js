@@ -260,7 +260,7 @@ enyo.kind({
     this.$.http.callMethod({
       methodName:'wp.getPages',
       methodParams:[this.account.blogid, this.account.username, this.password, 20]
-    }, { url:this.account.xmlrpc, onSuccess:'savePages' });
+    }, { url:this.account.xmlrpc, onSuccess:'savePages', onRequestFault:'apiFault', onFailure:'badURL' });
   },
   savePages:function(sender, response, request){
     var account = this.account;
@@ -310,13 +310,13 @@ enyo.kind({
 		  return http.callMethod({
 			  methodName:'wp.editPage',
 			  methodParams:[account.blogid, post.page_id, account.username, account.password, post._data, false]
-		  }, {onSuccess:'savePageSuccess', post:post, update:true});
+		  }, {onSuccess:'savePageSuccess', post:post, update:true, onRequestFault:'apiFault', onFailure:'badURL'});
 	  }else{
 		  this.log("sending the new page to the server");
 		  return http.callMethod({
 			  methodName:'wp.newPage',
 			  methodParams:[account.blogid, account.username, client.password, post._data, false]
-		  }, {onSuccess:'savePageSuccess', post:post, update:false});
+		  }, {onSuccess:'savePageSuccess', post:post, update:false, onRequestFault:'apiFault', onFailure:'badURL'});
 	  };
   },
   savePageSuccess:function(sender, response, request){
@@ -344,7 +344,7 @@ enyo.kind({
 		  client.$.http.callMethod({
 			  methodName:'wp.getPage',
 			  methodParams:[account.blogid, post.page_id, client.account.username, client.password]
-		  }, { url:account.xmlrpc, onSuccess:'refreshPage', post:post, update:false })
+		  }, { url:account.xmlrpc, onSuccess:'refreshPage', post:post, update:false, onRequestFault:'apiFault', onFailure:'badURL' })
 	  });
   },
   refreshPage:function(sender, response, request){
@@ -372,7 +372,7 @@ enyo.kind({
 		  return http.callMethod({
 			  methodName:'wp.deletePage',
 			  methodParams:[account.blogid, account.username, account.password, post.page_id]
-		  }, {onSuccess:'deletePageSuccess', post:post});
+		  }, {onSuccess:'deletePageSuccess', post:post, onRequestFault:'apiFault', onFailure:'badURL'});
 	  }
   },
   deletePageSuccess:function(sender, response, request){
@@ -395,14 +395,14 @@ enyo.kind({
 		  return http.callMethod({
 			  methodName:'metaWeblog.editPost',
 			  methodParams:[post.postid, account.username, account.password, post._data, false]
-		  }, {onSuccess:'savePostSuccess', post:post, update:true});
+		  }, {onSuccess:'savePostSuccess', post:post, update:true, onRequestFault:'apiFault', onFailure:'badURL'});
 	  }else{
 		  this.log("sending the new post to the server");
 		  return http.callMethod({
 			  //     mw.method('newPost', 'blog_id', 'username', 'password', 'content', 'publish');
 			  methodName:'metaWeblog.newPost',
 			  methodParams:[account.blogid, account.username, client.password, post._data, false]
-		  }, {onSuccess:'savePostSuccess', post:post, update:false});
+		  }, {onSuccess:'savePostSuccess', post:post, update:false, onRequestFault:'apiFault', onFailure:'badURL'});
 	  };
   },
   savePostSuccess:function(sender, response, request){
@@ -430,7 +430,7 @@ enyo.kind({
       client.$.http.callMethod({
         methodName:'metaWeblog.getPost',
         methodParams:[post.postid, client.account.username, client.password]
-      }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:false })
+      }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:false, onRequestFault:'apiFault', onFailure:'badURL' })
     });
   },
   refreshPost:function(sender, response, request){
@@ -459,7 +459,7 @@ enyo.kind({
 		  return http.callMethod({
 			  methodName:'metaWeblog.deletePost',
 			  methodParams:["unused", post.postid, account.username, account.password, false]
-		  }, {onSuccess:'deletePostSuccess', post:post});
+		  }, {onSuccess:'deletePostSuccess', post:post, onRequestFault:'apiFault', onFailure:'badURL'});
 	  }
   },
   deletePostSuccess:function(sender, response, request){
@@ -487,7 +487,7 @@ enyo.kind({
     this.$.http.callMethod({
       methodName:'metaWeblog.getPost',
       methodParams:[post.postid, account.username, this.password]
-    }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:true })
+    }, { url:account.xmlrpc, onSuccess:'refreshPost', post:post, update:true, onRequestFault:'apiFault', onFailure:'badURL'})
   },
   onSavePost:function(sender, response, request){
     this.log(">>>AAA: ping danilo if this function is called somewhere! Saved the post!", response);
@@ -518,7 +518,7 @@ enyo.kind({
         comment.post_id,
         comment._data
       ] // methodParams
-    }, { url:this.account.xmlrpc, onSuccess:'publishCommentSuccess', comment:comment }); 
+    }, { url:this.account.xmlrpc, onSuccess:'publishCommentSuccess', comment:comment, onRequestFault:'apiFault', onFailure:'badURL' }); 
   },
   publishCommentSuccess:function(sender, response, request){
     console.log("Success!", response);
@@ -535,7 +535,7 @@ enyo.kind({
 	this.$.http.callMethod({
       methodName:'wp.getComment',
       methodParams:[this.account.blogid, this.account.username, this.account.password, comment_id]
-    }, { url:this.account.xmlrpc, onSuccess:'getCommentSuccess' });
+    }, { url:this.account.xmlrpc, onSuccess:'getCommentSuccess', onRequestFault:'apiFault', onFailure:'badURL' });
   },
   getCommentSuccess:function(sender, response, success){
 	this.log("getCommentSuccess ", response);
@@ -564,7 +564,7 @@ enyo.kind({
     this.$.http.callMethod({
       methodName:'wp.editComment',
       methodParams: [this.account.blogid, this.account.username, this.password, comment.comment_id, comment._data]
-    }, { url:this.account.xmlrpc, onSuccess:'commentUpdated', comment:comment} );
+    }, { url:this.account.xmlrpc, onSuccess:'commentUpdated', comment:comment, onRequestFault:'apiFault', onFailure:'badURL'} );
   },
   commentUpdated:function(sender, response, request){
     //console.log("Comment updated - request:", request);
@@ -581,7 +581,7 @@ enyo.kind({
     this.$.http.callMethod({
       methodName:'wp.deleteComment',
       methodParams: [this.account.blogid, this.account.username, this.password, comment.comment_id]
-    }, { url:this.account.xmlrpc, onSuccess:'commentDeleted',  comment:comment} );
+    }, { url:this.account.xmlrpc, onSuccess:'commentDeleted',  comment:comment, onRequestFault:'apiFault', onFailure:'badURL'} );
   },
   commentDeleted:function(sender, response, request){
 //	console.log("Deleted comment", request.comment);
@@ -596,7 +596,7 @@ enyo.kind({
     var options = {};
     this.$.getComments.callMethod({
       methodParams:[this.account.blogid, this.account.username, this.password, options]
-    }, { url: this.account.xmlrpc, skip_notifications:skip_notifications } );
+    }, { url: this.account.xmlrpc, skip_notifications:skip_notifications, onRequestFault:'apiFault', onFailure:'badURL' } );
   },
   checkNewComments:function(sender, response, request){
     var account = this.account;

@@ -6,7 +6,8 @@ enyo.kind({
       { name:'setTimer', method:'set', onSuccess:'storeTimerKey', onSuccess:'timeoutSet' },
       { name:'clearTimer', method:'clear' }
     ] },
-    { kind:'Comment'}
+    { kind:'Comment'},
+    { name:'palmAppOpener', kind:'PalmService', service:'palm://com.palm.applicationManager/', method:'open' },
   ],
   create:function(){
     this.inherited(arguments);
@@ -119,6 +120,24 @@ enyo.kind({
   displayComment:function(sender, comment, account){
     console.log("Open to the comment!");
     this.openWordPress({action:'showComment', comment_id:comment.id, account_id:account.id});
-  }
-  
+  },
+  readTheFAQ:function(){
+    //we're launching a browser window instead of staying in app
+    this.$.palmAppOpener.call({target:'http://ios.wordpress.org/faq/'});
+  },
+  sendEmailToSupport:function(){
+    this.$.palmAppOpener.call({
+    	id: "com.palm.app.email",
+        params: {
+            summary: "WordPress for webOS Help Request",
+            text: $L("Hello, \n (Write here the URL of your blog and the error message.)"),
+            recipients: [{
+                type:"email",
+                role:1,
+                value:"support@wordpress.com",
+                contactDisplay:"WordPress for webOS"
+            }]
+        }
+    });
+  },
 });

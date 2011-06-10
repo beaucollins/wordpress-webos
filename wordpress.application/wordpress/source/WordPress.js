@@ -47,7 +47,17 @@ enyo.kind({
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
     { name:'setupForm', scrim:true, lazy:false, kind:'enyo.Toaster', className:'wp-blog-setup-dialog', components:[
       { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
-    ]}
+    ]},
+	//Global errors handling interface components
+    {name: "globalErrorPopup", kind: "Popup",  lazy:false, showHideMode: "transition",  openClassName: "scaleFadeIn", scrim: true, 
+		 modal: true, className: "fastAnimate transitioner wp-blog-setup-dialog", width: "400px", components: [
+		{name: 'globalNeedHelpPane', kind: "wp.NeedHelpPrompt", onNeedHelp: "needHelp", onSubmit: "closeGlobalErrorPopup"}
+	]},
+    { name: 'globalHelpView', scrim:true, className:'wp-comment-reply-dialog', kind:'enyo.Toaster', components:[
+      {content: $L("Please visit the FAQ to get answers to common questions. If you're still having trouble, post in the forums.")},
+      { kind: 'enyo.Button', onclick:"readTheFAQ", caption: $L('Read the FAQ') },
+      { kind: 'enyo.Button', onclick:"sendEmail", caption: $L('Send Support E-mail')},
+    ]},
   ],
   create:function(){
     this.inherited(arguments);
@@ -101,24 +111,34 @@ enyo.kind({
   },
   connectionError:function(sender, request, response){
 	this.log("connectionError",request, response);
-    // this.$.scrim.hide();
-   // this.$.setupForm.toggleSignUpActivity();
     
     var errorTitle = 'Error';
     var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
-    if(response.faultString && response.faultString.length > 0) {
+    if(response && response.faultString && response.faultString.length > 0) {
     	errorMessage = response.faultString;
     }
     //check the error code
-    if(response.faultCode && response.faultCode == 403) {
-    	 //this.$.setupForm.updatePassword(this, null, '');
-    	 errorTitle = $L('Sorry, can\'t log in');
-    	 errorMessage = $L('Please update your credentials and try again.');
+    if(response && response.faultCode && response.faultCode == 403) {
+    	this.displayPasswordForm(sender);
+    	return;
     }
     
     this.log("error: ", errorTitle, errorMessage);
-    //this.$.needHelpPane.setErrorMessage(errorTitle, errorMessage);
-    //this.$.errorPopup.openAtCenter();
+    this.$.globalNeedHelpPane.setErrorMessage(errorTitle, errorMessage);
+    this.$.globalErrorPopup.openAtCenter();
+  },
+  closeGlobalErrorPopup: function(inSender) {
+	  this.$.globalErrorPopup.close();
+  },
+  needHelp: function(inSender) {
+	  this.$.globalErrorPopup.close();
+	  this.$.globalHelpView.openAtCenter();
+  },
+  readTheFAQ:function(){
+	  enyo.application.launcher.readTheFAQ();
+  },
+  sendEmail:function(){
+	  enyo.application.launcher.sendEmailToSupport();
   },
   refreshClient:function(sender){
     console.log("Refresh client");
