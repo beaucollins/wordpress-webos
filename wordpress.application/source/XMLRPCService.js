@@ -98,7 +98,16 @@ enyo.kind({
 		  var parser = new XMLRPCParser(responseTest);
 		  this.response = parser.toObject();
 		  this.fault = parser.fault;
-	  };
+	  } else if(inXHR.status == 0) {
+	  	// believe the error code indicates that the response was empty, (as not even headers were returned). This means the connection was accepted and then closed gracefully (TCP FIN).
+		this.fault = true;
+		this.faultMessage = "No Response from the Server";
+		this.faultCode = 0;
+	  } else {
+		this.fault = true;
+		this.faultMessage = inXHR.statusText ? inXHR.statusText : "Something went wrong";
+		this.faultCode = inXHR.status;
+	  }
   }
 });
 

@@ -14,6 +14,7 @@ enyo.kind({
   components: [
     { name: 'xmlrpc_client', kind:'XMLRPCService' },
     { name: 'stats_api', kind: 'WebService', method: 'POST', url: 'https://api.wordpress.org/webosapp/update-check/1.0/' },
+    {kind: "ApplicationEvents", onOpenAppMenu: "openAppMenuHandler", onCloseAppMenu: "closeAppMenuHandler"},
     { kind:'Pane', flex:1, components:[
       { name:'blankSlate', flex:1, kind:'enyo.Control' },
       {
@@ -40,7 +41,7 @@ enyo.kind({
     ]},
     // main sliding pane interface
     { name:'replyForm', scrim:true, onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
-    { kind:'AppMenu', components:[
+    { kind:'AppMenu', automatic: false, components:[
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
@@ -70,6 +71,9 @@ enyo.kind({
         onInvalidPassword:'displayPasswordForm',
         onPasswordReady:'refreshClient',
         
+        onFailure:'connectionError',
+        onBadUrl:'connectionError',
+                
         onPendingComments:'updateCommentCount',
         onNewComment:'refreshComments',
         onUpdateComment:'refreshComments',
@@ -94,6 +98,27 @@ enyo.kind({
     this.accountChanged();
     this.commentChanged();
     this.refreshDraftCount();
+  },
+  connectionError:function(sender, request, response){
+	this.log("connectionError",request, response);
+    // this.$.scrim.hide();
+   // this.$.setupForm.toggleSignUpActivity();
+    
+    var errorTitle = 'Error';
+    var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
+    if(response.faultString && response.faultString.length > 0) {
+    	errorMessage = response.faultString;
+    }
+    //check the error code
+    if(response.faultCode && response.faultCode == 403) {
+    	 //this.$.setupForm.updatePassword(this, null, '');
+    	 errorTitle = $L('Sorry, can\'t log in');
+    	 errorMessage = $L('Please update your credentials and try again.');
+    }
+    
+    this.log("error: ", errorTitle, errorMessage);
+    //this.$.needHelpPane.setErrorMessage(errorTitle, errorMessage);
+    //this.$.errorPopup.openAtCenter();
   },
   refreshClient:function(sender){
     console.log("Refresh client");
@@ -269,11 +294,12 @@ enyo.kind({
     enyo.application.launcher.openComposerWithNewItem(account,"Post");
   },*/
   openAppMenuHandler: function() {
-    // console.log("Open app menu please");
+    this.log("Open app menu please");
     this.$.appMenu.render();
     this.$.appMenu.open();
   },
   closeAppMenuHandler: function() {
+	  this.log("Close app menu please");
       this.$.appMenu.close();
   },
   displayPasswordForm:function(sender){

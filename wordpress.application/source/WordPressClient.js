@@ -19,6 +19,10 @@ enyo.kind({
   events: {
     onPasswordReady:'',
     onInvalidPassword:'',
+       
+    onFailure:'',
+    onBadUrl:'',
+    
     onNewComment:'',
     onUpdateComment:'',
     onDeleteComment:'',
@@ -101,6 +105,17 @@ enyo.kind({
     // console.log("We're ready!" + this.password);
     this.doPasswordReady();
   },
+  // apiFault, either bad username/pass or API disabled
+  apiFault:function(sender, request, response){
+	this.log("apiFault",request, response);
+	  //if(this.cancelled == true) return;
+    this.doFailure(request, response);
+  },
+  badURL:function(sender, request, response){
+	  this.log("_badURL",request, response);
+	 // if(this.cancelled == true) return;
+	 this.doBadURL(request, response);
+  },
   downloadComments:function(){
     // we should page through comments until there are no more, or to a sane amount of comments
     // this should probably only be done when the account is added
@@ -110,12 +125,12 @@ enyo.kind({
     this.$.http.callMethod({
       methodName: 'metaWeblog.getRecentPosts',
       methodParams: [this.account.blogid, this.account.username, this.password, 20]
-    }, { url:this.account.xmlrpc, onSuccess:'savePosts' });
+    }, { url:this.account.xmlrpc, onSuccess:'savePosts',  onRequestFault:'apiFault', onFailure:'badURL' });
     
     this.$.http.callMethod({
         methodName: 'wp.getCategories',
         methodParams: [this.account.blogid, this.account.username, this.password]
-      }, { url:this.account.xmlrpc, onSuccess:'saveCategories' });
+      }, { url:this.account.xmlrpc, onSuccess:'saveCategories',  onRequestFault:'apiFault', onFailure:'badURL' });
   },
   saveCategories:function(sender, response, request){
 	  var account = this.account;
@@ -647,23 +662,6 @@ enyo.kind({
   pendingCommentCountChanged:function(){
     this.doPendingComments(this.pendingCommentCount);
   },
-  uploadFile:function(filePath){
-    
-    // blogName: 'TEXT',
-    // blogid: 'INT',
-    // isAdmin: 'BOOLEAN',
-    // url: 'TEXT',
-    // username: 'TEXT',
-    // xmlrpc: 'TEXT'
-    
-    this.$.uploader.call({
-      endpoint:this.account.xmlrpc,
-      username:this.account.username,
-      password:this.password,
-      file:filePath,
-      blogId:this.account.blogid
-    });
-  },
   uploadCompleted:function(sender, response, request){
     console.log("Upload completed!");
     // parse the response XML here
@@ -673,8 +671,7 @@ enyo.kind({
       this.doUploadFailed(response_object);
     }else{
       this.doUploadComplete(response_object);
-    }
-    
+    }  
   },
   uploadFailed:function(sender, response, request){
     console.log("Upload failed");
