@@ -70,7 +70,7 @@ enyo.kind({
     }
   },
   refresh:function(){
-	this.log("refreshed!");
+	this.log("List refreshed!");
 	this.$.spinner.hide();
 	this.selectedRow = null;
 	this.$.list.getSelection().clear();

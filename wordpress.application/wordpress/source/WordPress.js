@@ -127,12 +127,11 @@ enyo.kind({
     this.log("error: ", errorTitle, errorMessage);
     this.$.globalNeedHelpPane.setErrorMessage(errorTitle, errorMessage);
     this.$.globalErrorPopup.openAtCenter();
-    
-    
+        
     //stop the loading spinners
-    this.$.posts.stopSpinner();
-    this.$.comments.stopSpinner();
-    this.$.pages.stopSpinner();
+    if(this.$.posts) this.$.posts.stopSpinner();
+    if(this.$.comments) this.$.comments.stopSpinner();
+    if(this.$.pages) this.$.pages.stopSpinner();
   },
   closeGlobalErrorPopup: function(inSender) {
 	  this.$.globalErrorPopup.close();

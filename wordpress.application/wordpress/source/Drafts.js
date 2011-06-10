@@ -28,7 +28,10 @@ enyo.kind({
   refresh:function(){
     console.log("Draft Items UI Refresh!");
     this.$.postList.accountChanged();
-    this.$.pane.selectView(this.$.blank);
+    this.$.postList.refresh();
+    this.$.detail.postChanged();
+    this.$.pane.selectViewByName('blank'); //on refresh we should put the blank item on the right side
+    
   },
   refreshPosts:function(){
     this.refresh();

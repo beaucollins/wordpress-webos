@@ -22,7 +22,8 @@ enyo.kind({
   components:[
   { kind:'FilePicker', fileType:'image', onPickFile:'uploadPickedFile' },
   { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onUploadComplete:'uploadComplete', onUploadFailed:'uploadFailed',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
-	  onNewPage:'savePostSuccess', onUpdatePage:'savePostSuccess', onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess'},
+	  onNewPage:'savePostSuccess', onUpdatePage:'savePostSuccess', onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess',
+      onFailure:'connectionError', onBadUrl:'connectionError',},
 	{	name: "uploadMediaFile", 
 		kind: "WebService",  
 		method: "POST", 
@@ -42,7 +43,6 @@ enyo.kind({
 		]}
 	]},	
     { name:'desktop', className:'desktop', components:[
-      {name:'filePicker', kind: "FilePicker", fileType:["image"], allowMultiSelect:false, onPickFile: "handleResult"},
       {name: "errorDialog", kind: "Dialog", components: [
 	     {name:"errorMessage", style: "padding: 12px", content: ""},
 	     {kind: "Button", caption: $L("Close"), onclick: "closeDialog"}
@@ -676,7 +676,20 @@ enyo.kind({
 	uploadTest:function(sender){
 	  // we're just going to use one of the wallpapers
 	  this.$.client.uploadFile("/media/internal/wallpapers/03.jpg");
-	}
+	},
+	connectionError:function(sender, response, request){
+		this.log("connectionError", response, request);
+
+		var errorTitle = 'Error';
+		var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
+		if(response && response.faultString && response.faultString.length > 0) {
+			errorMessage = response.faultString;
+		}
+
+		this.log("error: ", errorTitle, errorMessage);
+		this.$.spinner.hide();
+		enyo.windows.addBannerMessage(errorTitle+" - "+errorMessage,"{}");
+	},
 });
  
  enyo.kind({
