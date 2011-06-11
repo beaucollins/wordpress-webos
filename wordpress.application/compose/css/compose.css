@@ -106,8 +106,8 @@ body {
 
 #compose_contentScroller {
 	position: relative;
-	z-index: 1000;
-}
+/*  z-index: 1000;
+*/}
 
 #wrapper {
 	position: absolute;
@@ -210,8 +210,8 @@ body {
 }
 
 #compose_dialog {
-	z-index: 1000;
-}
+/*  z-index: 1000;
+*/}
 
 .enyo-button {
 	text-shadow: 0 1px 0 rgba(255,255,255,1);

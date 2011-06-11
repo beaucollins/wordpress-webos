@@ -21,7 +21,7 @@ enyo.kind({
   categoriesChanged : false, //true when the user click on categories
   components:[
   { kind:'FilePicker', fileType:'image', onPickFile:'uploadPickedFile' },
-  { name:'client', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onUploadComplete:'uploadComplete', onUploadFailed:'uploadFailed',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
+  { name:'wpclient', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onUploadComplete:'uploadComplete', onUploadFailed:'uploadFailed',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
 	  onNewPage:'savePostSuccess', onUpdatePage:'savePostSuccess', onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess',
       onFailure:'connectionError', onBadUrl:'connectionError',},
 	{	name: "uploadMediaFile", 
@@ -50,7 +50,8 @@ enyo.kind({
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
           { name:'headerLabelField', content:$L('New Post'), flex:1 },
-          { name:'attachButton', kind:'enyo.Button', caption:$L('Attach File'), onclick:'uploadTest' },
+          // { name:'attachButton', kind:'enyo.Button', caption:$L('Upload Test'), onclick:'uploadTest' },
+          { name:'attachButton', kind:'enyo.Button', caption:$L('Attach Image'), onclick:'pickFile' },
           { name:'previewButton', kind:'enyo.Button', caption:$L('Preview'), onclick:'showPreview' },
           { name:'draftButton', kind:'enyo.Button', caption:$L('Save Draft'), onclick:'savePost' },
 		  { kind: 'Spinner', className: 'wp-compose-spinner' },
@@ -65,6 +66,7 @@ enyo.kind({
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
 			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange"},
 			]},
+			{ name:'uploadTray', kind:'enyo.Control' },
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:$L('Settings'), onclick:'toggleSettings' },
 			] },
 		  ] },
@@ -110,6 +112,7 @@ enyo.kind({
   ],
   create:function(){
     this.inherited(arguments);
+    this.uploads = new Array();
     mediaFiles = new Array();
     this.accountChanged();
     this.postChanged();
@@ -358,15 +361,15 @@ enyo.kind({
 	if (inSender.name == 'postButton') {
 		// save the post via the client
 		if(this.isAPost())
-			this.$.client.savePost(this.post);
+			this.$.wpclient.savePost(this.post);
 		else
-			this.$.client.savePage(this.post);
+			this.$.wpclient.savePage(this.post);
 	} 
 	else {
 		if(this.isAPost())
-			this.$.client.saveDraft(this.post);
+			this.$.wpclient.saveDraft(this.post);
 		else
-			this.$.client.saveDraftPage(this.post);
+			this.$.wpclient.saveDraftPage(this.post);
 	}
   },
   savePostSuccess:function(sender, post, account){
@@ -532,7 +535,7 @@ enyo.kind({
   },
   accountChanged:function(){
 	  this.log("Account Changed:", this.account);
-	  this.$.client.setAccount(this.account);
+	  this.$.wpclient.setAccount(this.account);
 	  var that = this;
 	  //update the categories field
 	  if(this.account != null) {		  
@@ -715,6 +718,7 @@ enyo.kind({
 		this.$.passwordField.forceFocus();
 	},
 	pickFile:function(sender){
+    this.$.filePicker.onPickFile = 'uploadPickedFile';
 	  this.$.filePicker.pickFile();
 	},
 	
@@ -730,8 +734,9 @@ enyo.kind({
 	},
 	// files is an array but there's currently only ever one file picked
 	uploadPickedFile:function(sender, files){
-	  
+	  console.log("Time to upload the file");
 	  var file = files[0];
+	  console.log(enyo.json.stringify(file));
     // file has these properties
 	  //   {
     //  fullPath: // Absolute File Path.
@@ -740,12 +745,21 @@ enyo.kind({
     //  size: // File Size in Bytes.
     // }
     
+	  var uploadThumb = this.createComponent({kind:'UploadThumbnail', file:file});
+    uploadThumb.setParentNode(this.$.uploadTray.node);
 	  
-	  this.$.client.uploadFile(file.fullPath);
+	  this.$.wpclient.uploadFile(file.fullPath);
+	  console.log("Sent the file off to the client");
 	},
 	uploadTest:function(sender){
 	  // we're just going to use one of the wallpapers
-	  this.$.client.uploadFile("/media/internal/wallpapers/03.jpg");
+	  console.log("upload test");
+	  this.uploadPickedFile(sender, [{
+	    fullPath: "/media/internal/wallpapers/03.jpg",
+	    iconPath: "/media/",
+	    attachmentType: 'image'
+	  }]);
+	  
 	},
 	connectionError:function(sender, response, request){
 		this.log("connectionError", response, request);
@@ -760,6 +774,34 @@ enyo.kind({
 		this.$.spinner.hide();
 		enyo.windows.addBannerMessage(errorTitle+" - "+errorMessage,"{}");
 	},
+});
+
+enyo.kind({
+  name: 'UploadThumbnail',
+  kind: enyo.Control,
+  published: {
+    file: null,
+    uploading: false
+  },
+  components: [
+    { kind:'Image' },
+    { kind:'Spinner' }
+  ],
+  ready:function(){
+    this.fileChanged();
+  },
+  fileChanged:function(){
+    if(this.file){
+      this.$.image.setSrc(this.file.iconPath);
+    }
+  },
+  uploadingChanged:function(){
+    if (this.uploading) {
+      this.$.spinner.show();
+    }else{
+      this.$.spinner.hide();
+    }
+  }
 });
  
  enyo.kind({
