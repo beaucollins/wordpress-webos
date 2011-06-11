@@ -9,6 +9,7 @@ enyo.kind({
     if (page < 0) return;
     var that = this;
     console.log("Page size", pageSize);
+    var load_requests = this.load_requests;
     this.account.account
       .pages
       .order('date_created_gmt', false)
