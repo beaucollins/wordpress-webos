@@ -22,9 +22,10 @@ enyo.kind({
     	  }
         // that.$.postList.refresh();
       });
-    // if (this.account && this.$.dataPage.missingPage(page)) {
-    //   this.$.xmlrpc_client.callMethod({methodParams:[this.account.blogid, this.account.username, this.account.password, ((page+1) * this.$.list.pageSize)]}, { page:page });
-    // };
+      if (this.account && that.$.postList.missingPage(page) && !load_requests[page]) {
+        load_requests[page] = true;
+        this.doLoadMore(page*pageSize + pageSize);
+      };
   },
   refreshPosts:function(){
     this.account.downloadPages();  

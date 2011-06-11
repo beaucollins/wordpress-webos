@@ -41,7 +41,8 @@ enyo.kind({
   },
   missingPage:function(page){
     if(page < 0) return false;
-    return !this.havePage(page);
+    var page = this.getPage(page);
+    return (!page || page.length < this.pageSize);
   },
   havePage:function(page){
     return this.pages[page];
@@ -60,7 +61,8 @@ enyo.kind({
   events: {
     onAcquireComments:"",
     onDiscardComments:"",
-    onSelectComment:""
+    onSelectComment:"",
+    onLoadMoreComments:""
   },
   kStatusNames: {
     'hold':'Pending',
@@ -93,7 +95,6 @@ enyo.kind({
       ]}
     ] },
     { kind: 'enyo.Toolbar', components:[
-      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
 	  { kind: 'Spinner', className: 'wp-list-spinner' },
       { kind:'Button', name: 'refreshButton', content:$L('Refresh'), onclick:'refreshComments', className:"enyo-button-blue" }
     ] }
@@ -118,6 +119,8 @@ enyo.kind({
   },
   acquireComments:function(sender, page){
     var that = this;
+    if (!this.load_requests) this.load_requests = {};
+    var load_requests = this.load_requests;
     if (this.account) {
       this.account.account
         .comments
@@ -127,6 +130,16 @@ enyo.kind({
         .list(function(comments){
           that.$.dataPage.storePage(page, comments);
           that.$.list.refresh();
+          // if we're out of comments try to download more comments
+          // we need to let our owner know that we'd like more comments
+          // if we already requested that page then we can just wait
+          if (that.$.dataPage.missingPage(page) && !load_requests[page]) {
+            load_requests[page] = true;
+            that.doLoadMoreComments({
+              offset: page * that.$.list.pageSize + comments.length,
+              number: that.$.list.pageSize
+            });
+          };
         });
     };
   },
@@ -135,6 +148,7 @@ enyo.kind({
     this.$.list.refresh();
   },
   accountChanged:function(){
+    this.load_requests = {};
 	if (this.selectedRow){
 		this.$.list.select(this.selectedRow.rowIndex);
 	}

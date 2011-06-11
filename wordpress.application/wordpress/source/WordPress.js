@@ -30,9 +30,9 @@ enyo.kind({
           { name:'main', className:'main-pane', flex:1, onResize:'resizeSubviews', peekWidth:42, components:[
               { name:'content', flex:1, kind:'Pane', onSelectView:'setupSubView', components:[
                 { name:'blank', kind:'Control', flex:1 },
-                { name:'comments', kind: 'wp.Comments', flex:1, lazy:false, onReply:'replyToComment' },
-                { name:'posts', kind: 'wp.Posts', flex:1, lazy:true },
-                { name:'pages', kind: 'wp.Pages', flex:1, lazy:true },
+                { name:'comments', kind: 'wp.Comments', flex:1, lazy:false, onReply:'replyToComment', onLoadMoreComments:'loadMoreComments' },
+                { name:'posts', kind: 'wp.Posts', onLoadMore:'loadMorePosts', flex:1, lazy:true },
+                { name:'pages', kind: 'wp.Pages', onLoadMore:'loadMorePages', flex:1, lazy:true },
                 { name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
                 { name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
               ]}
@@ -434,6 +434,16 @@ enyo.kind({
         };
       });
     };
+  },
+  // sender will be a Comments
+  loadMoreComments:function(sender, options){
+      var wpclient = sender.account;
+      console.log("Load more comments: " + enyo.json.stringify(options));
+      wpclient.loadComments(options, true);
+  },
+  loadMorePosts:function(sender, numberOfPosts){
+    var wpclient = sender.account;
+    wpclient.downloadPosts(numberOfPosts);
   }
   
 });

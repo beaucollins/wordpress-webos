@@ -666,9 +666,9 @@ enyo.kind({
 
   },
   windowParamsChangeHandler: function(inSender, event) {
-	this.log("Compose windowParamsChangeHandler");
-	this.wasLaunchedBy = event.params.wasLaunchedBy;
-	var account_id = event.params.account;
+	  this.log("Compose windowParamsChangeHandler");
+	  this.wasLaunchedBy = event.params.wasLaunchedBy;
+	  var account_id = event.params.account;
     var post_id = event.params.post; //one between post_id and type should be defined
     var itemType = event.params.type;
     var composer = this;

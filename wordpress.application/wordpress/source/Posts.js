@@ -6,6 +6,9 @@ enyo.kind({
     account:null,
     methodName:'metaWeblog.getRecentPosts'
   },
+  events: {
+    onLoadMore:''
+  },
   components: [
     { name:'list', width:'350px', components:[
       { kind:'wp.PostList', flex:1, onSelectPost:'selectPost', onAcquirePage:'acquirePosts', onRefresh:'refreshPosts', onNewItem:'openNewItemEditor'}
@@ -21,6 +24,7 @@ enyo.kind({
     this.inherited(arguments);
   },
   accountChanged:function(){
+    this.load_requests = {};
     this.$.postList.setAccount(this.account);
     this.$.detail.setAccount(this.account);
   },
@@ -45,8 +49,8 @@ enyo.kind({
   acquirePosts:function(sender, page, pageSize){
     if(!this.account) return;
     if (page < 0) return;
+    var load_requests = this.load_requests;
     var that = this;
-    console.log("Page size", pageSize);
     this.account.account
       .posts
       .order('date_created_gmt', false)
@@ -60,9 +64,11 @@ enyo.kind({
           that.$.postList.setPage(page, posts);          
         };
       });
-    // if (this.account && this.$.dataPage.missingPage(page)) {
-    //   this.$.xmlrpc_client.callMethod({methodParams:[this.account.blogid, this.account.username, this.account.password, ((page+1) * this.$.list.pageSize)]}, { page:page });
-    // };
+      
+      if (this.account && that.$.postList.missingPage(page) && !load_requests[page]) {
+        load_requests[page] = true;
+        this.doLoadMore(page*pageSize + pageSize);
+      };
   },
   refreshPosts:function(){
     this.account.downloadPosts();    

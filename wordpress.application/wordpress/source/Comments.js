@@ -7,11 +7,12 @@ enyo.kind({
     comment:null
   },
   events: {
-    onReply:''
+    onReply:'',
+    onLoadMoreComments:''
   },
   components: [
     { name: 'list', width:'350px', components:[
-      { name:'comment_list', kind:'wp.CommentList', flex:1, onSelectComment:'showComment', onRefreshComment:''}
+      { name:'comment_list', kind:'wp.CommentList', flex:1, onLoadMoreComments:'doLoadMoreComments', onSelectComment:'showComment', onRefreshComment:''}
     ]},
     { name: 'right', flex:1, components:[
       { kind:'Pane', flex:1, components:[

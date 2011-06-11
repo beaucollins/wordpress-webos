@@ -123,10 +123,11 @@ enyo.kind({
     // this should probably only be done when the account is added
     this.refreshComments();
   },
-  downloadPosts:function(){
+  downloadPosts:function(number){
+    if (!number) { number = 20};
     this.$.http.callMethod({
       methodName: 'metaWeblog.getRecentPosts',
-      methodParams: [this.account.blogid, this.account.username, this.password, 20]
+      methodParams: [this.account.blogid, this.account.username, this.password, number]
     }, { url:this.account.xmlrpc, onSuccess:'savePosts',  onRequestFault:'apiFault', onFailure:'badURL' });
     
     this.$.http.callMethod({
@@ -173,51 +174,38 @@ enyo.kind({
 	 }
   },
   savePosts:function(sender, response, request){
-	  var account = this.account;
-	  var posts = response;
 	  var client = this;
-	  enyo.forEach(posts, function(post){
-		  // first find the post by id
-		  // if the post doesn't exist create a new one
-		  account.posts.filter('postid', '=', post.postid).one(function(existing){
-			  if (!existing) {
-				  // create it and save it
-				  var p = new enyo.application.models.Post(post);
-				  account.posts.add(p);
-			  } else {
-				  // update the post
-				  if (!existing.local_modifications || existing.local_modifications == 'false') {
-					  for(field in post){
-						  existing[field] = post[field];
-					  }
-				  };
-			  }
-		  });
-	  }, this);
+	  var account = this.account;
+	  var remote_posts = response;
+	  var persistence = enyo.application.persistence;
+	  
+	  var remote_post_ids = enyo.map(remote_posts, function(post){ return post.postid; });
+	  account.posts.filter('postid', 'in', remote_post_ids).list(function(local_posts){
+	    var local_posts_index = {};
+	    // create the index
+	    enyo.map(local_posts, function(post){ local_posts_index[post.postid] = post; });
+	    enyo.map(remote_posts, function(remote_post){
+	      var local_post;
+	      if (local_post = local_posts_index[remote_post.postid]) {
+	        // already exists locally
+	        if (!local_post.local_modifications) {
+	          for (field in remote_post) {
+	           local_post[field] = remote_post[field]
+	          };
+	        }
+	      } else {
+	        local_post = new enyo.application.models.Post(remote_post);
+	        account.posts.add(local_post);
+	      }
+	      
+	    }, client);
+	    
+	    persistence.flush(function(){
+	      client.doRefreshPosts();
+	    });
+	    
+	  });
 
-	  //remove posts from the local db that are not on the server anymore!!
-	  if(posts) {
-		  account.posts.list(function(storedPosts){
-			  enyo.forEach(storedPosts, function(storedPost){
-				  var presence = false;
-				  for(var i=0; i<posts.length; i++) {
-					  if(storedPost.postid == posts[i].postid)
-						  presence=true;
-				  }
-				  if(presence == false){
-					  console.log("Not Found: " + storedPost.title);
-					  account.posts.remove(storedPost);
-				  }
-			  }, this);
-			  enyo.application.persistence.flush(function(){
-				  client.doRefreshPosts(null, account);
-			  });
-		  });
-	  } else {
-		  enyo.application.persistence.flush(function(){
-			  client.doRefreshPosts(null, account);
-		  });
-	  }
   },
   savePassword:function(onSuccess){
     var options = {}
@@ -257,52 +245,48 @@ enyo.kind({
 	  });
   },
   // download a sane number of posts
-  downloadPages:function(){
+  downloadPages:function(number){
+    if (!number) number = 20;
     this.log("start loading pages from server");
     this.$.http.callMethod({
       methodName:'wp.getPages',
-      methodParams:[this.account.blogid, this.account.username, this.password, 20]
-    }, { url:this.account.xmlrpc, onSuccess:'savePages', onRequestFault:'apiFault', onFailure:'badURL' });
+      methodParams:[this.account.blogid, this.account.username, this.password, number]
+    }, { url:this.account.xmlrpc, onSuccess:'savePages', onRequestFault:'apiFault', onFailure:'badURL', pageRequestCount:number });
   },
   savePages:function(sender, response, request){
-    var account = this.account;
-    var pages = response;
+    
     var client = this;
-
-    enyo.forEach(pages, function(page){
-      account.pages.filter('page_id', '=', page.page_id).one(function(existing){
-        if (!existing) {
-          var p = new enyo.application.models.Page(page);
-          account.pages.add(p);
-        }else{     
-          for(field in page)
-            existing[field] = page[field];
-        }
-      });
-    }, this);
-    //remove pages from the local db that are not on the server anymore!!
-    if(pages) {    	
-    	account.pages.list(function(storedPages){
-    		enyo.forEach(storedPages, function(storedPage){
-    			var presence = false;
-    			for(var i=0; i < pages.length; i++) {
-    				if(storedPage.page_id == pages[i].page_id)
-    					presence=true;
-    			}
-    			if(presence == false){
-    				console.log("Not Found: " + storedPage.title);
-    				account.pages.remove(storedPage);
-    			}
-    		}, this);
-    		enyo.application.persistence.flush(function(){
-    			client.doRefreshPages(null,  account);
-    		});
-    	});
-    } else {
-    	enyo.application.persistence.flush(function(){
-			client.doRefreshPages(null, account);
-		});
-    }
+	  var account = this.account;
+	  var remote_pages = response;
+	  var persistence = enyo.application.persistence;
+	  	  
+	  var remote_page_ids = enyo.map(remote_pages, function(post){ return post.page_id; });
+	  account.pages.filter('page_id', 'in', remote_page_ids).list(function(local_pages){
+	    var local_pages_index = {};
+	    // create the index
+	    enyo.map(local_pages, function(page){ local_pages_index[page.page_id] = page; });
+	    enyo.map(remote_pages, function(remote_page){
+	      var local_page;
+	      if (local_page = local_pages_index[remote_page.page_id]) {
+	        // already exists locally
+	        if (!local_page.local_modifications) {
+	          for (field in remote_page) {
+	           local_page[field] = remote_page[field]
+	          };
+	        }
+	      } else {
+	        local_page = new enyo.application.models.Page(remote_page);
+	        account.posts.add(local_page);
+	      }
+	      
+	    }, client);
+	    
+	    persistence.flush(function(){
+	      client.doRefreshPages();
+	    });
+	    
+	  });
+	  
   },
   savePage:function(post){
 	  var client = this;
@@ -530,7 +514,7 @@ enyo.kind({
   },
   wordpressApiFault:function(sender, response, request){
     // bad password/username
-    if (response.faultCode == 403) {
+    if (response && response.faultCode == 403) {
       // delete the password
       this.$.removeKey.call({keyname:this.passwordKeyName()});
     };
@@ -632,59 +616,62 @@ enyo.kind({
       methodParams:[this.account.blogid, this.account.username, this.password, options]
     }, { url: this.account.xmlrpc, skip_notifications:skip_notifications, onRequestFault:'apiFault', onFailure:'badURL' } );
   },
+  loadComments:function(options, skip_notifications){
+    this.$.getComments.callMethod({
+      methodParams:[this.account.blogid, this.account.username, this.password, options]
+    }, { url: this.account.xmlrpc, skip_notifications:skip_notifications });
+  },
   checkNewComments:function(sender, response, request){
     var account = this.account;
     var client = this;
-    enyo.forEach(response, function(comment){
-      // first see if we have the comment already in this account
-      // check by the comment's id
-      // account.comments.add(new Comment(comment));
-      account.comments.filter('comment_id', '=', comment.comment_id).one(function(existing){
-        if (!existing) {
-          var c = new enyo.application.models.Comment(comment);
-          account.comments.add(c);
-          if(request.skip_notifications !== true){
-        	  enyo.application.commentDashboard.notifyComment(c, account)
-          }else{
-        	  console.log("Skipping notifications");
-          }
+    var persistence = enyo.application.persistence;
+    // we are receiving a subset of comments here
+    // so we should just create/or update
+    // first let's load all of the comments that we might have already have locally
+    // get all of the id's from the response
+    var remote_ids = enyo.map(response, function(comment){ return comment.comment_id }, this);
+    // find all local comments that may match these ids
+    this.account.comments.filter('comment_id', 'in', remote_ids).list(function(local_comments){
+      // index the local comments by comment_id
+      var comment_index = {};
+      var new_comments = [];
+      enyo.map(local_comments, function(comment){ comment_index[comment.comment_id] = comment; return comment}, client);
+      // now loop through the response array, if it's in the comment_index, update the comment
+      // if not, insert the comment
+      enyo.map(response, function(remote_comment){
+        var local_comment;
+        if (local_comment = comment_index[remote_comment.comment_id]) {
+          // update the local comment
+          for (field in remote_comment) {
+           local_comment[field]= remote_comment[field]
+          };
         }else{
-          //let's just update the content
-          // this should work, Persistence doesn't have any documentation for mass assigning properties
-          // console.log("It exists!", existing);
-          for(field in comment){
-            existing[field]=comment[field];
-          }
-
+          // create a new coment
+          console.log("Didn't find comment: ", remote_comment);
+          local_comment = new enyo.application.models.Comment(remote_comment);
+          // add it to the new_comments array so we can notify when we've committed all these changes
+          account.comments.add(local_comment);
+          new_comments.push(local_comment);
         }
+        
+      }, client);
+      
+      // comment modification shave been made let's persist them
+      persistence.flush(function(){
+        // notify that the comments have been refreshed
+        console.log("Persisted the comments?");
+        client.doRefreshComments();
+        client.refreshPendingCommentCount();
+        if (!(request.skip_notifications === true)) {
+          enyo.map(new_comments, function(comment){
+            enyo.application.commentDashboard.notifyComment(comment, account);
+          });
+        };
+        
       });
+      
     });
     
-    //remove comments from the local db that are not on the server anymore!!
-    if(response) {
-    	account.comments.list(function(storedComments){
-    		enyo.forEach(storedComments, function(storedComment){
-    			var presence = false;
-    			for(var i=0; i < response.length; i++) {
-    				if(storedComment.comment_id == response[i].comment_id)
-    					presence=true;
-    			}
-    			if(presence == false){
-    				console.log("Not Found Comment: " + storedComment.comment_id);
-    				account.comments.remove(storedComment);
-    			}
-    		}, this);    	 
-    		enyo.application.persistence.flush(function(){
-    			client.doRefreshComments(null, account);
-    			client.refreshPendingCommentCount();
-    		});
-    	});    
-    } else {
-    	enyo.application.persistence.flush(function(){
-    		client.doRefreshComments(null, account);
-    		client.refreshPendingCommentCount();
-    	});
-    }
   },
   refreshPendingCommentCount:function(){
     var client = this;
@@ -695,6 +682,23 @@ enyo.kind({
   },
   pendingCommentCountChanged:function(){
     this.doPendingComments(this.pendingCommentCount);
+  },
+  uploadFile:function(filePath){
+    
+    // blogName: 'TEXT',
+    // blogid: 'INT',
+    // isAdmin: 'BOOLEAN',
+    // url: 'TEXT',
+    // username: 'TEXT',
+    // xmlrpc: 'TEXT'
+    
+    this.$.uploader.call({
+      endpoint:this.account.xmlrpc,
+      username:this.account.username,
+      password:this.password,
+      file:filePath,
+      blogId:this.account.blogid
+    });
   },
   uploadCompleted:function(sender, response, request){
     console.log("Upload completed!");

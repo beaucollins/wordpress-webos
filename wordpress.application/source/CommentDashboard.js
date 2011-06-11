@@ -12,6 +12,7 @@ enyo.kind({
     delete this.dashboards;
   },
   notifyComment: function(comment, account){
+    console.log("Notifying comment", comment, account);
     var dashboard = this.getAccountDashboard(account);
     dashboard.push({
       icon:'images/notification-comment-large.png',

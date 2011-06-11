@@ -5,7 +5,8 @@ enyo.kind({
     onSelectPost:'',
     onAcquirePage:'',
     onRefresh:'',
-    onNewItem:''	
+    onNewItem:'',
+    onLoadMore:''
   },
   published: {
     account:null,
@@ -38,8 +39,7 @@ enyo.kind({
       ] }
     ] },
     { kind:'enyo.Toolbar', components:[
-      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'}, 
-	  { kind: 'Spinner', className: 'wp-list-spinner' },
+	    { kind: 'Spinner', className: 'wp-list-spinner' },
       { kind:'Button', name: 'refresh', content:$L("Refresh"), onclick:'refreshList'},
       { kind:'Button', name: 'newItem', content:$L("Add New"), onclick:'doNewItem'}
     ] }
@@ -82,6 +82,9 @@ enyo.kind({
   setPage:function(pageNumber, items){
     this.$.dataPage.storePage(pageNumber, items);
     this.$.list.refresh();
+  },
+  missingPage:function(pageNumber){
+    return this.$.dataPage.missingPage(pageNumber);
   },
   discardPage:function(sender, page){
     this.$.dataPage.clearPage(page);
