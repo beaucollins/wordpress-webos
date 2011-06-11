@@ -186,7 +186,7 @@ enyo.kind({
 				  account.posts.add(p);
 			  } else {
 				  // update the post
-				  if (!existing.local_modifications) {
+				  if (!existing.local_modifications || existing.local_modifications == 'false') {
 					  for(field in post){
 						  existing[field] = post[field];
 					  }
@@ -233,28 +233,111 @@ enyo.kind({
   // saves local modifications
   // Post should be an instance of enyo.application.models.Post
   saveDraft:function(post){
-    var client = this;
-    var account = this.account;
-    account.posts.add(post);
-    post.local_modifications = true;
-    console.log("Save draft");
-    enyo.application.persistence.flush(function(){
-      client.doSaveDraft(post, account);
-      enyo.application.launcher.draftSaved();
-    });
+	  var client = this;
+	  var account = this.account;    
+
+	  if(post.local_modifications == 'true') {
+		  this.log("Post already modified");
+		  account.posts.add(post);
+	  } else {
+		  this.log("new draft post stored");
+		  //make a local copy of the post
+		  var p = new enyo.application.models.Post();
+		  // clone the post - DO NOT USE for element in post
+		  p.postid = post.postid;
+		  p.title = post.title;
+		  p.categories = post.categories;
+		  p.custom_fields = post.custom_fields;
+		  p.date_created_gmt = post.date_created_gmt;
+		  p.description = post.description;
+		  p.link = post.link;
+		  p.mt_allow_comments = post.mt_allow_comments;
+		  p.mt_allow_pings = post.mt_allow_pings;
+		  p.mt_excerpt = post.mt_excerpt;
+		  p.mt_keywords = post.mt_keywords;
+		  p.mt_text_more = post.mt_text_more;
+		  p.permaLink = post.permaLink;
+		  p.post_status = post.post_status;
+		  p.userid = post.userid;
+		  p.wp_author_display_name = post.wp_author_display_name;
+		  p.wp_author_id = post.wp_author_id;
+		  p.wp_password = post.wp_password;
+		  p.wp_post_form = post.wp_post_form;
+		  p.wp_slug = post.wp_slug;
+		  p.local_modifications = 'true';
+		  account.posts.add(p);
+		  
+		  //TODO: rollback the changes on the original post
+		/*  account.posts.filter('postid', '=', post.post).one(function(existing){
+			  if (existing) {
+				  for(field in existing)
+					  post[field] = existing[field];
+			  }
+		  });*/
+		  
+	  }
+	  this.log("Saved draft Post");
+	  	  	  
+	  enyo.application.persistence.flush(function(){
+		  client.doSaveDraft(post, account);
+		  enyo.application.launcher.draftSaved();
+	  });
   },
   // saves local modifications
   // Page should be an instance of enyo.application.models.Page
-  saveDraftPage:function(post){
+  saveDraftPage:function(page){
     var client = this;
     var account = this.account;
-    account.pages.add(post);
-    post.local_modifications = true;
-    console.log("Save draft Page");
-    enyo.application.persistence.flush(function(){
-      client.doSaveDraftPage(post, account);
-      enyo.application.launcher.draftSaved();
-    });
+
+	  if(page.local_modifications == 'true') {
+		  this.log("page already modified");
+		  account.pages.add(page);
+	  } else {
+		  this.log("new draft page stored");
+		  //make a local copy of the page
+		  var p = new enyo.application.models.Page();
+		  // clone the page - DO NOT USE for element in page
+          p.categories = page.categories;
+		  p.custom_fields = page.custom_fields;
+		  p.date_created_gmt = page.date_created_gmt;
+		  p.dateCreated = page.dateCreated;
+    	  p.description = page.description;
+    	  p.excerpt = page.excerpt;
+		  p.link = page.link;
+		  p.mt_allow_comments = page.mt_allow_comments;
+		  p.mt_allow_pings = page.mt_allow_pings;
+		  p.page_id = page.page_id;
+		  p.page_status = page.page_status;
+		  p.permaLink = page.permaLink;
+		  p.text_more = page.text_more;
+		  p.title = page.title;
+		  p.userid = page.userid;		  
+		  p.wp_author = page.wp_author;
+		  p.wp_author_id = page.wp_author_id;
+     	  p.wp_page_order = page.wp_page_order;
+		  p.wp_page_parent_id = page.wp_page_parent_id;
+		  p.wp_page_parent_title = page.wp_page_parent_title;
+		  p.wp_page_template = page.wp_page_template;
+		  p.wp_password = page.wp_password;
+		  p.wp_slug = page.wp_slug;
+		  p.local_modifications = 'true';
+		  account.pages.add(p);
+		  
+		  //TODO: rollback the changes on the original page
+		/*  account.pages.filter('page_id', '=', page.page_id).one(function(existing){
+			  if (existing) {
+				  for(field in existing)
+					  page[field] = existing[field];
+			  }
+		  });*/
+		  
+	  }
+	    this.log("Saved draft Page");
+	  	  	  
+	  enyo.application.persistence.flush(function(){
+		  client.doSaveDraft(page, account);
+		  enyo.application.launcher.draftSaved();
+	  });
   },
   // download a sane number of posts
   downloadPages:function(){
@@ -329,7 +412,7 @@ enyo.kind({
 	  var client = this;
 	  var account = this.account;
 	  if(post.local_modifications) {
-		  post.local_modifications = false;
+		  post.local_modifications = 'false';
 	  }
 	  
 	  if(request.update) {
@@ -414,8 +497,9 @@ enyo.kind({
     var post = request.post;
     var client = this;
     var account = this.account;
+    
     if(post.local_modifications) {
-    	post.local_modifications = false;
+    	post.local_modifications = 'false';
     }
     
     if(request.update) {

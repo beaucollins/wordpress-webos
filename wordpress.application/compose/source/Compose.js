@@ -531,7 +531,7 @@ enyo.kind({
 	  this.$.errorDialog.close();
   },
   accountChanged:function(){
-	  console.log("Account Changed:", this.account);
+	  this.log("Account Changed:", this.account);
 	  this.$.client.setAccount(this.account);
 	  var that = this;
 	  //update the categories field
@@ -603,7 +603,7 @@ enyo.kind({
     
     var load_account = function(){
       enyo.application.models.Account.load(account_id, function(account){
-        composer.setAccount(account)
+        composer.setAccount(account);
       })
     }
         

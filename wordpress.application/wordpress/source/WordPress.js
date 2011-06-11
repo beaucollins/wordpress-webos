@@ -70,7 +70,6 @@ enyo.kind({
   ready:function(){
     console.log("Ready");
     this.loadAccounts();
-    
   },
   loadAccounts: function(){
     this.log("Load accounts", enyo.application.accountManager.accounts);
@@ -392,11 +391,13 @@ enyo.kind({
 	
 	if (params.action == 'refreshPages') {
 		this.refreshDraftCount();
-		this.$.pages.refresh();
+		if(this.$.pages)
+			this.$.pages.refresh();
 	};
 	if (params.action == 'refreshPosts') {
 		this.refreshDraftCount();
 //		if (this.$.content.getView() == this.$.posts) {
+		if(this.$.posts)
 			this.$.posts.refresh();
 	//	}
 	};  

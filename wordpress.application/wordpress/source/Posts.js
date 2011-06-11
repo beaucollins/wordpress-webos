@@ -50,6 +50,8 @@ enyo.kind({
     this.account.account
       .posts
       .order('date_created_gmt', false)
+       .filter('local_modifications', '=', null) //we must filter the local drafts here
+       .or(new enyo.application.persistence.PropertyFilter('local_modifications', '=', 'false'))
       .filter('postid', '!=', '0')
       .limit(pageSize)
       .skip(page*pageSize)
