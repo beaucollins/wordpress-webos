@@ -803,6 +803,34 @@ enyo.kind({
     }
   }
 });
+
+enyo.kind({
+  name: 'UploadThumbnail',
+  kind: enyo.Control,
+  published: {
+    file: null,
+    uploading: false
+  },
+  components: [
+    { kind:'Image' },
+    { kind:'Spinner' }
+  ],
+  ready:function(){
+    this.fileChanged();
+  },
+  fileChanged:function(){
+    if(this.file){
+      this.$.image.setSrc(this.file.iconPath);
+    }
+  },
+  uploadingChanged:function(){
+    if (this.uploading) {
+      this.$.spinner.show();
+    }else{
+      this.$.spinner.hide();
+    }
+  }
+});
  
  enyo.kind({
 	 name: "MediaObject",
