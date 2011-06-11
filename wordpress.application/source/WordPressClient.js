@@ -234,50 +234,10 @@ enyo.kind({
   // Post should be an instance of enyo.application.models.Post
   saveDraft:function(post){
 	  var client = this;
-	  var account = this.account;    
-
-	  if(post.local_modifications == 'true') {
-		  this.log("Post already modified");
-		  account.posts.add(post);
-	  } else {
-		  this.log("new draft post stored");
-		  //make a local copy of the post
-		  var p = new enyo.application.models.Post();
-		  // clone the post - DO NOT USE for element in post
-		  p.postid = post.postid;
-		  p.title = post.title;
-		  p.categories = post.categories;
-		  p.custom_fields = post.custom_fields;
-		  p.date_created_gmt = post.date_created_gmt;
-		  p.description = post.description;
-		  p.link = post.link;
-		  p.mt_allow_comments = post.mt_allow_comments;
-		  p.mt_allow_pings = post.mt_allow_pings;
-		  p.mt_excerpt = post.mt_excerpt;
-		  p.mt_keywords = post.mt_keywords;
-		  p.mt_text_more = post.mt_text_more;
-		  p.permaLink = post.permaLink;
-		  p.post_status = post.post_status;
-		  p.userid = post.userid;
-		  p.wp_author_display_name = post.wp_author_display_name;
-		  p.wp_author_id = post.wp_author_id;
-		  p.wp_password = post.wp_password;
-		  p.wp_post_form = post.wp_post_form;
-		  p.wp_slug = post.wp_slug;
-		  p.local_modifications = 'true';
-		  account.posts.add(p);
-		  
-		  //TODO: rollback the changes on the original post
-		/*  account.posts.filter('postid', '=', post.post).one(function(existing){
-			  if (existing) {
-				  for(field in existing)
-					  post[field] = existing[field];
-			  }
-		  });*/
-		  
-	  }
-	  this.log("Saved draft Post");
-	  	  	  
+	  var account = this.account; 
+	  post.local_modifications = 'true';
+	  account.posts.add(post);
+	  this.log("Saved draft Post");	  	  	  
 	  enyo.application.persistence.flush(function(){
 		  client.doSaveDraft(post, account);
 		  enyo.application.launcher.draftSaved();
@@ -286,54 +246,11 @@ enyo.kind({
   // saves local modifications
   // Page should be an instance of enyo.application.models.Page
   saveDraftPage:function(page){
-    var client = this;
-    var account = this.account;
-
-	  if(page.local_modifications == 'true') {
-		  this.log("page already modified");
-		  account.pages.add(page);
-	  } else {
-		  this.log("new draft page stored");
-		  //make a local copy of the page
-		  var p = new enyo.application.models.Page();
-		  // clone the page - DO NOT USE for element in page
-          p.categories = page.categories;
-		  p.custom_fields = page.custom_fields;
-		  p.date_created_gmt = page.date_created_gmt;
-		  p.dateCreated = page.dateCreated;
-    	  p.description = page.description;
-    	  p.excerpt = page.excerpt;
-		  p.link = page.link;
-		  p.mt_allow_comments = page.mt_allow_comments;
-		  p.mt_allow_pings = page.mt_allow_pings;
-		  p.page_id = page.page_id;
-		  p.page_status = page.page_status;
-		  p.permaLink = page.permaLink;
-		  p.text_more = page.text_more;
-		  p.title = page.title;
-		  p.userid = page.userid;		  
-		  p.wp_author = page.wp_author;
-		  p.wp_author_id = page.wp_author_id;
-     	  p.wp_page_order = page.wp_page_order;
-		  p.wp_page_parent_id = page.wp_page_parent_id;
-		  p.wp_page_parent_title = page.wp_page_parent_title;
-		  p.wp_page_template = page.wp_page_template;
-		  p.wp_password = page.wp_password;
-		  p.wp_slug = page.wp_slug;
-		  p.local_modifications = 'true';
-		  account.pages.add(p);
-		  
-		  //TODO: rollback the changes on the original page
-		/*  account.pages.filter('page_id', '=', page.page_id).one(function(existing){
-			  if (existing) {
-				  for(field in existing)
-					  page[field] = existing[field];
-			  }
-		  });*/
-		  
-	  }
-	    this.log("Saved draft Page");
-	  	  	  
+	  var client = this;
+	  var account = this.account;
+	  page.local_modifications = 'true';
+	  account.pages.add(page);
+	  this.log("Saved draft Page");
 	  enyo.application.persistence.flush(function(){
 		  client.doSaveDraft(page, account);
 		  enyo.application.launcher.draftSaved();
@@ -411,10 +328,7 @@ enyo.kind({
 	  var post = request.post;
 	  var client = this;
 	  var account = this.account;
-	  if(post.local_modifications) {
-		  post.local_modifications = 'false';
-	  }
-	  
+
 	  if(request.update) {
 		  //check the response bool value
 		  if(response === false) 
@@ -423,7 +337,26 @@ enyo.kind({
 		  //this is a new page
 		  post.page_id = response;
 	  }
-	    
+
+	  //if this post is a local draft of a previous published post we should remove it from the local storage and update the 'original' version of the post   
+	  if(post.local_modifications == null || post.local_modifications == 'false') {
+		  this.log("this is NOT a local draft page");
+	  } else {
+		  this.log("this IS a local draft page");
+		  //find and update the original version
+		  account.pages.filter('page_id', '=', post.page_id)  
+		  .filter('local_modifications', '=', null) //we must filter the local drafts here
+		  .one(function(existing){
+			  if (existing) {
+				  client.log("removed the original page",existing.id );
+				  enyo.application.models.Page.all().remove(existing);
+			  } else {
+				  client.log("original page not found");
+			  }
+		  });
+	  }
+	  
+	  post.local_modifications = null;
 	  account.pages.add(post);
 	  enyo.application.persistence.flush(function(){
 		  client.$.http.callMethod({
@@ -492,16 +425,11 @@ enyo.kind({
   },
   savePostSuccess:function(sender, response, request){
 	this.log(">>>savePostSuccess", response);
-	  // if it was a metaWeblog.editPost request response will be boolean true
+	 // if it was a metaWeblog.editPost request response will be boolean true
     // otherwise it will be the new id of the post
     var post = request.post;
     var client = this;
     var account = this.account;
-    
-    if(post.local_modifications) {
-    	post.local_modifications = 'false';
-    }
-    
     if(request.update) {
     	//check the response bool value
     	if(response === false) 
@@ -511,7 +439,27 @@ enyo.kind({
     	post.postid = response;
     }
     
-    account.posts.add(post);
+    //if this post is a local draft of a previous published post we should remove it from the local storage and update the 'original' version of the post   
+    if(post.local_modifications == null || post.local_modifications == 'false') {
+    	this.log("this is NOT a local draft");
+    } else {
+    	this.log("this IS a local draft");
+    	//find and update the original version
+    	account.posts.filter('postid', '=', post.postid)  
+    	.filter('local_modifications', '=', null) //we must filter the local drafts here
+    	.one(function(existing){
+    		if (existing) {
+    			client.log("removed the original",existing.id );
+    			enyo.application.models.Post.all().remove(existing);
+    		} else {
+    			client.log("original not found");
+    		}
+    	});
+    }
+
+    post.local_modifications = null;
+	account.posts.add(post);
+    
     enyo.application.persistence.flush(function(){
       client.$.http.callMethod({
         methodName:'metaWeblog.getPost',

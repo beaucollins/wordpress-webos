@@ -593,6 +593,75 @@ enyo.kind({
 	  //password has been set from the Key Manager now
 	  console.log("Compose Client is ready");
   },
+  cloneItem:function(item){
+	  
+	  if(item.local_modifications && item.local_modifications == 'true') {
+		  this.log("Item already modified");
+		  return item;
+	  } 
+
+	  if(item._type === "Post") {
+		  this.log("new draft Post stored");
+		  var post = item;
+		  //make a local copy of the post
+		  var p = new enyo.application.models.Post();
+		  // clone the post - DO NOT USE for element in post
+		  p.postid = post.postid;
+		  p.title = post.title;
+		  p.categories = post.categories;
+		  p.custom_fields = post.custom_fields;
+		  p.date_created_gmt = post.date_created_gmt;
+		  p.description = post.description;
+		  p.link = post.link;
+		  p.mt_allow_comments = post.mt_allow_comments;
+		  p.mt_allow_pings = post.mt_allow_pings;
+		  p.mt_excerpt = post.mt_excerpt;
+		  p.mt_keywords = post.mt_keywords;
+		  p.mt_text_more = post.mt_text_more;
+		  p.permaLink = post.permaLink;
+		  p.post_status = post.post_status;
+		  p.userid = post.userid;
+		  p.wp_author_display_name = post.wp_author_display_name;
+		  p.wp_author_id = post.wp_author_id;
+		  p.wp_password = post.wp_password;
+		  p.wp_post_form = post.wp_post_form;
+		  p.wp_slug = post.wp_slug;
+		  p.local_modifications = 'true';
+		  return p;
+	  } else {
+		  this.log("new draft Page stored");
+		  var page = item;
+		  //make a local copy of the page
+		  var p = new enyo.application.models.Page();
+		  // clone the page - DO NOT USE for element in page
+		  p.categories = page.categories;
+		  p.custom_fields = page.custom_fields;
+		  p.date_created_gmt = page.date_created_gmt;
+		  p.dateCreated = page.dateCreated;
+		  p.description = page.description;
+		  p.excerpt = page.excerpt;
+		  p.link = page.link;
+		  p.mt_allow_comments = page.mt_allow_comments;
+		  p.mt_allow_pings = page.mt_allow_pings;
+		  p.page_id = page.page_id;
+		  p.page_status = page.page_status;
+		  p.permaLink = page.permaLink;
+		  p.text_more = page.text_more;
+		  p.title = page.title;
+		  p.userid = page.userid;		  
+		  p.wp_author = page.wp_author;
+		  p.wp_author_id = page.wp_author_id;
+		  p.wp_page_order = page.wp_page_order;
+		  p.wp_page_parent_id = page.wp_page_parent_id;
+		  p.wp_page_parent_title = page.wp_page_parent_title;
+		  p.wp_page_template = page.wp_page_template;
+		  p.wp_password = page.wp_password;
+		  p.wp_slug = page.wp_slug;
+		  p.local_modifications = 'true';
+		  return p;
+	  }
+
+  },
   windowParamsChangeHandler: function(inSender, event) {
 	this.log("Compose windowParamsChangeHandler");
 	this.wasLaunchedBy = event.params.wasLaunchedBy;
@@ -611,10 +680,11 @@ enyo.kind({
       enyo.application.models.Post.load(post_id, function(post){
         console.log("Found a post? ", post);
         if (post) {
-          composer.setPost(post);
+          var p = composer.cloneItem(post); //clone the post obj
+          composer.setPost(p);
           post.fetch('account', function(account){
         	  composer.setAccount(account);
-          })
+          });
         }else{
           load_account();
           composer.setPost(new enyo.application.models.Post({mt_allow_pings:null,mt_allow_comments:null}));

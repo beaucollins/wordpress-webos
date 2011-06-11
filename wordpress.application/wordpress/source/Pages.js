@@ -14,7 +14,6 @@ enyo.kind({
       .order('date_created_gmt', false)
       .filter('page_id', '!=', '0')
       .filter('local_modifications', '=', null) //we must filter the local drafts here
-      .or(new enyo.application.persistence.PropertyFilter('local_modifications', '=', 'false'))
       .limit(pageSize)
       .skip(page*pageSize)
       .list(function(posts){
