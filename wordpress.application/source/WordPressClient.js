@@ -632,7 +632,7 @@ enyo.kind({
     var client = this;
     this.account.comments.remove(request.comment);
     enyo.application.persistence.flush(function(){
-      client.doDeleteComment();
+      client.doDeleteComment(request.comment);
       client.refreshPendingCommentCount();
     });
   },

@@ -56,7 +56,7 @@ enyo.kind({
   published: {
     account: null,
     filterItem:null,
-    selectedRow:null
+    selected:null
   },
   events: {
     onAcquireComments:"",
@@ -95,7 +95,8 @@ enyo.kind({
       ]}
     ] },
     { kind: 'enyo.Toolbar', components:[
-	  { kind: 'Spinner', className: 'wp-list-spinner' },
+      { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
+	    { kind: 'Spinner', className: 'wp-list-spinner' },
       { kind:'Button', name: 'refreshButton', content:$L('Refresh'), onclick:'refreshComments', className:"enyo-button-blue" }
     ] }
   ],
@@ -110,7 +111,7 @@ enyo.kind({
       this.$.timestamp.setContent(FormatDateTimeForListView(comment.date_created_gmt));
       this.$.commentContent.setContent(TruncateText(StripHTML(comment.content)));
       this.$.commentSubject.setContent(comment.post_title);
-      this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(comment.id))
+      this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(inIndex));
       this.$.item.addClass("status-"+comment.status);
       this.$.status.addClass("status-"+comment.status);
       this.$.status.setContent($L(this.kStatusNames[comment.status]));
@@ -148,11 +149,10 @@ enyo.kind({
     this.$.list.refresh();
   },
   accountChanged:function(){
+    this.setSelected(null);
     this.load_requests = {};
-	if (this.selectedRow){
-		this.$.list.select(this.selectedRow.rowIndex);
-	}
     this.$.list.punt();
+    this.$.list.select(null);
     this.$.dataPage.clear();
     if (this.account == null) {
       return;
@@ -163,21 +163,24 @@ enyo.kind({
   imageLoadError:function(sender){
     sender.setSrc('../images/icons/default-avatar.png');
   },
-  selectComment:function(sender, item){
-	this.log("Selected Comment: ", item);
-	this.selectedRow = item;
-    var comment = this.$.dataPage.itemAtIndex(item.rowIndex);
-    this.$.list.select(item.rowIndex);
+  selectComment:function(sender, event){
+    var comment = this.$.dataPage.itemAtIndex(event.rowIndex);
+    this.setSelected(comment);
+    this.$.list.select(event.rowIndex);
     this.$.item.addClass('active-selection');
     this.doSelectComment(comment, this.account);
   },
   refreshed:function(){
+    this.log("REMOVE");
+    this.refresh();
+  },
+  refresh:function(){
     this.log("Refreshed the list");
     this.selectedRow = null
     this.$.list.getSelection().clear();
     this.$.list.reset();
     this.$.list.refresh();
-	this.$.spinner.hide();
+	  this.$.spinner.hide();
   },
   stopSpinner:function() {
 	this.$.spinner.hide();
@@ -223,8 +226,15 @@ enyo.kind({
   },
   refreshComments:function(sender){
     this.log("Account", this.account);
-	this.$.spinner.show();
+	  this.$.spinner.show();
     this.account.refreshComments();
+  },
+  fireSelected:function(){
+    this.doSelectComment(this.selected);
+  },
+  clearSelection:function(){
+    this.setSelected(null);
+    this.$.list.select(null);
   }
 });
 

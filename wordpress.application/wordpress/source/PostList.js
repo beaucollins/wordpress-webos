@@ -10,7 +10,7 @@ enyo.kind({
   },
   published: {
     account:null,
-	selectedRow:null
+    selected:null
   },
   kPostStatus: {
     'publish' : 'Published',
@@ -20,7 +20,6 @@ enyo.kind({
   },
   components: [
     { kind:'wp.DataPage' },
-    // setting lookAhead to 1 for XMLRPC api performance reasons, because we can't get paged results
     { name:'list', kind:'VirtualList', flex:1, onSetupRow:'setupPost', onAcquirePage:'requestPageWithSize', onDiscardPage:'discardPage', components:[
       { name:'item', kind:'Item', onclick:'selectPost', className:'post-item', components:[
 	      { name:'header', kind:'HFlexBox', components: [
@@ -39,9 +38,11 @@ enyo.kind({
       ] }
     ] },
     { kind:'enyo.Toolbar', components:[
-	    { kind: 'Spinner', className: 'wp-list-spinner' },
+	    { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
+	    { flex:1 },
+      { kind: 'Spinner', className: 'wp-list-spinner' },
       { kind:'Button', name: 'refresh', content:$L("Refresh"), onclick:'refreshList'},
-      { kind:'Button', name: 'newItem', content:$L("Add New"), onclick:'doNewItem'}
+      { kind:'Button', name: 'newItem', content:$L("Add New"), onclick:'openNewItemEditor'}
     ] }
   ],
   create:function(){
@@ -54,11 +55,10 @@ enyo.kind({
   stopSpinner:function() {
 	 this.$.spinner.hide();
   },
-  selectPost:function(sender, item){
-	this.log("selected item: ", item);
-	this.selectedRow = item;
-    var post = this.$.dataPage.itemAtIndex(item.rowIndex);
-    this.$.list.select(item.rowIndex);
+  selectPost:function(sender, event){
+    var post = this.$.dataPage.itemAtIndex(event.rowIndex);
+    this.setSelected(post);
+    this.$.list.select(event.rowIndex);
     this.doSelectPost(post, this.account);
   },
   requestPageWithSize:function(sender, page){
@@ -66,20 +66,45 @@ enyo.kind({
     if (cached = this.$.dataPage.getPage(page)) {
       this.$.list.refresh();
     }else{
-      this.doAcquirePage(page, this.$.list.pageSize);
+      this.acquirePosts(page, this.$.list.pageSize);
     }
   },
+  acquirePosts:function(page, pageSize){
+    if(!this.account) return;
+    if (page < 0) return;
+    var load_requests = this.load_requests;
+    var that = this;
+    this.account.account
+      .posts
+      .order('date_created_gmt', false)
+       .filter('local_modifications', '=', null) //we must filter the local drafts here
+      .filter('postid', '!=', '0')
+      .limit(pageSize)
+      .skip(page*pageSize)
+      .list(function(posts){
+        console.log("Found something? ", posts);
+        if (posts.length > 0) {
+          // console.log("Data for the page:", page, posts);
+          that.setPage(page, posts);          
+        };
+        
+        if (that.account && that.missingPage(page) && !load_requests[page]) {
+          load_requests[page] = true;
+          that.doLoadMore(page*pageSize + pageSize);
+        };
+        
+      });
+  },
   refresh:function(){
-	this.log("List refreshed!");
-	this.$.spinner.hide();
-	this.selectedRow = null;
-	this.$.list.getSelection().clear();
+  	this.$.spinner.hide();
+  	this.selectedRow = null;
     this.$.list.punt();
     this.$.dataPage.clear();
     this.$.list.reset();
     this.$.list.refresh();
   },
   setPage:function(pageNumber, items){
+    console.log("Setting page", pageNumber, items);
     this.$.dataPage.storePage(pageNumber, items);
     this.$.list.refresh();
   },
@@ -119,7 +144,7 @@ enyo.kind({
       }
       this.$.postStatus.setContent($L(this.kPostStatus[status]));
       this.$.postStatus.addClass("status-"+status);
-      this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(index))
+      this.$.item.addRemoveClass('active-selection', this.$.list.isSelected(index));
       if (post.date_created_gmt) {
         this.$.postDate.setContent(FormatDateTimeForListView(post.date_created_gmt));        
       }else{
@@ -129,9 +154,10 @@ enyo.kind({
     };
   },
   accountChanged:function(){
-	if (this.selectedRow){
-		this.$.list.select(this.selectedRow.rowIndex);
-	}
+    this.load_requests = {};
+    this.setSelected(null);
+    this.$.list.select(null);
+    
     this.$.list.punt();
     this.$.dataPage.clear();
     this.$.list.reset();
@@ -142,7 +168,18 @@ enyo.kind({
   },
   hideNewButton:function(){
 	  this.$.newItem.setShowing(false);
+  },
+  fireSelected:function(){
+    this.doSelectPost(this.selected);
+  },
+  clearSelection:function(){
+    this.selected = null;
+    this.$.list.select(null);
+  },
+  openNewItemEditor:function(sender, post){
+  	enyo.application.launcher.openComposerWithNewItem(this.account.account,"Post");    
   }
+  
 });
 
 

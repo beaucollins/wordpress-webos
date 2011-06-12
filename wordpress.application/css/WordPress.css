@@ -1,8 +1,8 @@
-body {
+body, .source-list {
 	background: url(../images/background.jpg) 0 0 no-repeat;
 }
 
-#postPreviewView {
+#postPreviewView, .wordpress-main-pane {
   background:#FFF;
 }
 
@@ -415,14 +415,6 @@ img {
 
 /* Left (main) pane */
 
-.enyo-sliding-view {
-	background: #fff;
-}
-
-.enyo-sliding-view#wordPress_left {
-	background: none;
-}
-
 .source-item {
   padding: 9px 10px;
   border-top:1px solid rgba(255,255,255,.1);
@@ -509,19 +501,19 @@ img {
 /* Comments detail view */
 
 /* Default with margin to avoid fat fingers */
-#wordPress_comments_detail_approve {
+.approve-button {
 	background-color: #006505;
 	}
 
-#wordPress_comments_detail_unapprove {
+.unapprove-button {
 	background-color: #D98500;
 	}
 
-#wordPress_comments_detail_spam {
+.spam-button {
 	background-color: #BC0B0B;
 	}
 
-#wordPress_comments_detail_trash {
+.trash-button {
 	background-color: #BC0B0B;
 	}
 
@@ -691,4 +683,12 @@ img {
 
 #wordPress_posts_detail_content img{
 	max-width: 100%;
+}
+
+#wordPress_comments_detail {
+  background:#FFF;
+}
+
+.blank-view {
+  background:#FFF;
 }

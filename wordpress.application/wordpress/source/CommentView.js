@@ -58,10 +58,10 @@ enyo.kind({
         { flex:1 },
         { kind: "Spinner", className: 'wp-list-spinner'},
         { kind:'Button', name:'reply', caption:  $L('Reply'), onclick:'doReply', className:'enyo-button-blue' },
-        { kind:'Button', name:'approve', caption: $L('Approve'), onclick:'markComment' },
-        { kind:'Button', name:'unapprove', caption: $L('Unapprove'), onclick:'markComment' },
-        { kind:'Button', name:'trash', caption: $L('Trash'), onclick:'askBeforeDelete' },
-        { kind:'Button', name:'spam', caption: $L('Spam'), onclick:'markComment' }
+        { kind:'Button', className:'approve-button', name:'approve', caption: $L('Approve'), onclick:'markComment' },
+        { kind:'Button', className:'unapprove-button', name:'unapprove', caption: $L('Unapprove'), onclick:'markComment' },
+        { kind:'Button', className:'trash-button', name:'trash', caption: $L('Trash'), onclick:'askBeforeDelete' },
+        { kind:'Button', className:'spam-button', name:'spam', caption: $L('Spam'), onclick:'markComment' }
       ] } 
     ] },
 	{name: "twoDialog", kind: "Dialog", components: [

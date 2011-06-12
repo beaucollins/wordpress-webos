@@ -20,20 +20,32 @@ enyo.kind({
       {
         name: 'panes',
         kind: 'enyo.SlidingPane',
+        className:'wordpress-main-pane',
         flex: 1,
         multiViewMinWidth:500,
         components: [
-          { name:'left', width:'225px', components:[
+          { name:'left', className:'source-list', width:'225px', components:[
             { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', /*onCreateDraft:'composeDraft',*/ onAddBlog:'addNewBlog' }
           ]},
           // column for showing what is selected from the source list
-          { name:'main', className:'main-pane', flex:1, onResize:'resizeSubviews', peekWidth:42, components:[
+          { name:'middle', width:'350px', fixedWidth:true, peekWidth:42, components:[
+            { name:'middlePane', flex:1, kind:'Pane', onSelectView:'setupMiddleView', components:[
+              { name:'middle_blank', kind:'Control', flex:1 },
+              { name:'comment_list', kind:'wp.CommentList', flex:1, onLoadMoreComments:'loadMoreComments', onSelectComment:'onSelectComment', onRefreshComment:'' },
+              { name:'post_list', kind:'wp.PostList', flex:1, onSelectPost:'onSelectPost',  onRefresh:'downloadPosts'},
+              { name:'page_list', kind:'wp.PageList', flex:1, onSelectPost:'onSelectPage', onRefresh:'downloadPages'},
+              { name:'draft_list', kind:'wp.DraftList', flex:1, onSelectPost:'onSelectPage' },
+              { name:'stats', kind: 'wp.Stats', flex:1, lazy:true }
+            ]}
+          ]},
+          { name:'main', className:'main-pane', flex:1, showing:false, onResize:'resizeSubviews', peekWidth:42, components:[
               { name:'content', flex:1, kind:'Pane', onSelectView:'setupSubView', components:[
-                { name:'blank', kind:'Control', flex:1 },
-                { name:'comments', kind: 'wp.Comments', flex:1, lazy:false, onReply:'replyToComment', onLoadMoreComments:'loadMoreComments' },
-                { name:'posts', kind: 'wp.Posts', onLoadMore:'loadMorePosts', flex:1, lazy:true },
-                { name:'pages', kind: 'wp.Pages', onLoadMore:'loadMorePages', flex:1, lazy:true },
-                { name:'stats', kind: 'wp.Stats', flex:1, lazy:true },
+                { name:'blank', kind:'BlankSlate', clasName:'blank-view', flex:1 },
+                { name:'comment_view', kind:'wp.CommentView', onReply:'replyToComment', flex:1, lazy:false },
+                { name:'post_view', kind:'wp.PostView', onEdit:'openPostEditor', onDelete:'onDeletePost', flex:1 },
+                // { name:'comments', kind: 'wp.Comments', flex:1, lazy:false, onReply:'replyToComment', onLoadMoreComments:'loadMoreComments' },
+                // { name:'posts', kind: 'wp.Posts', onLoadMore:'loadMorePosts', flex:1, lazy:true },
+                // { name:'pages', kind: 'wp.Pages', onLoadMore:'loadMorePages', flex:1, lazy:true },
                 { name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
               ]}
           ]}
@@ -168,67 +180,124 @@ enyo.kind({
     });
   },
   refreshComments:function(sender, comment, account){
-    if (this.$.content.getView() == this.$.comments) {
-      if (this.$.comments.account == sender) {
-        this.$.comments.refresh();
-      }
+    console.log("refresh the comments!");
+    if (this.account == sender) {
+      this.$.comment_list.refresh();
     };
+    // if (this.$.content.getView() == this.$.comments) {
+    //   if (this.$.comments.account == sender) {
+    //     this.$.comments.refresh();
+    //   }
+    // };
   },
   refreshCommentsAfterDelete:function(sender, comment, account){
-    if (this.$.content.getView() == this.$.comments) {
-      if (this.$.comments.account == sender) {
-    	  this.refreshComments();
-    	  this.$.comments.accountChanged();
-      }
+    console.log(this.account, sender);
+    if (this.account == sender) {
+      if (this.$.comment_view.comment == comment) {
+        this.$.content.selectView(this.$.blank);
+        this.$.comment_list.clearSelection();
+      };
+      this.$.comment_list.refresh();
     };
+    // if (this.$.content.getView() == this.$.comments) {
+    //   if (this.$.comments.account == sender) {
+    //     this.$.comments.refresh();
+    //   }
+    // };
+  },
+  downloadPosts:function(sender){
+    sender.account.downloadPosts();
   },
   refreshPosts:function(sender, post, account){
-	this.log(">>>refreshPosts");
+	  this.log(">>>refreshPosts");
     this.refreshDraftCount();
-    if (this.$.content.getView() == this.$.posts) {
-      if (this.$.posts.account == sender) {
-        this.$.posts.refresh();
-      }
-    };
+	  if (this.account == sender) {
+	    this.$.post_list.stopSpinner();
+	    if (this.$.post_list.selected = post) {
+	      this.$.post_list.clearSelection();
+	      this.$.content.selectView(this.$.blank);
+	    };
+	    this.$.post_list.refresh();
+	  };
+  },
+  downloadPages:function(sender){
+    sender.account.downloadPages();
   },
   refreshPages:function(sender, page, account){
-	this.log(">>>refreshPages");
-	this.refreshDraftCount();
-    if (this.$.content.getView() == this.$.pages) {
-      if (this.$.pages.account == sender) {
-        this.$.pages.refresh();
-      }
-    };
+	  this.log(">>>refreshPages");
+    this.refreshDraftCount();
+	  if (this.account == sender) {
+	    if (this.$.page_list.selected = page) {
+	      this.$.page_list.clearSelection();
+	      this.$.content.selectView(this.$.blank);
+	    };
+	    this.$.page_list.refresh();
+	  };
   },
   updateCommentCount:function(sender, count){
     // console.log("Pending comments:", count);
     this.$.sourceList.updateCommentCounts();
   },
   performAccountAction: function(sender, action, account){
-    this.setAccount(sender);
+    this.setAccount(account);
     this.activeAccount = account;
     if (action == 'comments') {
-      this.$.comments.setAccount(account);
-      this.$.content.selectView(this.$.comments);      
+      this.$.middle.setFixedWidth(true);
+      this.$.middlePane.selectViewByName('comment_list');
+      this.$.main.setShowing(true);
     };
     if (action == 'posts') {
-      this.$.content.selectViewByName('posts');
+      this.$.middle.setFixedWidth(true);
+      this.$.middlePane.selectViewByName('post_list');
+      this.$.main.setShowing(true);
     };
     if (action == 'pages') {
-      this.$.content.selectViewByName('pages');
+      this.$.middle.setFixedWidth(true);
+      this.$.middlePane.selectViewByName('page_list');
+      this.$.main.setShowing(true);
     };
     if (action == 'drafts') {
-      this.$.content.selectViewByName('drafts');
+      this.$.middle.setFixedWidth(true);
+      this.$.middlePane.selectViewByName('draft_list');
+      this.$.main.setShowing(true);
     };
     if (action == 'stats') {
-      this.$.content.selectViewByName('stats');
+      this.$.middle.setFixedWidth(false);
+      this.$.middlePane.selectViewByName('stats');
+      this.$.main.setShowing(false);
     };
     if (!this.$.panes.multiView) {
       this.$.panes.selectView(this.$.main);
     };
   },
+  setupMiddleView:function(sender, view){
+    
+    switch(view){
+      case this.$.comment_list:
+      case this.$.account_list:
+      case this.$.page_list:
+      case this.$.post_list:
+        if(view.account != this.account){
+          console.log("Account is changed, selection should be cleared");
+          view.setAccount(this.account);
+        }
+        if (view.getSelected()) {
+          view.fireSelected()
+        }else{
+          this.$.content.selectView(this.$.blank);
+        }
+        break;
+     case this.$.draft_list:
+       if (view.getSelected()) {
+         view.fireSelected()
+       }else{
+         this.$.content.selectView(this.$.blank);
+       }
+       break;
+      
+    }
+  },
   setupSubView:function(sender, view){
-    this.log("Setup Sub View", view);
     var account;
     if ( view.name == 'posts' || view.name == 'pages' || view.name == 'stats') {
       account = this.account ? this.account : this.activeAccount;
@@ -250,7 +319,6 @@ enyo.kind({
     this.$.panes.back(e);
   },
   beforeNewBlogDialogOpen: function() {
-	  this.log("beforeNewBlogDialogOpen");
 	  if (this.accounts.length == 0) {
 		  this.$.setupForm.setScrim(false);
 		  this.$.setupForm.setModal(true);
@@ -287,6 +355,31 @@ enyo.kind({
     // select the comment item from the account source list
     // show the comment view
   },
+  onSelectComment:function(sender, comment){
+    this.$.comment_view.setAccount(this.account);
+    this.$.comment_view.setComment(comment);
+    this.$.content.selectView(this.$.comment_view);
+    this.$.main.setShowing(true);
+  },
+  onSelectPost:function(sender, post){
+    this.$.post_view.setAccount(this.account);
+    this.$.post_view.setPost(post);
+    this.$.content.selectView(this.$.post_view);
+  },
+  onSelectPage:function(sender, post){
+    this.$.post_view.setAccount(this.account);
+    this.$.post_view.setPost(post);
+    this.$.content.selectView(this.$.post_view);
+  },
+  onDeletPost:function(sender, post){
+    
+  },
+  onDeletePage:function(sender, page){
+    
+  },
+  onDeleteComment:function(sender, comment){
+    
+  },
   addNewBlog:function(sender){
 	this.$.setup.reset();
     this.$.setupForm.open();
@@ -321,13 +414,12 @@ enyo.kind({
     enyo.application.launcher.openComposerWithNewItem(account,"Post");
   },*/
   openAppMenuHandler: function() {
-    this.log("Open app menu please");
-    this.$.appMenu.render();
+    // this.log("Open app menu please");
+    // this.$.appMenu.render();
     this.$.appMenu.open();
   },
   closeAppMenuHandler: function() {
-	  this.log("Close app menu please");
-      this.$.appMenu.close();
+    this.$.appMenu.close();
   },
   displayPasswordForm:function(sender){
     this.$.passwordForm.setAccount(sender);
@@ -374,7 +466,6 @@ enyo.kind({
   publishCommentReply:function(sender){
     var client = this.activeAccount;
     var reply = sender.getValue();
-    console.log("Reply", sender);
     var comment = new enyo.application.models.Comment();
     comment.content = reply;
     comment.status = 'approve';
@@ -438,12 +529,34 @@ enyo.kind({
   // sender will be a Comments
   loadMoreComments:function(sender, options){
       var wpclient = sender.account;
-      console.log("Load more comments: " + enyo.json.stringify(options));
       wpclient.loadComments(options, true);
   },
   loadMorePosts:function(sender, numberOfPosts){
     var wpclient = sender.account;
     wpclient.downloadPosts(numberOfPosts);
+  },
+  openPostEditor:function(sender, post){
+    post.fetch('account', function(account){
+      enyo.application.launcher.openComposer(account, post);    
+    })
+  },
+  onDeletePost:function(sender, post){
+    var wp = this;
+    if (post.local_modifications) {
+      enyo.application.persistence.remove(post);
+      enyo.application.persistence.flush(function(){
+        //refresh the drafts
+        wp.$.draft_list.refresh();
+        if (wp.$.draft_list.selected == post) {
+          wp.$.content.selectView(this.$.blank);
+        };
+      });
+      //then just delete the post itself
+    }else if (post._type == 'Post') {
+  	  this.account.deletePost(post);         
+    }else if(post._type == 'Page'){
+      this.account.deletePage(post);
+    }
   }
   
 });
