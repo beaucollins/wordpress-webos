@@ -200,12 +200,28 @@ enyo.kind({
 	      
 	    }, client);
 	    
-	    persistence.flush(function(){
+	/*    persistence.flush(function(){
 	      client.doRefreshPosts();
 	    });
-	    
+	  */  
 	  });
-
+	    
+	  account.posts.filter('postid', 'not in', remote_post_ids).list(function(old_local_posts){
+		  client.log("these posts shoud be removed from the local db", old_local_posts);
+		  
+		  for(var removeIndex = 0; removeIndex < old_local_posts.length; removeIndex++) {
+			  var candidateToBeRemoved = old_local_posts[removeIndex];
+		        if (candidateToBeRemoved.local_modifications) {
+		        	//local draft
+		        } else {
+		        	//remove this post
+		        	account.posts.remove(old_local_posts[removeIndex]);		        	
+		        }
+		  }
+		  persistence.flush(function(){
+			  client.doRefreshPosts();
+		  });
+	  });
   },
   savePassword:function(onSuccess){
     var options = {}
@@ -281,10 +297,25 @@ enyo.kind({
 	      
 	    }, client);
 	    
-	    persistence.flush(function(){
+	  /*  persistence.flush(function(){
 	      client.doRefreshPages();
-	    });
-	    
+	    });*/
+	  });
+	  
+	  account.pages.filter('page_id', 'not in', remote_page_ids).list(function(old_local_pages){
+		  client.log("these pages shoud be removed from the local db", old_local_pages);
+		  for(var removeIndex = 0; removeIndex < old_local_pages.length; removeIndex++) {
+			  var candidateToBeRemoved = old_local_pages[removeIndex];
+		        if (candidateToBeRemoved.local_modifications) {
+		        	//local drafts, do not remove here
+		        } else {
+		        	//this page should be removed
+		        	account.pages.remove(old_local_pages[removeIndex]);		        	
+		        }
+		  }
+		  persistence.flush(function(){
+			  client.doRefreshPages();
+		  });
 	  });
 	  
   },
