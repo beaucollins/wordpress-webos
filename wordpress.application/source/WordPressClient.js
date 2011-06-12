@@ -21,7 +21,7 @@ enyo.kind({
     onInvalidPassword:'',
        
     onFailure:'',
-    onBadUrl:'',
+    onBadURL:'',
     
     onNewComment:'',
     onUpdateComment:'',

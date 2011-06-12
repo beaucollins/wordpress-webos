@@ -23,7 +23,7 @@ enyo.kind({
   { kind:'FilePicker', fileType:'image', onPickFile:'uploadPickedFile' },
   { name:'wpclient', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onUploadComplete:'uploadComplete', onUploadFailed:'uploadFailed',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
 	  onNewPage:'savePostSuccess', onUpdatePage:'savePostSuccess', onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess',
-      onFailure:'connectionError', onBadUrl:'connectionError',},
+      onFailure:'connectionError', onBadURL:'connectionError',},
 	{	name: "uploadMediaFile", 
 		kind: "WebService",  
 		method: "POST", 

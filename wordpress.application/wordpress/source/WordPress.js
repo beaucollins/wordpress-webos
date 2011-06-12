@@ -82,7 +82,7 @@ enyo.kind({
         onPasswordReady:'refreshClient',
         
         onFailure:'connectionError',
-        onBadUrl:'connectionError',
+        onBadURL:'connectionError',
                 
         onPendingComments:'updateCommentCount',
         onNewComment:'refreshComments',
