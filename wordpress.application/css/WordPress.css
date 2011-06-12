@@ -2,6 +2,10 @@ body {
 	background: url(../images/background.jpg) 0 0 no-repeat;
 }
 
+#postPreviewView {
+  background:#FFF;
+}
+
 img {
   vertical-align:middle;
 }
