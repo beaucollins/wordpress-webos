@@ -19,8 +19,7 @@ enyo.kind({
           // console.log("Data for the page:", page, posts);
           that.setPage(page, posts);          
         };
-        
-        
+                
 
         if (that.account && that.missingPage(page) && !load_requests[page]) {
           load_requests[page] = true;
@@ -31,7 +30,7 @@ enyo.kind({
       
   },
   openNewItemEditor:function(sender, post){
-  	enyo.application.launcher.openComposerWithNewItem(this.account.account,"Post");    
+  	enyo.application.launcher.openComposerWithNewItem(this.account.account,"Page");    
   }
 
 });

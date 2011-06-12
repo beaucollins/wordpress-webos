@@ -31,7 +31,6 @@ enyo.kind({
 	  //we don't have an account, so we should call the main window here
 	  var wordpress = enyo.windows.fetchWindow('wordpress');
 	  if (wordpress) {
-		  // tell it we have updated comments
 		  enyo.windows.setWindowParams(wordpress, {'action':'refreshDrafts'});
 	  };
   },
