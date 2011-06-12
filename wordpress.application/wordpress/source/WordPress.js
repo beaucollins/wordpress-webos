@@ -11,6 +11,7 @@ enyo.kind({
     account:null,
     comment:null
   },
+  isOnErrorPopupShown : false,
   components: [
     { name: 'xmlrpc_client', kind:'XMLRPCService' },
     { name: 'stats_api', kind: 'WebService', method: 'POST', url: 'https://api.wordpress.org/webosapp/update-check/1.0/' },
@@ -63,7 +64,7 @@ enyo.kind({
     
 	//Global errors handling interface components
     {name: "globalErrorPopup", kind: "Popup",  lazy:false, showHideMode: "transition",  openClassName: "scaleFadeIn", scrim: true, 
-		 modal: true, className: "fastAnimate transitioner wp-blog-setup-dialog", width: "400px", components: [
+    	dismissWithClick:false, modal: true, className: "fastAnimate transitioner wp-blog-setup-dialog", width: "400px", components: [
 		{name: 'globalNeedHelpPane', kind: "wp.NeedHelpPrompt", onNeedHelp: "needHelp", onSubmit: "closeGlobalErrorPopup"}
 	]},
     { name: 'globalHelpView', scrim:true, className:'wp-comment-reply-dialog', kind:'enyo.Toaster', components:[
@@ -123,6 +124,9 @@ enyo.kind({
   },
   connectionError:function(sender, response, request){
 	this.log("connectionError", response, request);
+    if(this.isOnErrorPopupShown == true) return;
+    
+    this.isOnErrorPopupShown == true;
     
     var errorTitle = 'Error';
     var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
@@ -140,21 +144,25 @@ enyo.kind({
     this.$.globalErrorPopup.openAtCenter();
         
     //stop the loading spinners
-    if(this.$.posts) this.$.posts.stopSpinner();
-    if(this.$.comments) this.$.comments.stopSpinner();
-    if(this.$.pages) this.$.pages.stopSpinner();
+    if(this.$.post_list) this.$.post_list.stopSpinner();
+    if(this.$.page_list) this.$.page_list.stopSpinner();
+    if(this.$.draft_list) this.$.draft_list.stopSpinner();
   },
   closeGlobalErrorPopup: function(inSender) {
+	  this.isOnErrorPopupShown = false;
 	  this.$.globalErrorPopup.close();
   },
   needHelp: function(inSender) {
 	  this.$.globalErrorPopup.close();
+	  this.isOnErrorPopupShown = false;
 	  this.$.globalHelpView.openAtCenter();
   },
   readTheFAQ:function(){
+	  this.isOnErrorPopupShown = false;
 	  enyo.application.launcher.readTheFAQ();
   },
   sendEmail:function(){
+	  this.isOnErrorPopupShown = false;
 	  enyo.application.launcher.sendEmailToSupport();
   },
   refreshClient:function(sender){
@@ -166,9 +174,7 @@ enyo.kind({
   refreshDrafts:function(){
 	this.log(">>>Refreshing drafts");  
     this.refreshDraftCount();
-    if (this.$.content.getView() == this.$.drafts) {
-      this.$.drafts.refresh();
-    };
+    this.$.draft_list.refresh();
   },
   refreshDraftCount:function(){
 	this.log("Refreshing the drafts count");  
@@ -311,8 +317,8 @@ enyo.kind({
     this.$.panes.resize();
   },
   resizeSubviews: function(){
-    if (this.$.comments) this.$.comments.resize();
-    if (this.$.posts) this.$.posts.resize();
+    if (this.$.comment_list) this.$.comment_list.resize();
+    if (this.$.post_list) this.$.post_list.resize();
 	if (this.$.stats) this.$.stats.resizeChart();
   },
   backHandler: function(sender, e){
@@ -482,27 +488,23 @@ enyo.kind({
 	
 	if (params.action == 'refreshPages') {
 		this.refreshDraftCount();
-		if(this.$.pages)
-			this.$.pages.refresh();
+		if(this.$.page_list)
+			this.$.page_list.refresh();
 	};
 	if (params.action == 'refreshPosts') {
 		this.refreshDraftCount();
-//		if (this.$.content.getView() == this.$.posts) {
-		if(this.$.posts)
-			this.$.posts.refresh();
-	//	}
+		if(this.$.post_list)
+			this.$.post_list.refresh();
 	};  
     if (params.action == 'refreshComments') {
       this.updateCommentCount();
-      if (this.$.content.getView() == this.$.comments) {
-        this.$.comments.refresh();
-      };
+      if(this.$.comment_list)
+    	  this.$.comment_list.refresh();
     };
     if (params.action == 'refreshDrafts') {
       this.refreshDraftCount();
-      if (this.$.content.getView() == this.$.drafts) {
-        this.$.drafts.refresh();
-      };
+      if(this.$.draft_list)
+    	  this.$.draft_list.refresh();
     };
     if (params.action == 'showComment') {
       // we should have a comment id
