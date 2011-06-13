@@ -53,7 +53,6 @@ enyo.kind({
         { kind:'enyo.Header', components:[
           { name:'headerLabelField', content:$L('New Post'), flex:1 },
           // { name:'attachButton', kind:'enyo.Button', caption:$L('Upload Test'), onclick:'uploadTest' },
-          { name:'attachButton', kind:'enyo.Button', caption:$L('Attach Image'), onclick:'showImageFilePicker' },
           { name:'previewButton', kind:'enyo.Button', caption:$L('Preview'), onclick:'showPreview' },
           { name:'draftButton', kind:'enyo.Button', caption:$L('Save Draft'), onclick:'savePost' },
 		  { kind: 'Spinner', className: 'wp-compose-spinner' },
@@ -117,6 +116,7 @@ enyo.kind({
     mediaFiles = new Array();
     this.accountChanged();
     this.postChanged();
+	showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showImageFilePicker");
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
 	linkBtnClickFunctionBind = enyo.bind(this, "linkHelper");
   },
@@ -624,7 +624,7 @@ enyo.kind({
   uploadPickedFile:function(sender, files){
 	  this.log("Time to upload the file");
 	  this.$.spinner.show();
-	  this.$.attachButton.setDisabled(true);
+	  //this.$.attachButton.setDisabled(true);
 	  var file = files[0]; // files is an array but there's currently only ever one file picked
 	  this.log(enyo.json.stringify(file));
 
@@ -646,7 +646,7 @@ enyo.kind({
   // if an upload was successfull
   uploadComplete:function(sender, response){
 	  this.$.spinner.hide();
-	  this.$.attachButton.setDisabled(false);
+	  //this.$.attachButton.setDisabled(false);
 	  this.log("Upload Complete");
 	  this.log(enyo.json.stringify(response));
 	  //{"file":"11.jpg","url":"http://www.eritreo.it/validator/wp-content/uploads/2011/06/11.jpg","type":""}
