@@ -45,7 +45,7 @@ enyo.kind({
   accountChanged:function(){
     if(!this.account) return;
     var account = this.account.account;
-    this.$.header.setCaption(account.blogName);
+    this.$.header.setCaption(this.decodeHtml(account.blogName));
     
     // attempt to setup the blavatar if there is a valid one
     var blavatar = new Image();
@@ -72,6 +72,11 @@ enyo.kind({
   draftCountChanged:function(){
     this.$.drafts.setUnreadCount(this.draftCount);
   },
+  decodeHtml:function(input){
+    var e = document.createElement('div');
+    e.innerHTML = input;
+    return e.childNodes[0].nodeValue;
+  }
   /*openDashBoard:function(item, inEvent){
 	  if(!this.account) return;
 	  console.log("Launching Dashboard");
