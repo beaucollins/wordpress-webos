@@ -300,6 +300,12 @@ enyo.kind({
          this.$.content.selectView(this.$.blank);
        }
        break;
+     case this.$.stats:
+       if(view.account != this.account){
+         console.log("Account is changed, selection should be cleared");
+         view.setAccount(this.account);
+       }
+       break;
       
     }
   },
