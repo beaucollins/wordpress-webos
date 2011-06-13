@@ -651,7 +651,7 @@ enyo.kind({
 	  this.log(enyo.json.stringify(response));
 	  //{"file":"11.jpg","url":"http://www.eritreo.it/validator/wp-content/uploads/2011/06/11.jpg","type":""}
 	  
-	  var mediaHTML = "<br /><a href="+ response.url+"><img src="+  response.url+" class=\"alignnone size-full\" /></a>";
+	  var mediaHTML = "<br /><a href="+ response.url+"><img style=\"max-width: 100%\" src="+  response.url+" class=\"alignnone size-full\" /></a>";
 	  this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML );
   },
   uploadFailed:function(sender, response){
