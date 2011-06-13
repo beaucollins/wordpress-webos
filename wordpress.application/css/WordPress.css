@@ -675,13 +675,13 @@ img {
 	text-align: center;
 }
 
-#wordPress_posts_detail_content, #wordPress_comments_detail_body, #wordPress_pages_detail_content{
+#wordPress_post_view_content, #wordPress_comment_view_body {
 	max-width: 100%;
 	pointer-events: none;
 	cursor: default;
 }
 
-#wordPress_posts_detail_content img{
+#wordPress_post_view_content img{
 	max-width: 100%;
 }
 
