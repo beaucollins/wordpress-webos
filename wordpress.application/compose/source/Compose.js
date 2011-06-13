@@ -675,7 +675,9 @@ enyo.kind({
   connectionError:function(sender, response, request){
 	  this.log("connectionError", response, request);
 
-	  var errorTitle = 'Error';
+	  if(sender.account) //don't think this check is necessary but better to be safe
+	  	var blogName =  sender.account.blogName;
+	  var errorTitle = blogName + ' Error';
 	  var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
 	  if(response && response.faultString && response.faultString.length > 0) {
 		  errorMessage = response.faultString;
