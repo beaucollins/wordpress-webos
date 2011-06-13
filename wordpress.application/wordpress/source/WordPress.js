@@ -47,7 +47,7 @@ enyo.kind({
                 // { name:'comments', kind: 'wp.Comments', flex:1, lazy:false, onReply:'replyToComment', onLoadMoreComments:'loadMoreComments' },
                 // { name:'posts', kind: 'wp.Posts', onLoadMore:'loadMorePosts', flex:1, lazy:true },
                 // { name:'pages', kind: 'wp.Pages', onLoadMore:'loadMorePages', flex:1, lazy:true },
-                { name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
+                //{ name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
               ]}
           ]}
       ]}
@@ -558,7 +558,7 @@ enyo.kind({
         //refresh the drafts
         wp.$.draft_list.refresh();
         if (wp.$.draft_list.selected == post) {
-          wp.$.content.selectView(this.$.blank);
+          wp.$.content.selectView(wp.$.blank);
         };
       });
       //then just delete the post itself
