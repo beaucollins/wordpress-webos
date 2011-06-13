@@ -163,7 +163,7 @@ enyo.kind({
       { name:'scroller', kind:'enyo.Scroller', flex:1, components:[
         { name:'blogs', kind:'VirtualRepeater', flex:1, onSetupRow:'setupBlogRow', components:[
           { kind:'Item', layoutKind:'HFlexLayout', components:[
-            { name:'blogName', flex:1 },
+            { name:'blogName', flex:1, allowHtml:true },
             { kind:'CheckBox', checked:false, onclick:'blogToggled' }
           ]}
         ]},
