@@ -37,5 +37,7 @@ enyo.kind({
   tappedComment:function(sender, layer, mouseEvent){
     console.log("Tapped Comment");
     this.doTapComment(layer.comment, layer.account);
+    var dashboard = this.getAccountDashboard(layer.account);
+    dashboard.pop();
   }
 });

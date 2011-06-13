@@ -673,7 +673,6 @@ enyo.kind({
           };
         }else{
           // create a new coment
-          console.log("Didn't find comment: ", remote_comment);
           local_comment = new enyo.application.models.Comment(remote_comment);
           // add it to the new_comments array so we can notify when we've committed all these changes
           account.comments.add(local_comment);
@@ -685,7 +684,6 @@ enyo.kind({
       // comment modification shave been made let's persist them
       persistence.flush(function(){
         // notify that the comments have been refreshed
-        console.log("Persisted the comments?");
         client.doRefreshComments();
         client.refreshPendingCommentCount();
         if (!(request.skip_notifications === true)) {

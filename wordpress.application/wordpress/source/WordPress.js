@@ -15,7 +15,7 @@ enyo.kind({
   components: [
     { name: 'xmlrpc_client', kind:'XMLRPCService' },
     { name: 'stats_api', kind: 'WebService', method: 'POST', url: 'https://api.wordpress.org/webosapp/update-check/1.0/' },
-    {kind: "ApplicationEvents", onOpenAppMenu: "openAppMenuHandler", onCloseAppMenu: "closeAppMenuHandler"},
+    {kind: "ApplicationEvents", onOpenAppMenu: "openAppMenuHandler", onCloseAppMenu: "closeAppMenuHandler", onWindowParamsChange:'windowParamsChangeHandler'},
     { kind:'Pane', flex:1, components:[
       { name:'blankSlate', flex:1, kind:'enyo.Control' },
       {
@@ -77,11 +77,10 @@ enyo.kind({
     this.inherited(arguments);
     // create a signing key
     // should this only be done when needed or can it be called whenever?
-    enyo.windowParamsChangeHandler = enyo.bind(this, 'windowParamsChangeHandler');
+    // enyo.windowParamsChangeHandler = enyo.bind(this, 'windowParamsChangeHandler');
     // this.runStats();
   },
   ready:function(){
-    console.log("Ready");
     this.loadAccounts();
   },
   loadAccounts: function(){
@@ -490,9 +489,9 @@ enyo.kind({
     this.$.replyForm.close();
     
   },
-  windowParamsChangeHandler:function(params){
-	var p = params;
-	this.log(window.name, p);
+  windowParamsChangeHandler:function(sender, event){
+	var p = event.params;
+	var params = event.params;
 	
 	if (params.action == 'refreshPages') {
 		this.refreshDraftCount();
@@ -533,6 +532,7 @@ enyo.kind({
     if (params.action == 'showComment') {
       // we should have a comment id
       var app = this;
+
       enyo.application.models.Comment.load(params.comment_id, function(comment){
         if (comment) {
           comment.fetch('account', function(account){
@@ -541,12 +541,15 @@ enyo.kind({
             for (var i=0; i < app.accounts.length; i++) {
               if (app.accounts[i].account.id == account.id) client = app.activeAccount = app.accounts[i]
             };
-            
             app.$.sourceList.selectAccountItem(account, 'comments');
-            app.$.comments.setAccount(client);
-            app.$.content.selectView(app.$.comments);
-            app.$.comments.setComment(comment);
-            app.$.comments.highlightComment(comment);
+            app.$.comment_list.setAccount(client);
+            app.performAccountAction(this, 'comments', client);
+            app.$.comment_view.setAccount(this.account);
+            enyo.nextTick(function(){
+              app.$.comment_list.highlightComment(comment);              
+            });
+            
+
           });
         };
       });
@@ -555,7 +558,7 @@ enyo.kind({
   // sender will be a Comments
   loadMoreComments:function(sender, options){
       var wpclient = sender.account;
-      wpclient.loadComments(options, true);
+      if (wpclient) wpclient.loadComments(options, true);
   },
   loadMorePosts:function(sender, numberOfPosts){
     var wpclient = sender.account;

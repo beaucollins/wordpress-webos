@@ -5,18 +5,23 @@ enyo.kind({
   name:'wp.DataPage',
   kind:'Component',
   published: {
-    pageSize:10,
-	selectedRow:null
+    pageSize:10
   },
   create:function(){
     this.inherited(arguments);
     this.pages = {};
+    this.page_index = {};
+    this.row_index = {};
   },
   destroy:function(){
-    this.pages = null;
+    this.pages = {};
   },
   storePage:function(page, itemArray){
     this.pages[page] = enyo.clone(itemArray);
+    for (var i=0; i < itemArray.length; i++) {
+      this.page_index[itemArray.id] = page;
+      this.row_index[itemArray.id] = i;
+    };
   },
   clearPage:function(page){
     this.pages[page] = null;
@@ -36,8 +41,16 @@ enyo.kind({
       return item;
     };
   },
+  indexForId:function(id){
+    var page = this.page_index[id];
+    var row = this.row_index[id];
+    if (page && row) {
+      return page * this.pageSize + row;
+    };
+  },
   clear:function(){
     this.pages = {};
+    this.ids = [];
   },
   missingPage:function(page){
     if(page < 0) return false;
@@ -104,7 +117,15 @@ enyo.kind({
     this.inherited(arguments);
   },
   setupComment:function(inSender, inIndex){
-    if(comment = this.$.dataPage.itemAtIndex(inIndex)){      
+    if(comment = this.$.dataPage.itemAtIndex(inIndex)){
+      if (this.commentToSelect) {
+        if (this.commentToSelect.id == comment.id) {
+          this.commentToSelect = null;
+          this.$.list.select(inIndex);
+          this.setSelected(comment)
+          this.doSelectComment(comment);
+        };
+      };    
       this.$.avatar.setEmail(comment.author_email, {size:30});
       this.$.author.setContent(comment.author);
       this.$.authorURL.setContent(comment.author_url);
@@ -176,8 +197,6 @@ enyo.kind({
   },
   refresh:function(){
     this.log("Refreshed the list");
-    this.selectedRow = null
-    this.$.list.getSelection().clear();
     this.$.list.reset();
     this.$.list.refresh();
 	  this.$.spinner.hide();
@@ -186,9 +205,12 @@ enyo.kind({
 	this.$.spinner.hide();
   },
   highlightComment:function(comment){
-    this.$.list.select(comment.id);
-    this.log("Selected", this.$.list);
+    this.commentToSelect = comment;
+    this.$.list.select(null);
     this.refresh();
+    // this.$.list.select(comment.id);
+    // this.log("Selected", this.$.list);
+    // this.refresh();
   },
   showFilterOptions:function(sender){
     this.$.filterMenu.openAtControl(sender);
@@ -225,7 +247,6 @@ enyo.kind({
     this.$.list.resizeHandler();
   },
   refreshComments:function(sender){
-    this.log("Account", this.account);
 	  this.$.spinner.show();
     this.account.refreshComments();
   },
