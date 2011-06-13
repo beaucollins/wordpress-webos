@@ -727,19 +727,21 @@ enyo.kind({
     });
   },
   uploadCompleted:function(sender, response, request){
-    console.log("Upload completed!");
+    this.log("Upload completed!");
     // parse the response XML here
-    var response_object = XMLRPCParser.parse(response.xml);
+    var parser = new XMLRPCParser(response.xml);
+	var response_object = parser.toObject();
+	var fault = parser.fault; 
     console.log(enyo.json.stringify(response_object));
-    if(response_object.fault){
+    if(fault){
       this.doUploadFailed(response_object);
     }else{
       this.doUploadComplete(response_object);
     }  
   },
   uploadFailed:function(sender, response, request){
-    console.log("Upload failed");
-    console.log(enyo.json.stringify(response));
-    this.doUploadFailed();
+    this.log("Upload failed!");
+    cnosole.log(enyo.json.stringify(response));
+    this.doUploadFailed(response, request);
   }
 })

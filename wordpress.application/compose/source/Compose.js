@@ -650,18 +650,13 @@ enyo.kind({
 	  this.log("Upload Complete");
 	  this.log(enyo.json.stringify(response));
 	  //{"file":"11.jpg","url":"http://www.eritreo.it/validator/wp-content/uploads/2011/06/11.jpg","type":""}
-	  
 	  var mediaHTML = "<br /><a href="+ response.url+"><img style=\"max-width: 100%\" src="+  response.url+" class=\"alignnone size-full\" /></a>";
 	  this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML );
   },
   uploadFailed:function(sender, response){
 	  this.$.spinner.hide();
-	  this.$.attachButton.setDisabled(false);
-	  this.log("Upload failed");
-	  this.log(enyo.json.stringify(response));
-	  var errorTitle = 'Error';
-	  var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
-	  enyo.windows.addBannerMessage(errorTitle+" - "+errorMessage,"{}");
+	  this.log("Media Upload failed");
+	  this.connectionError(sender, response);
   },
   uploadTest:function(sender){
 	  // we're just going to use one of the wallpapers
@@ -674,6 +669,7 @@ enyo.kind({
   },
   connectionError:function(sender, response, request){
 	  this.log("connectionError", response, request);
+	  this.$.spinner.hide();
 
 	  if(sender.account) //don't think this check is necessary but better to be safe
 	  	var blogName =  sender.account.blogName;
