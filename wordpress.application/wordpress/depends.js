@@ -25,6 +25,7 @@ enyo.depends(
   "../css/WordPress.css",
   "source/BlogDiscover.js",
   "../source/XMLRPCService.js",
+  "../source/WordPressLaunch.js",
   "../source/SimpleHtmlParser.js",
   "../source/datetime.js",
   "source/DashboardView.js",

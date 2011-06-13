@@ -29,7 +29,6 @@ enyo.kind({
     	onFailure: "onUploadMediaFileFailure",
     },
     {kind: "ApplicationEvents", onWindowParamsChange: "windowParamsChangeHandler"},
-    {name: "canvasUsedToUploadTheImage", kind: "ImgUploadCanvas", onImageLoaded:"sendFile"},
 	{kind: "Dialog", components: [
 		{content: "Insert a Link"},
 		{kind: "VFlexBox", components: [
@@ -38,6 +37,17 @@ enyo.kind({
 			{kind: "Button", name: 'linkOKBtn', caption: $L("OK"), onclick: "linkOKClick"}
 		]}
 	]},	
+	//Global errors handling interface components
+    {name: "globalErrorPopup", kind: "Popup",  lazy:false, scrim: true, 
+    	dismissWithClick:false, modal: true, width: "400px", components: [
+		{name: 'globalNeedHelpPane', kind: "wp.NeedHelpPrompt", onNeedHelp: "needHelp", onSubmit: "closeGlobalErrorPopup"}
+	]},
+    { name: 'globalHelpView', scrim:true, className:'wp-compose-error-detail-dialog ', kind:'enyo.Toaster', components:[
+      {content: $L("Please visit the FAQ to get answers to common questions. If you're still having trouble, post in the forums.")},
+      { kind: 'enyo.Button', onclick:"readTheFAQ", caption: $L('Read the FAQ') },
+      { kind: 'enyo.Button', onclick:"sendEmail", caption: $L('Send Support E-mail')},
+    ]},
+    //main view
     { name:'desktop', className:'desktop', components:[
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
@@ -99,7 +109,7 @@ enyo.kind({
           ]},
         ]}
       ] } //'composer' close tag
-    ] } //'desktop' close tag
+    ] }, //'desktop' close tag
   ],
   create:function(){
     this.inherited(arguments);
@@ -556,9 +566,9 @@ enyo.kind({
 
   },
   windowParamsChangeHandler: function(inSender, event) {
-	  this.log("Compose windowParamsChangeHandler");
-	  this.wasLaunchedBy = event.params.wasLaunchedBy;
-	  var account_id = event.params.account;
+	this.log("Compose windowParamsChangeHandler");
+	this.wasLaunchedBy = event.params.wasLaunchedBy;
+	var account_id = event.params.account;
     var post_id = event.params.post; //one between post_id and type should be defined
     var itemType = event.params.type;
     var composer = this;
@@ -673,7 +683,28 @@ enyo.kind({
 
 	  this.log("error: ", errorTitle, errorMessage);
 	  this.$.spinner.hide();
-	  enyo.windows.addBannerMessage(errorTitle+" - "+errorMessage,"{}");
+      this.$.globalNeedHelpPane.setErrorMessage(errorTitle, errorMessage);
+	  this.$.globalErrorPopup.openAtCenter();
+	//  enyo.windows.addBannerMessage(errorTitle+" - "+errorMessage,"{}");
+  },
+  closeGlobalErrorPopup: function(inSender) {
+	  this.log("closeGlobalErrorPopup: ");
+	//  this.isOnErrorPopupShown = false;
+	  this.$.globalErrorPopup.close();
+	  this.$.globalErrorPopup.close();
+  },
+  needHelp: function(inSender) {
+	  this.$.globalErrorPopup.close();
+	 // this.isOnErrorPopupShown = false;
+	  this.$.globalHelpView.openAtCenter();
+  },
+  readTheFAQ:function(){
+	  //this.isOnErrorPopupShown = false;
+	  enyo.application.launcher.readTheFAQ();
+  },
+  sendEmail:function(){
+	//  this.isOnErrorPopupShown = false;
+	  enyo.application.launcher.sendEmailToSupport();
   },
 });
 
@@ -703,6 +734,4 @@ enyo.kind({
       this.$.spinner.hide();
     }
   }
-});
-
- 
+}); 

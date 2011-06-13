@@ -236,6 +236,23 @@ body {
 	margin-left: 10px;
 }
 
+
+.wp-compose-error-dialog {
+  left:15%;
+  right:15%;
+  bottom:0;
+  top:0;
+  background:#FFF;
+}
+
+.wp-compose-error-detail-dialog {
+  left:15%;
+  right:15%;
+  bottom:0;
+  top:0;
+  background:#FFF;
+}
+
 /* tags / password text fields 
 
 #compose_settings .enyo-input {

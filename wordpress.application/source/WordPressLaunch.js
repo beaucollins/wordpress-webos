@@ -141,3 +141,26 @@ enyo.kind({
     });
   },
 });
+
+
+enyo.kind({
+	name: "wp.NeedHelpPrompt",
+	kind: enyo.Control,
+	events: {
+		onSubmit: "",
+		onNeedHelp: ""
+	},
+	components: [
+		{name:'titleHolder', content: $L("Enter your password:"), style: "font-size: 26px; padding: 6px;" },
+		{name:'msgHolder', content: "Some pickers"},
+		{kind: "HFlexBox", style: "padding-top: 6px;", components: [
+			{kind: "Button", flex: 1, caption: $L("Need Help?"), onclick: "doNeedHelp"},
+			{kind: "Spacer"},
+			{kind: "Button", flex: 1, caption: $L("OK"), onclick: "doSubmit"},
+		]},
+	],
+	setErrorMessage: function(title, msg) {
+		this.$.titleHolder.setContent(title);
+		this.$.msgHolder.setContent(msg);
+	}
+});
