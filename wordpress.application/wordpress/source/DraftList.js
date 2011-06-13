@@ -26,17 +26,12 @@ enyo.kind({
 	      });
       });
   },
-  refreshPosts:function(){
-    //this.refresh();
+  refreshList:function(sender){
+	 this.$.spinner.show();
 	  //we don't have an account, so we should call the main window here
 	  var wordpress = enyo.windows.fetchWindow('wordpress');
 	  if (wordpress) {
 		  enyo.windows.setWindowParams(wordpress, {'action':'refreshDrafts'});
 	  };
-  },
-  refreshList:function(sender){
-	 this.$.spinner.show();
-	 this.refreshPosts();
   }
-
 });
