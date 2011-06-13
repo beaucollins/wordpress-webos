@@ -1,6 +1,3 @@
-var showWebOsImageFilePickerFunctionBind = null; //this variable is used to show the webOS filePicker when the user tap on the Image btn on the editor toolbar
-var showWebOsVideoFilePickerFunctionBind = null;
-
 enyo.kind({
   name:'wp.Compose',
   kind:'Control',
@@ -16,7 +13,6 @@ enyo.kind({
     post:null
   },
   wasLaunchedBy : null, //reference to the window that opened this composer card
-  currentMediaFile : null, //@protected
   accountCategories : null,
   categoriesChanged : false, //true when the user click on categories
   components:[
@@ -43,15 +39,11 @@ enyo.kind({
 		]}
 	]},	
     { name:'desktop', className:'desktop', components:[
-      {name: "errorDialog", kind: "Dialog", components: [
-	     {name:"errorMessage", style: "padding: 12px", content: ""},
-	     {kind: "Button", caption: $L("Close"), onclick: "closeDialog"}
-      ]},
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
           { name:'headerLabelField', content:$L('New Post'), flex:1 },
           // { name:'attachButton', kind:'enyo.Button', caption:$L('Upload Test'), onclick:'uploadTest' },
-          { name:'attachButton', kind:'enyo.Button', caption:$L('Attach Image'), onclick:'pickFile' },
+          { name:'attachButton', kind:'enyo.Button', caption:$L('Attach Image'), onclick:'showImageFilePicker' },
           { name:'previewButton', kind:'enyo.Button', caption:$L('Preview'), onclick:'showPreview' },
           { name:'draftButton', kind:'enyo.Button', caption:$L('Save Draft'), onclick:'savePost' },
 		  { kind: 'Spinner', className: 'wp-compose-spinner' },
@@ -61,7 +53,6 @@ enyo.kind({
           { name:'main', kind:'VFlexBox', flex:1, components:[
             { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:$L('Title') },
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
-			//{ name:'uploadButton', kind:'enyo.ActivityButton', caption:'Upload Test', onclick:'uploadMedia' },
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
 			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange"},
@@ -107,8 +98,8 @@ enyo.kind({
 			] }
           ]},
         ]}
-      ] }
-    ] }
+      ] } //'composer' close tag
+    ] } //'desktop' close tag
   ],
   create:function(){
     this.inherited(arguments);
@@ -116,8 +107,6 @@ enyo.kind({
     mediaFiles = new Array();
     this.accountChanged();
     this.postChanged();
-    showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showImageFilePicker"); //js clousure. showWebOsImageFilePickerFunctionBind is declared globally and is used to access a function inside this obj
-    showWebOsVideoFilePickerFunctionBind = enyo.bind(this, "showVideoFilePicker");
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
 	linkBtnClickFunctionBind = enyo.bind(this, "linkHelper");
   },
@@ -434,105 +423,6 @@ enyo.kind({
 	 // enyo.mixin(params, options);
 	  enyo.windows.activate("../wordpress/postPreview.html", "Post Preview", params);
   },
-  //Handles the download image
-  uploadMedia: function() {  
-	  if(this.account == null) {
-		  alert("Please select an account on the main view");
-		  return;
-	  }  
-	  this.$.uploadButton.setActive(true);
-	  this.$.uploadButton.setDisabled(true);
-	  //The image attempting to be loaded is already on the device - an image reference returned by the file picker
-	  //the file picker doesn't work on emulator/browser. it works on a real device.
-	  
-	  //The onPickFile event fires with a response from the file picker if/when the user chooses a file. 
-	  //The response object is an array of objects indicating chosen files: [ { fullPath: // Absolute File Path. iconPath: // Absolute File Path with ExtractFS prefix. attachmentType: // File Type (image, document, audio, video) size: // File Size in Bytes. }, { ... }, ... ]
-	  var newMediaObj = new MediaObject();
-	  newMediaObj.setLocalURL('http://www.megabri.com/wp-content/uploads/2011/05/oktop.jpg');
-	  currentMediaFile = newMediaObj;
-	  this.$.canvasUsedToUploadTheImage.loadImage(newMediaObj.getLocalURL());
-  }, 
-  sendFile: function(sender, fileInfo) {
-	  console.log("sendFile");
-	  
-	  if(fileInfo.error == true) {
-		  this.$.uploadButton.setActive(false);
-		  this.$.uploadButton.setDisabled(false);
-		  return; //something went wrong while reading and encoding the file from memory
-	  }
-	  
-	  var newMediaObj = currentMediaFile; 
-	  newMediaObj.setHeight(fileInfo.height);
-	  newMediaObj.setWidth(fileInfo.width);
-	  newMediaObj.setFileName(fileInfo.fileName);
-	  newMediaObj.setMimeType(fileInfo.fileType);
-	  console.log("the media obj updated:");
-	  console.log(newMediaObj);
-	 
-	  //  console.log("data encoded using Base64: "+ base64EncodedString);
-	   var postdata = "<?xml version=\"1.0\"?>"
-		+ "<methodCall><methodName>metaWeblog.newMediaObject</methodName>"
-		+ "<params><param><value><string>1</string></value></param>"
-		+ "<param><value><string>"+this.account.username+"</string></value></param>"
-		+ "<param><value><string>"+ this.account.password+"</string></value></param>"
-		+ "<param><value><struct>"
-		+ "<member><name>type</name><value><string>"+newMediaObj.getMimeType()+"</string></value></member>"
-		+ "<member><name>name</name><value><string>"+newMediaObj.getFileName()+"</string></value></member>"
-		+ "<member><name>bits</name><value><base64>"
-	    + fileInfo.encodedData
-	    + "</base64></value></member></struct></value></param></params></methodCall>";
-	  // console.log("the xml-rpc request = " + postdata);
-	   this.$.uploadMediaFile.url =  this.account.xmlrpc;
-	   this.$.uploadMediaFile.call({},postdata);
-  },
-  onUploadMediaFileSuccess: function(inSender, inResponse) {
-	 // this.$.postResponse.setContent(inResponse);
-	  this.$.uploadButton.setActive(false);
-	  this.$.uploadButton.setDisabled(false);
-	  console.log("upload success response text= " + inResponse);
-	  var parser = new XMLRPCParser(inResponse);
-	  var response = parser.toObject();
-	  console.log(response);
-	  
-	  if(parser.fault) {
-		  console.log("parser error");
-	  } else {
-		  currentMediaFile.setRemoteURL(response.url); //TODO check for shortcode here
-		  var mediaHTML = currentMediaFile.getMediaHTML();
-	  	  this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML);
-	  }
-	  
-	  this.$.errorMessage.setContent('Img uploaded');
-	  this.$.errorDialog.open();
-	  currentMediaFile = null;
-  },
-  onUploadMediaFileFailure: function(inSender, inResponse) {
-	  this.$.uploadButton.setActive(false);
-	  this.$.uploadButton.setDisabled(false);
-	  //this.$.postResponse.setContent(inResponse);
-	  console.log("upload failure response = " + inResponse);
-	  this.$.errorMessage.setContent($L('Sorry, something went wrong, please try again later.'));
-	  this.$.errorDialog.open();
-	  currentMediaFile = null;
-  },
-  showImageFilePicker: function(inSender, inEvent) {
-	 //alert("Hey baby, the Image File Picker doesn't work.");
-	 //this.$.filePicker.fileType=["image"];
-	 //  this.$.filePicker.pickFile();
-  },
-  showVideoFilePicker: function(inSender, inEvent) {
-	 //alert("Hey baby, the Video File Picker doesn't work.");
-	 //this.$.filePicker.fileType=["video"];
-	//  this.$.filePicker.pickFile();
-  },
-  handleResult: function(inSender, msg) {
-	  //TODO: call the upload function here
-	  //this.$.selectedFiles.setContent("Selected Files : "+enyo.json.stringify(msg));
-  },
-  //close the error dialog
-  closeDialog: function() {
-	  this.$.errorDialog.close();
-  },
   accountChanged:function(){
 	  this.log("Account Changed:", this.account);
 	  this.$.wpclient.setAccount(this.account);
@@ -711,69 +601,80 @@ enyo.kind({
       this.$.headerLabelField.setContent(this.isAPost() ? $L("New Post") : $L("New Page"));
     }
   },
-	tagsClick:function(sender){
-		this.$.tagsField.forceFocus();
-	},
-	passwordClick:function(sender){
-		this.$.passwordField.forceFocus();
-	},
-	pickFile:function(sender){
-    this.$.filePicker.onPickFile = 'uploadPickedFile';
+  tagsClick:function(sender){
+	  this.$.tagsField.forceFocus();
+  },
+  passwordClick:function(sender){
+	  this.$.passwordField.forceFocus();
+  },
+  showImageFilePicker:function(sender){
+	  this.$.filePicker.onPickFile = 'uploadPickedFile';
 	  this.$.filePicker.pickFile();
-	},
-	
-  // if an upload was successfull
-	uploadComplete:function(sender, response){
-	  console.log("Upload Complete");
-	  console.log(enyo.json.stringify(response));
-	},
-	
-	uploadFailed:function(sender, response){
-	  console.log("Upload failed");
-	  console.log(enyo.json.stringify(response));
-	},
-	// files is an array but there's currently only ever one file picked
-	uploadPickedFile:function(sender, files){
-	  console.log("Time to upload the file");
-	  var file = files[0];
-	  console.log(enyo.json.stringify(file));
-    // file has these properties
-	  //   {
-    //  fullPath: // Absolute File Path.
-    //  iconPath: // Absolute File Path with ExtractFS prefix.
-    //  attachmentType: // File Type (image, document, audio, video)
-    //  size: // File Size in Bytes.
-    // }
-    
+  },
+  uploadPickedFile:function(sender, files){
+	  this.log("Time to upload the file");
+	  this.$.spinner.show();
+	  this.$.attachButton.setDisabled(true);
+	  var file = files[0]; // files is an array but there's currently only ever one file picked
+	  this.log(enyo.json.stringify(file));
+
+	  /*
+		 file has these properties
+		   {
+		  fullPath: // Absolute File Path.
+		  iconPath: // Absolute File Path with ExtractFS prefix.
+		  attachmentType: // File Type (image, document, audio, video)
+		  size: // File Size in Bytes.
+		 }
+	   */		
+
 	  var uploadThumb = this.createComponent({kind:'UploadThumbnail', file:file});
-    uploadThumb.setParentNode(this.$.uploadTray.node);
-	  
+	  uploadThumb.setParentNode(this.$.uploadTray.node);
 	  this.$.wpclient.uploadFile(file.fullPath);
-	  console.log("Sent the file off to the client");
-	},
-	uploadTest:function(sender){
+	  this.log("Sent the file off to the client");
+  },
+  // if an upload was successfull
+  uploadComplete:function(sender, response){
+	  this.$.spinner.hide();
+	  this.$.attachButton.setDisabled(false);
+	  this.log("Upload Complete");
+	  this.log(enyo.json.stringify(response));
+	  //{"file":"11.jpg","url":"http://www.eritreo.it/validator/wp-content/uploads/2011/06/11.jpg","type":""}
+	  
+	  var mediaHTML = "<br /><a href="+ response.url+"><img src="+  response.url+" class=\"alignnone size-full\" /></a>";
+	  this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML );
+  },
+  uploadFailed:function(sender, response){
+	  this.$.spinner.hide();
+	  this.$.attachButton.setDisabled(false);
+	  this.log("Upload failed");
+	  this.log(enyo.json.stringify(response));
+	  var errorTitle = 'Error';
+	  var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
+	  enyo.windows.addBannerMessage(errorTitle+" - "+errorMessage,"{}");
+  },
+  uploadTest:function(sender){
 	  // we're just going to use one of the wallpapers
 	  console.log("upload test");
 	  this.uploadPickedFile(sender, [{
-	    fullPath: "/media/internal/wallpapers/03.jpg",
-	    iconPath: "/media/",
-	    attachmentType: 'image'
+		  fullPath: "/media/internal/wallpapers/03.jpg",
+		  iconPath: "/media/",
+		  attachmentType: 'image'
 	  }]);
-	  
-	},
-	connectionError:function(sender, response, request){
-		this.log("connectionError", response, request);
+  },
+  connectionError:function(sender, response, request){
+	  this.log("connectionError", response, request);
 
-		var errorTitle = 'Error';
-		var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
-		if(response && response.faultString && response.faultString.length > 0) {
-			errorMessage = response.faultString;
-		}
+	  var errorTitle = 'Error';
+	  var errorMessage = $L('Sorry, something went wrong. Please, try again.');	 
+	  if(response && response.faultString && response.faultString.length > 0) {
+		  errorMessage = response.faultString;
+	  }
 
-		this.log("error: ", errorTitle, errorMessage);
-		this.$.spinner.hide();
-		enyo.windows.addBannerMessage(errorTitle+" - "+errorMessage,"{}");
-	},
+	  this.log("error: ", errorTitle, errorMessage);
+	  this.$.spinner.hide();
+	  enyo.windows.addBannerMessage(errorTitle+" - "+errorMessage,"{}");
+  },
 });
 
 enyo.kind({
@@ -803,60 +704,5 @@ enyo.kind({
     }
   }
 });
-
-enyo.kind({
-  name: 'UploadThumbnail',
-  kind: enyo.Control,
-  published: {
-    file: null,
-    uploading: false
-  },
-  components: [
-    { kind:'Image' },
-    { kind:'Spinner' }
-  ],
-  ready:function(){
-    this.fileChanged();
-  },
-  fileChanged:function(){
-    if(this.file){
-      this.$.image.setSrc(this.file.iconPath);
-    }
-  },
-  uploadingChanged:function(){
-    if (this.uploading) {
-      this.$.spinner.show();
-    }else{
-      this.$.spinner.hide();
-    }
-  }
-});
- 
- enyo.kind({
-	 name: "MediaObject",
-	 kind: enyo.Object, 
-	 // declare 'published' properties
-	 published: {
-		 remoteURL : null,
-		 localURL  : null, 
-		 shortcode : null,
-		 fileName  : null,
-		 mimeType  : null,
-		 width     : null,
-		 height    : null,
-		 remoteStatusNumber : 0,
-		 progress : 0,
-	 },
-	 getMediaHTML : function() {
-		 return "<br /><a href="+ this.remoteURL+"><img src="+  this.remoteURL+" class=\"alignnone size-full\" /></a>";
-	 },
-	 // these methods will be automatically generated:
-	 //  getMyValue: function() ...
-	 //  setMyValue: function(inValue) ...
-	 /* optional method that is fired whenever setMyValue is called
-	    myValueChanged: function(inOldValue) {
-	        this.delta = this.myValue - inOldValue;
-	    }*/
- }); 
 
  
