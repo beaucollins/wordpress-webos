@@ -726,11 +726,12 @@ enyo.kind({
   },
   uploadCompleted:function(sender, response, request){
     this.log("Upload completed!");
+   // console.log(enyo.json.stringify(response.deviceFilePath));
     // parse the response XML here
     var parser = new XMLRPCParser(response.xml);
 	var response_object = parser.toObject();
 	var fault = parser.fault; 
-    console.log(enyo.json.stringify(response_object));
+	response_object.deviceFilePath = response.deviceFilePath;
     if(fault){
       this.doUploadFailed(response_object);
     }else{
@@ -739,7 +740,8 @@ enyo.kind({
   },
   uploadFailed:function(sender, response, request){
     this.log("Upload failed!");
-    cnosole.log(enyo.json.stringify(response));
-    this.doUploadFailed(response, request);
+    //console.log(enyo.json.stringify(response.deviceFilePath));
+    console.log(enyo.json.stringify(response));
+    this.doUploadFailed(response);
   }
 })

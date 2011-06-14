@@ -7,8 +7,7 @@ enyo.kind({
   events: {
     onSelectAccountAction:"",
     onSelectAction:"",
-    onAddBlog:"",
-    onRemoveBlog:"",    	
+    onAddBlog:""  	
   },
   components: [
     { kind:'enyo.Scroller', flex:1, components:[

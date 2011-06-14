@@ -59,7 +59,7 @@ CommandAssistant.prototype.run = function(future) {
               response_data += data.toString('UTF-8')
             });
             response.on('end', function(){
-              future.result = { returnValue:true, status: response.statusCode, xml:response_data };
+              future.result = { returnValue:true, status: response.statusCode, xml:response_data, deviceFilePath:file };
             })
           };
         });

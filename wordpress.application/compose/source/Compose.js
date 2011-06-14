@@ -15,6 +15,7 @@ enyo.kind({
   wasLaunchedBy : null, //reference to the window that opened this composer card
   accountCategories : null,
   categoriesChanged : false, //true when the user click on categories
+  uploadThumbnailArray : new Array(),
   components:[
   { kind:'FilePicker', fileType:'image', onPickFile:'uploadPickedFile' },
   { name:'wpclient', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onUploadComplete:'uploadComplete', onUploadFailed:'uploadFailed',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
@@ -66,7 +67,7 @@ enyo.kind({
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
 			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange"},
 			]},
-			{ name:'uploadTray', kind:'enyo.Control' },
+			{ name:'uploadTray', kind: "Control", layoutKind: "HFlexLayout" },
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:$L('Settings'), onclick:'toggleSettings' },
 			] },
 		  ] },
@@ -636,27 +637,45 @@ enyo.kind({
 		  attachmentType: // File Type (image, document, audio, video)
 		  size: // File Size in Bytes.
 		 }
-	   */		
-
-	  var uploadThumb = this.createComponent({kind:'UploadThumbnail', file:file});
+	  		
+	  EX: {"fullPath":"/media/internal/wallpapers/05.jpg","iconPath":"/var/luna/extractfs//media/internal/wallpapers/05.jpg:0:0:","attachmentType":"image"}
+	  */
+	  
+	  var uploadThumb = this.$.uploadTray.createComponent({kind:'UploadThumbnail', file:file});  
 	  uploadThumb.setParentNode(this.$.uploadTray.node);
+	  uploadThumb.setUploading(true);
+	  this.$.uploadTray.render();
+	
+	  this.uploadThumbnailArray.push(uploadThumb); //add the obj to the array of uploading elements
+	  this.log("array è ora lungo ", this.uploadThumbnailArray.length);
+	  
 	  this.$.wpclient.uploadFile(file.fullPath);
 	  this.log("Sent the file off to the client");
   },
   // if an upload was successfull
-  uploadComplete:function(sender, response){
+  uploadComplete:function(sender, response, request){
 	  this.$.spinner.hide();
-	  //this.$.attachButton.setDisabled(false);
-	  this.log("Upload Complete");
+	  this.log("Upload Complete - response:");
 	  this.log(enyo.json.stringify(response));
-	  //{"file":"11.jpg","url":"http://www.eritreo.it/validator/wp-content/uploads/2011/06/11.jpg","type":""}
+	  //{"file":"11.jpg","url":"http://www.eritreo.it/validator/wp-content/uploads/2011/06/11.jpg","type":"", "deviceFilePath":"/media/internal/wallpapers/11.jpg"}
 	  var mediaHTML = "<br /><a href="+ response.url+"><img style=\"max-width: 100%\" src="+  response.url+" class=\"alignnone size-full\" /></a>";
 	  this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML );
+	  
+	  //remove the spinner!
+	  for(var i=0; this.uploadThumbnailArray.length < 0; i++) {
+		  if(this.uploadThumbnailArray[i].file.fullPath == response.deviceFilePath)
+			  this.uploadThumbnailArray[i].setUploading(false);
+	  }
   },
-  uploadFailed:function(sender, response){
+  uploadFailed:function(sender, response, request){
 	  this.$.spinner.hide();
 	  this.log("Media Upload failed");
 	  this.connectionError(sender, response);
+	  //remove the spinner!
+	  for(var i=0; this.uploadThumbnailArray.length < 0; i++) {
+		  if(this.uploadThumbnailArray[i].file.fullPath == response.deviceFilePath)
+			  this.uploadThumbnailArray[i].setUploading(false);
+	  }
   },
   uploadTest:function(sender){
 	  // we're just going to use one of the wallpapers
@@ -709,6 +728,7 @@ enyo.kind({
 enyo.kind({
   name: 'UploadThumbnail',
   kind: enyo.Control,
+  layoutKind: "HFlexLayout",
   published: {
     file: null,
     uploading: false
@@ -721,11 +741,15 @@ enyo.kind({
     this.fileChanged();
   },
   fileChanged:function(){
+	  this.log("fileChanged");
     if(this.file){
-      this.$.image.setSrc(this.file.iconPath);
+    	//error: Not allowed to load local resource: file:///var/luna/extractfs//media/internal/wallpapers/09.jpg:0:0:
+      this.$.image.setStyle("width:50px;height:50px;");
+      this.$.image.setSrc(this.file.fullPath);
     }
   },
   uploadingChanged:function(){
+	  this.log("uploadingChanged");
     if (this.uploading) {
       this.$.spinner.show();
     }else{
