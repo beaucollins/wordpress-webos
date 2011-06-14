@@ -640,7 +640,7 @@ enyo.kind({
     var options = {};
     this.$.getComments.callMethod({
       methodParams:[this.account.blogid, this.account.username, this.password, options]
-    }, { url: this.account.xmlrpc, skip_notifications:skip_notifications, onRequestFault:'apiFault', onFailure:'badURL' } );
+    }, { url: this.account.xmlrpc, skip_notifications:skip_notifications, delete_comments:true, onRequestFault:'apiFault', onFailure:'badURL' } );
   },
   loadComments:function(options, skip_notifications){
     this.$.getComments.callMethod({
@@ -681,18 +681,42 @@ enyo.kind({
         
       }, client);
       
-      // comment modification shave been made let's persist them
-      persistence.flush(function(){
-        // notify that the comments have been refreshed
-        client.doRefreshComments();
-        client.refreshPendingCommentCount();
-        if (!(request.skip_notifications === true)) {
-          enyo.map(new_comments, function(comment){
-            enyo.application.commentDashboard.notifyComment(comment, account);
-          });
-        };
-        
-      });
+      if(request.delete_comments && request.delete_comments === true) {
+    	  //now loop through the response array, if it not in the comment_index, delete the comment
+
+    	  account.comments.filter('comment_id', 'not in', remote_ids).list(function(old_local_comments){
+      		  client.log("these comment shoud be removed from the local db", old_local_comments);
+      		  for(var removeIndex = 0; removeIndex < old_local_comments.length; removeIndex++) {
+   		        	account.comments.remove(old_local_comments[removeIndex]);		        	
+      		  }
+      	      // comment modification shave been made let's persist them
+      	      persistence.flush(function(){
+      	        // notify that the comments have been refreshed
+      	        client.doRefreshComments();
+      	        client.refreshPendingCommentCount();
+      	        if (!(request.skip_notifications === true)) {
+      	          enyo.map(new_comments, function(comment){
+      	            enyo.application.commentDashboard.notifyComment(comment, account);
+      	          });
+      	        };
+      	        
+      	      });
+      	  });
+    	  
+      } else {
+          // comment modification shave been made let's persist them
+          persistence.flush(function(){
+            // notify that the comments have been refreshed
+            client.doRefreshComments();
+            client.refreshPendingCommentCount();
+            if (!(request.skip_notifications === true)) {
+              enyo.map(new_comments, function(comment){
+                enyo.application.commentDashboard.notifyComment(comment, account);
+              });
+            };
+            
+          });    	  
+      }
       
     });
     

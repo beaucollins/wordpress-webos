@@ -247,7 +247,7 @@ enyo.kind({
     this.$.list.resizeHandler();
   },
   refreshComments:function(sender){
-	  this.$.spinner.show();
+	this.$.spinner.show();
     this.account.refreshComments();
   },
   fireSelected:function(){
