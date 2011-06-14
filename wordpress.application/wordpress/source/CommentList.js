@@ -199,7 +199,7 @@ enyo.kind({
     this.log("Refreshed the list");
     this.$.list.reset();
     this.$.list.refresh();
-	  this.$.spinner.hide();
+	this.$.spinner.hide();
   },
   stopSpinner:function() {
 	this.$.spinner.hide();

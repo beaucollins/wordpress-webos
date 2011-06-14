@@ -196,6 +196,9 @@ enyo.kind({
     console.log("refresh the comments!");
     if (this.account == sender) {
       this.$.comment_list.refresh();
+      if (this.$.comment_view.comment == comment) {
+    	  this.$.comment_view.commentChanged(); //this is called to update the detail view after a comment is changed
+      };
     };
     // if (this.$.content.getView() == this.$.comments) {
     //   if (this.$.comments.account == sender) {
