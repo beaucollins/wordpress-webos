@@ -647,7 +647,6 @@ enyo.kind({
 	  this.$.uploadTray.render();
 	
 	  this.uploadThumbnailArray.push(uploadThumb); //add the obj to the array of uploading elements
-	  this.log("array è ora lungo ", this.uploadThumbnailArray.length);
 	  
 	  this.$.wpclient.uploadFile(file.fullPath);
 	  this.log("Sent the file off to the client");
@@ -662,7 +661,7 @@ enyo.kind({
 	  this.$.contentField.setValue(this.$.contentField.getValue() + mediaHTML );
 	  
 	  //remove the spinner!
-	  for(var i=0; this.uploadThumbnailArray.length < 0; i++) {
+	  for(var i=0; i < this.uploadThumbnailArray.length; i++) {
 		  if(this.uploadThumbnailArray[i].file.fullPath == response.deviceFilePath)
 			  this.uploadThumbnailArray[i].setUploading(false);
 	  }
@@ -672,7 +671,7 @@ enyo.kind({
 	  this.log("Media Upload failed");
 	  this.connectionError(sender, response);
 	  //remove the spinner!
-	  for(var i=0; this.uploadThumbnailArray.length < 0; i++) {
+	  for(var i=0; i < this.uploadThumbnailArray.length; i++) {
 		  if(this.uploadThumbnailArray[i].file.fullPath == response.deviceFilePath)
 			  this.uploadThumbnailArray[i].setUploading(false);
 	  }
@@ -729,6 +728,7 @@ enyo.kind({
   name: 'UploadThumbnail',
   kind: enyo.Control,
   layoutKind: "HFlexLayout",
+  style: "padding: 2px 5px 2px 5px;",
   published: {
     file: null,
     uploading: false
