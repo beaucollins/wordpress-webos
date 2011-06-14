@@ -33,8 +33,8 @@ enyo.kind({
             { name:'middlePane', flex:1, kind:'Pane', onSelectView:'setupMiddleView', components:[
               { name:'middle_blank', kind:'Control', flex:1 },
               { name:'comment_list', kind:'wp.CommentList', flex:1, onLoadMoreComments:'loadMoreComments', onSelectComment:'onSelectComment', onRefreshComment:'' },
-              { name:'post_list', kind:'wp.PostList', flex:1, onSelectPost:'onSelectPost',  onRefresh:'downloadPosts'},
-              { name:'page_list', kind:'wp.PageList', flex:1, onSelectPost:'onSelectPage', onRefresh:'downloadPages'},
+              { name:'post_list', kind:'wp.PostList', flex:1, onSelectPost:'onSelectPost', onRefresh:'downloadPosts', onLoadMore:'loadMorePosts'},
+              { name:'page_list', kind:'wp.PageList', flex:1, onSelectPost:'onSelectPage', onRefresh:'downloadPages', onLoadMore:'loadMorePages'},
               { name:'draft_list', kind:'wp.DraftList', flex:1, onSelectPost:'onSelectPage' },
               { name:'stats', kind: 'wp.Stats', flex:1, lazy:true }
             ]}
@@ -536,6 +536,7 @@ enyo.kind({
         
     client.newComment(comment);
     this.$.replyForm.close();
+    this.$.replyForm.reset();
     
   },
   windowParamsChangeHandler:function(sender, event){
@@ -612,6 +613,11 @@ enyo.kind({
   loadMorePosts:function(sender, numberOfPosts){
     var wpclient = sender.account;
     wpclient.downloadPosts(numberOfPosts);
+    console.log("Loading more pages", numberOfPosts);
+  },
+  loadMorePages:function(sender, numberOfPages){
+    var wpclient = sender.account;
+    wpclient.downloadPages(numberOfPages);
   },
   openPostEditor:function(sender, post){
     post.fetch('account', function(account){

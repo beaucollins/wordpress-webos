@@ -20,7 +20,7 @@ enyo.kind({
   },
   components: [
     { kind:'wp.DataPage' },
-    { name:'list', kind:'VirtualList', flex:1, onSetupRow:'setupPost', onAcquirePage:'requestPageWithSize', onDiscardPage:'discardPage', components:[
+    { name:'list', kind:'VirtualList', flex:1, onSetupRow:'setupPost', onAcquirePage:'acquirePosts', onDiscardPage:'discardPage', components:[
       { name:'item', kind:'Item', onclick:'selectPost', className:'post-item', components:[
 	      { name:'header', kind:'HFlexBox', components: [
 	          { kind:'VFlexBox', flex:1, components:[
@@ -69,11 +69,12 @@ enyo.kind({
       this.acquirePosts(page, this.$.list.pageSize);
     }
   },
-  acquirePosts:function(page, pageSize){
+  acquirePosts:function(sender, page){
     if(!this.account) return;
     if (page < 0) return;
     var load_requests = this.load_requests;
     var that = this;
+    var pageSize = this.$.list.pageSize;
     this.account.account
       .posts
       .order('date_created_gmt', false)
@@ -83,10 +84,8 @@ enyo.kind({
       .skip(page*pageSize)
       .list(function(posts){
         console.log("Found something? ", posts);
-        if (posts.length > 0) {
-          // console.log("Data for the page:", page, posts);
-          that.setPage(page, posts);          
-        };
+        that.setPage(page, posts);          
+        that.$.list.refresh();
         
         if (that.account && that.missingPage(page) && !load_requests[page]) {
           load_requests[page] = true;
@@ -95,18 +94,26 @@ enyo.kind({
         
       });
   },
-  refresh:function(){
+  reset: function(){
   	this.$.spinner.hide();
   	this.selectedRow = null;
-    this.$.list.punt();
+    // this.$.list.punt();
     this.$.dataPage.clear();
     this.$.list.reset();
-    this.$.list.refresh();
+    this.$.list.refresh();    
+  },
+  refresh:function(){
+  	this.selectedRow = null;
+    // this.$.list.punt();
+    // this.$.dataPage.clear();
+    this.$.list.reset();
+    this.$.list.refresh();    
+    this.$.spinner.hide();
+  	
   },
   setPage:function(pageNumber, items){
     console.log("Setting page", pageNumber, items);
     this.$.dataPage.storePage(pageNumber, items);
-    this.$.list.refresh();
   },
   missingPage:function(pageNumber){
     return this.$.dataPage.missingPage(pageNumber);
