@@ -322,8 +322,11 @@ enyo.kind({
 	  this.categoriesChanged = true;
   },
   savePost:function(inSender){
-    // set up the post object
-	this.$.spinner.show();
+	 this.$.spinner.show();
+	 this.$.draftButton.setDisabled(true);
+	 this.$.postButton.setDisabled(true);
+	  
+	// set up the post object
     this.post.title = this.$.titleField.getValue();
 	//get rid of the more div if it's there, only need it on the app side
 	var content = this.$.contentField.getHtml();
@@ -374,6 +377,9 @@ enyo.kind({
   },
   savePostSuccess:function(sender, post, account){
 	  this.$.spinner.hide();
+ 	  this.$.draftButton.setDisabled(false);
+   	  this.$.postButton.setDisabled(false);
+		 
 	  if(post._type === "Page")
 		  enyo.windows.addBannerMessage($L("Page saved successfully"), "{}");
 	  else
@@ -624,8 +630,6 @@ enyo.kind({
   },
   uploadPickedFile:function(sender, files){
 	  this.log("Time to upload the file");
-	  this.$.spinner.show();
-	  //this.$.attachButton.setDisabled(true);
 	  var file = files[0]; // files is an array but there's currently only ever one file picked
 	  this.log(enyo.json.stringify(file));
 
@@ -653,7 +657,7 @@ enyo.kind({
   },
   // if an upload was successfull
   uploadComplete:function(sender, response, request){
-	  this.$.spinner.hide();
+	 
 	  this.log("Upload Complete - response:");
 	  this.log(enyo.json.stringify(response));
 	  //{"file":"11.jpg","url":"http://www.eritreo.it/validator/wp-content/uploads/2011/06/11.jpg","type":"", "deviceFilePath":"/media/internal/wallpapers/11.jpg"}
@@ -667,7 +671,6 @@ enyo.kind({
 	  }
   },
   uploadFailed:function(sender, response, request){
-	  this.$.spinner.hide();
 	  this.log("Media Upload failed");
 	  this.connectionError(sender, response);
 	  //remove the spinner!
@@ -688,6 +691,8 @@ enyo.kind({
   connectionError:function(sender, response, request){
 	  this.log("connectionError", response, request);
 	  this.$.spinner.hide();
+      this.$.draftButton.setDisabled(false);
+      this.$.postButton.setDisabled(false);
 
 	  if(sender.account) //don't think this check is necessary but better to be safe
 	  	var blogName =  sender.account.blogName;
@@ -698,7 +703,6 @@ enyo.kind({
 	  }
 
 	  this.log("error: ", errorTitle, errorMessage);
-	  this.$.spinner.hide();
       this.$.globalNeedHelpPane.setErrorMessage(errorTitle, errorMessage);
 	  this.$.globalErrorPopup.openAtCenter();
 	//  enyo.windows.addBannerMessage(errorTitle+" - "+errorMessage,"{}");
@@ -743,8 +747,8 @@ enyo.kind({
   fileChanged:function(){
 	  this.log("fileChanged");
     if(this.file){
-    	//error: Not allowed to load local resource: file:///var/luna/extractfs//media/internal/wallpapers/09.jpg:0:0:
       this.$.image.setStyle("width:50px;height:50px;");
+      //error: tried to load the iconPathbut got: Not allowed to load local resource: file:///var/luna/extractfs//media/internal/wallpapers/09.jpg:0:0:
       this.$.image.setSrc(this.file.fullPath);
     }
   },
