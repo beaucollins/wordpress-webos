@@ -573,6 +573,7 @@ enyo.kind({
     enyo.application.persistence.flush(function(){
       client.getComment(comment.comment_id);
     });
+    enyo.windows.addBannerMessage($L("Comment published successfully"), "{}");
     console.log("Comment has an id now", comment.comment_id, comment);
   },
   getComment:function(comment_id){

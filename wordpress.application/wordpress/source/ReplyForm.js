@@ -37,5 +37,8 @@ enyo.kind({
   cancel:function(){
     this.$.replyContent.setValue();
     this.close();
+  },
+  reset:function(){
+    this.$.replyContent.setValue();
   }
 });
