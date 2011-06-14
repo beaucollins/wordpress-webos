@@ -7,14 +7,15 @@ enyo.kind({
   events: {
     onSelectAccountAction:"",
     onSelectAction:"",
-    onAddBlog:""
+    onAddBlog:"",
+    onRemoveBlog:"",    	
   },
   components: [
     { kind:'enyo.Scroller', flex:1, components:[
       { name:'list', kind:'enyo.Repeater', onSetupRow:'getAccountItem' }
     ]},
     { kind:'enyo.Toolbar', className:'source-list-command', components:[
-      { kind:'Button', caption:$L('Add Blog'), onclick:'doAddBlog' }
+      { kind:'Button', caption:$L('Open Menu'), onclick:'doAddBlog' },
     ] }
   ],
   create:function(){

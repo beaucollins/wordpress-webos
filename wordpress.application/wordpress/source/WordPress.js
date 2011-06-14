@@ -26,7 +26,7 @@ enyo.kind({
         multiViewMinWidth:500,
         components: [
           { name:'left', className:'source-list', width:'225px', components:[
-            { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', /*onCreateDraft:'composeDraft',*/ onAddBlog:'addNewBlog' }
+            { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', /*onCreateDraft:'composeDraft',*/ onAddBlog:'openAppMenuHandler' }
           ]},
           // column for showing what is selected from the source list
           { name:'middle', width:'350px', fixedWidth:true, peekWidth:42, components:[
@@ -54,14 +54,20 @@ enyo.kind({
     ]},
     // main sliding pane interface
     { name:'replyForm', scrim:true, onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
-    { kind:'AppMenu', automatic: false, components:[
-      {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' }
+    { kind:'AppMenu', onBeforeOpen: "beforeAppMenuOpen", automatic: false, components:[
+      {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' },
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
     { name:'setupForm', scrim:true, lazy:false, kind:'enyo.Toaster', className:'wp-blog-setup-dialog',  onBeforeOpen:'beforeNewBlogDialogOpen', components:[
       { name:'setup', flex:1, height:'100%', kind: 'wp.AccountSetup', onSelectBlogs:'setupBlogs', onCancel:'showPanes' }
     ]},
-    
+    //Remove Blog Confirm Dialog
+	{name: "removeBlogDialog", kind: "Dialog", components: [
+ 		{className: "enyo-item enyo-first", style: "padding: 12px", content: $L('Are You Sure?')},
+ 		{className: "enyo-item enyo-last", style: "padding: 12px; font-size: 14px", content: $L('Deleting an Item cannot be undone')},
+ 		{kind: "Button", caption: $L('Cancel'), onclick:'toggleBlogDeleteDialog'},
+ 		{kind: "Button", caption: $L('Delete'), className:'enyo-red-button', onclick:'removeBlog'}
+ 	 ]},
 	//Global errors handling interface components
     {name: "globalErrorPopup", kind: "Popup",  lazy:false, showHideMode: "transition",  openClassName: "scaleFadeIn", scrim: true, 
     	dismissWithClick:false, modal: true, className: "fastAnimate transitioner wp-blog-setup-dialog", width: "400px", components: [
@@ -393,6 +399,18 @@ enyo.kind({
   onDeleteComment:function(sender, comment){
     
   },
+  beforeAppMenuOpen: function() {
+	  this.updateAppMenu();
+  },
+  updateAppMenu: function() {
+	  var m = this.$.appMenu;
+	  if (this.accounts.length > 0 && this.account != null && !this.$.removeBlogItem) {
+		  m.createComponent({name: "removeBlogItem",  caption: $L('Remove Blog'), onclick:'toggleBlogDeleteDialog', owner: this});
+	  } else if ( (this.accounts.length == 0 || this.account == null) && this.$.removeBlogItem) {
+		  this.$.removeBlogItem.destroy();
+	  }
+	  m.render();
+  },
   addNewBlog:function(sender){
 	this.$.setup.reset();
     this.$.setupForm.open();
@@ -412,6 +430,34 @@ enyo.kind({
     enyo.application.persistence.flush(function(){
       wp.loadAccounts();      
     });
+  },
+  toggleBlogDeleteDialog:function(sender) {
+	  if(this.account == null) return;
+	  this.$.removeBlogDialog.toggleOpen();
+  },
+  removeBlog:function(sender){
+	  this.log("Remove blog clicked - Active account :", this.account);
+	  this.$.removeBlogDialog.toggleOpen();
+	  if(this.account == null) return;
+
+	  var account = this.account.account;
+	  enyo.application.persistence.remove(account);
+	  enyo.application.accountManager.removeAccount(account);
+	  account.posts.destroyAll();
+	  account.pages.destroyAll();
+	  account.comments.destroyAll();
+	  account.categories.destroyAll();
+	  
+	  var wp = this;
+//     this.$.sourceList.setAccounts(this.accounts);
+	  enyo.application.persistence.flush(function(){
+		  wp.loadAccounts();      
+		  wp.$.sourceList.setAccounts(wp.accounts);
+	  });
+	  
+	  this.$.middlePane.selectViewByName('middle_blank');
+	  this.$.content.selectView(this.$.blank);
+	  
   },
   showPanes:function(){
     // this.$.pane.selectView(this.$.panes);
