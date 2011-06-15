@@ -3,26 +3,30 @@ enyo.kind({
   kind:'wp.PostList',
   create: function(){
 	  this.inherited(arguments);
+	  this.$.list.pageSize = 1000;
 	  this.hideNewButton();
   },
-  acquirePosts:function(page, pageSize){
-    if (page < 0) return;
+ acquirePosts:function(page){
+	if (page < 0) return;
+	page = 0;
     var that = this;
-    console.log("Requesting page", page, pageSize);
+    var load_requests = this.load_requests;
+    var pageSize = this.$.list.pageSize;
     enyo.application.models.Post.all().filter('local_modifications', '=', 'true')
       .prefetch('account')
       .order('date_created_gmt', false)
      // .limit(pageSize)
      // .skip(page*pageSize)
-      .list(function(posts){       
+      .list(function(posts){   
 	    enyo.application.models.Page.all().filter('local_modifications', '=', 'true')
 	      .prefetch('account')
 	      .order('date_created_gmt', false)
-	     // .limit(pageSize)
+	   //   .limit(pageSize)
 	     // .skip(page*pageSize)
 	      .list(function(pages){
-	        console.log("setting page", page, posts.concat(pages));
+	      //  that.log("Found something? ",  posts.concat(pages));
 	        that.setPage(page, posts.concat(pages)); 
+	        that.$.list.refresh();  
 	      });
       });
   },
