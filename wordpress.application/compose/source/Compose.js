@@ -756,8 +756,10 @@ enyo.kind({
 	  this.log("uploadingChanged");
     if (this.uploading) {
       this.$.spinner.show();
+      this.$.image.show();
     }else{
       this.$.spinner.hide();
+      this.$.image.hide();
     }
   }
 }); 
