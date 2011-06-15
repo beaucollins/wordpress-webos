@@ -150,10 +150,14 @@ enyo.kind({
     this.$.globalNeedHelpPane.setErrorMessage(errorTitle, errorMessage);
     this.$.globalErrorPopup.openAtCenter();
         
-    //stop the loading spinners
-    if(this.$.post_list) this.$.post_list.stopSpinner();
-    if(this.$.page_list) this.$.page_list.stopSpinner();
-    if(this.$.draft_list) this.$.draft_list.stopSpinner();
+    //stop the loading spinners and reset the UI
+	  if (this.account == sender) {
+		  this.$.content.selectView(this.$.blank)
+		  //if(this.$.comment_view) this.$.comment_view.commentChanged(); //this is called to update the detail view after an error
+		  if(this.$.post_list) this.$.post_list.stopSpinner();
+		  if(this.$.page_list) this.$.page_list.stopSpinner();
+		  if(this.$.draft_list) this.$.draft_list.stopSpinner();
+	  }
   },
   closeGlobalErrorPopup: function(inSender) {
 	  this.isOnErrorPopupShown = false;

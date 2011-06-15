@@ -202,8 +202,8 @@ enyo.kind({
 	    
 	    account.posts.filter('postid', 'not in', remote_post_ids).list(function(old_local_posts){
   		  client.log("these posts shoud be removed from the local db", old_local_posts);
-
-  		  for(var removeIndex = 0; removeIndex < old_local_posts.length; removeIndex++) {
+  		 
+  		 for(var removeIndex = 0; removeIndex < old_local_posts.length; removeIndex++) {
   			  var candidateToBeRemoved = old_local_posts[removeIndex];
   		        if (candidateToBeRemoved.local_modifications) {
   		        	//local draft
@@ -267,52 +267,50 @@ enyo.kind({
     }, { url:this.account.xmlrpc, onSuccess:'savePages', onRequestFault:'apiFault', onFailure:'badURL', pageRequestCount:number });
   },
   savePages:function(sender, response, request){
-    
-    var client = this;
+
+	  var client = this;
 	  var account = this.account;
 	  var remote_pages = response;
 	  var persistence = enyo.application.persistence;
-	  	  
+
 	  var remote_page_ids = enyo.map(remote_pages, function(post){ return post.page_id; });
 	  account.pages.filter('page_id', 'in', remote_page_ids).list(function(local_pages){
-	    var local_pages_index = {};
-	    // create the index
-	    enyo.map(local_pages, function(page){ local_pages_index[page.page_id] = page; });
-	    enyo.map(remote_pages, function(remote_page){
-	      var local_page;
-	      if (local_page = local_pages_index[remote_page.page_id]) {
-	        // already exists locally
-	        if (!local_page.local_modifications) {
-	          for (field in remote_page) {
-	           local_page[field] = remote_page[field]
-	          };
-	        }
-	      } else {
-	        local_page = new enyo.application.models.Page(remote_page);
-	        account.posts.add(local_page);
-	      }
-	      
-	    }, client);
-	    
-  	  account.pages.filter('page_id', 'not in', remote_page_ids).list(function(old_local_pages){
-  		  client.log("these pages shoud be removed from the local db", old_local_pages);
-  		  for(var removeIndex = 0; removeIndex < old_local_pages.length; removeIndex++) {
-  			  var candidateToBeRemoved = old_local_pages[removeIndex];
-  		        if (candidateToBeRemoved.local_modifications) {
-  		        	//local drafts, do not remove here
-  		        } else {
-  		        	//this page should be removed
-  		        	account.pages.remove(old_local_pages[removeIndex]);		        	
-  		        }
-  		  }
-  		  persistence.flush(function(){
-  			  client.doRefreshPages();
-  		  });
-  	  });
-  	  
+		  var local_pages_index = {};
+		  // create the index
+		  enyo.map(local_pages, function(page){ local_pages_index[page.page_id] = page; });
+		  enyo.map(remote_pages, function(remote_page){
+			  var local_page;
+			  if (local_page = local_pages_index[remote_page.page_id]) {
+				  // already exists locally
+				  if (!local_page.local_modifications) {
+					  for (field in remote_page) {
+						  local_page[field] = remote_page[field]
+					  };
+				  }
+			  } else {
+				  local_page = new enyo.application.models.Page(remote_page);
+				  account.pages.add(local_page);
+			  }
+
+		  }, client);
+
+		  account.pages.filter('page_id', 'not in', remote_page_ids).list(function(old_local_pages){
+			  client.log("these pages shoud be removed from the local db", old_local_pages);
+			  for(var removeIndex = 0; removeIndex < old_local_pages.length; removeIndex++) {
+				  var candidateToBeRemoved = old_local_pages[removeIndex];
+				  if (candidateToBeRemoved.local_modifications) {
+					  //local drafts, do not remove here
+				  } else {
+					  //this page should be removed
+					  account.pages.remove(old_local_pages[removeIndex]);		        	
+				  }
+			  }
+			  persistence.flush(function(){
+				  client.doRefreshPages();
+			  });
+		  });
+
 	  });
-	  
-	  
   },
   savePage:function(post){
 	  var client = this;

@@ -50,6 +50,8 @@ enyo.kind({
   },
   refreshList:function(sender){
 	 this.$.spinner.show();
+	 this.$.list.punt();
+	 this.$.dataPage.clear();
 	 this.doRefresh();
   },
   stopSpinner:function() {
