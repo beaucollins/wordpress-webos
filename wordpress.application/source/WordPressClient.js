@@ -201,8 +201,7 @@ enyo.kind({
 	    }, client);
 	    
 	    account.posts.filter('postid', 'not in', remote_post_ids).list(function(old_local_posts){
-  		  client.log("these posts shoud be removed from the local db", old_local_posts);
-  		 
+  		
   		 for(var removeIndex = 0; removeIndex < old_local_posts.length; removeIndex++) {
   			  var candidateToBeRemoved = old_local_posts[removeIndex];
   		        if (candidateToBeRemoved.local_modifications) {
@@ -295,7 +294,6 @@ enyo.kind({
 		  }, client);
 
 		  account.pages.filter('page_id', 'not in', remote_page_ids).list(function(old_local_pages){
-			  client.log("these pages shoud be removed from the local db", old_local_pages);
 			  for(var removeIndex = 0; removeIndex < old_local_pages.length; removeIndex++) {
 				  var candidateToBeRemoved = old_local_pages[removeIndex];
 				  if (candidateToBeRemoved.local_modifications) {
