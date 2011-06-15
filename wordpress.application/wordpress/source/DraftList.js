@@ -6,9 +6,8 @@ enyo.kind({
 	  this.$.list.pageSize = 1000;
 	  this.hideNewButton();
   },
- acquirePosts:function(page){
-	if (page < 0) return;
-	page = 0;
+ acquirePosts:function(){
+	var page = 0;
     var that = this;
     var load_requests = this.load_requests;
     var pageSize = this.$.list.pageSize;
