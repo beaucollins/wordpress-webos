@@ -253,6 +253,14 @@ body {
   background:#FFF;
 }
 
+.enyo-richtext-hint, #compose_titleField_input, #compose_contentField_input {
+	color: #464646;
+}
+
+input::-webkit-input-placeholder, isindex::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+    color: #464646;
+}
+
 /* tags / password text fields 
 
 #compose_settings .enyo-input {
