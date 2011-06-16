@@ -90,17 +90,17 @@ enyo.kind({
                 ]}                                                                                       
 	    	  ]},
 			{ kind:'Item', components:[
-                { name:'tagsFieldDrawer', kind:'Drawer', open:true, caption:$L('Tags'), onclick: 'tagsClick', components:[
+                { name:'tagsFieldDrawer', kind:'Drawer', open:true, canChangeOpen:false, caption:$L('Tags'), onclick: 'tagsClick', components:[
                   { kind:'Input', name:'tagsField', hint:$L('Separate tags with commas'), inputType:'text' }
                 ] }
               ] },
 			{ kind:'Item', components:[
-                { kind:'Drawer', open:true, caption:$L('Password'), onclick: 'passwordClick', components:[
+                { kind:'Drawer', open:true, canChangeOpen:false, caption:$L('Password'), onclick: 'passwordClick', components:[
                   { name: 'passwordField', kind:'Input', hint:$L('Password'), inputType:'password' }
                 ] }
               ] },
 			{ kind:'Item', components:[
-				{ kind:'Drawer', open:true, caption:$L('Publish Date'), components:[
+				{ kind:'Drawer', open:true, canChangeOpen:false, caption:$L('Publish Date'), components:[
 					{kind: "DatePicker", label: $L("Date"), onChange: "datetimePickerPick"},
 					{kind: "TimePicker", label: $L("Time"), onChange: "datetimePickerPick"}
 				] }
