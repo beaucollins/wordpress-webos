@@ -360,8 +360,8 @@ enyo.kind({
 	this.log("Item date", referenceDate.getDate(), referenceDate.toUTCString());	
 	this.post.date_created_gmt = referenceDate;
 
-	this.log("calling the xmlrpc client...");
 	if (inSender.name == 'postButton') {
+  	this.log("calling the xmlrpc client...");
 		// save the post via the client
 		if(this.isAPost())
 			this.$.wpclient.savePost(this.post);
@@ -396,8 +396,9 @@ enyo.kind({
 	  window.close();
   },
   saveDraftSuccess:function(sender, post, account){
-    console.log("Draft was saved", post, account);
-    
+	  this.$.spinner.hide();
+ 	  this.$.draftButton.setDisabled(false);
+   	  this.$.postButton.setDisabled(false);
     //sending a notification to the opener window
 	if (this.wasLaunchedBy) {
 		enyo.windows.setWindowParams(this.wasLaunchedBy, {action: "refreshDrafts"});

@@ -6,28 +6,40 @@ enyo.kind({
 	  this.$.list.pageSize = 1000;
 	  this.hideNewButton();
   },
- acquirePosts:function(){
-	var page = 0;
+  acquirePosts:function(sender, page){
+    if (page < 0) return;
     var that = this;
-    var load_requests = this.load_requests;
     var pageSize = this.$.list.pageSize;
-    enyo.application.models.Post.all().filter('local_modifications', '=', 'true')
-      .prefetch('account')
-      .order('date_created_gmt', false)
-     // .limit(pageSize)
-     // .skip(page*pageSize)
-      .list(function(posts){   
-	    enyo.application.models.Page.all().filter('local_modifications', '=', 'true')
-	      .prefetch('account')
-	      .order('date_created_gmt', false)
-	   //   .limit(pageSize)
-	     // .skip(page*pageSize)
-	      .list(function(pages){
-	      //  that.log("Found something? ",  posts.concat(pages));
-	        that.setPage(page, posts.concat(pages)); 
-	        that.$.list.refresh();  
-	      });
-      });
+    enyo.application.models.Post.all().filter('local_modifications', '=', 'true').count(function(postCount){
+      enyo.application.models.Page.all().filter('local_modifications', '=', 'true').count(function(pageCount){
+        enyo.application.models.Post.all().filter('local_modifications', '=', 'true')
+          .prefetch('account')
+          .limit(pageSize)
+          .skip(page*pageSize)
+          .order('date_created_gmt', false)
+          .list(function(posts){
+            if (posts.length == pageSize) {
+              that.setPage(page, posts);
+              that.$.list.refresh();
+            }else{
+              //combine posts with pages query
+              var limit = pageSize - posts.length;
+              var offset = (page * pageSize) + posts.length;
+              enyo.application.models.Page.all().filter('local_modifications', '=', 'true')
+                .limit(pageSize - offset)
+                .skip(offset)
+                .order('date_created_gmt', false)
+                .list(function(pages){
+                  var items = posts.concat(pages);
+                  if (items.length > 0) {
+                    that.setPage(page, posts.concat(pages));
+                    that.$.list.refresh();
+                  };
+                });
+            }
+          })
+      })
+    });
   },
   refreshList:function(sender){
 	 this.$.spinner.show();

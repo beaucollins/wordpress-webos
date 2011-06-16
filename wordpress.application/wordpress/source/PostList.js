@@ -85,7 +85,6 @@ enyo.kind({
       .limit(pageSize)
       .skip(page*pageSize)
       .list(function(posts){
-        console.log("Found something? ", posts);
         that.setPage(page, posts);          
         that.$.list.refresh();
         
@@ -99,7 +98,7 @@ enyo.kind({
   reset: function(){
   	this.$.spinner.hide();
   	this.selectedRow = null;
-    // this.$.list.punt();
+    this.$.list.punt();
     this.$.dataPage.clear();
     this.$.list.reset();
     this.$.list.refresh();    
@@ -114,7 +113,6 @@ enyo.kind({
   	
   },
   setPage:function(pageNumber, items){
-    console.log("Setting page", pageNumber, items);
     this.$.dataPage.storePage(pageNumber, items);
   },
   missingPage:function(pageNumber){
@@ -126,7 +124,6 @@ enyo.kind({
   setupPost:function(sender, index){
     var post;
     if (post = this.$.dataPage.itemAtIndex(index)) {
-     // console.log("Setting up index: ", index, post);
       if (post.title.trim() == '') {
         this.$.title.addClass('untitled');
         this.$.title.setContent( $L("(No title)") );

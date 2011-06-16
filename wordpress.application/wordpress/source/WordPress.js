@@ -35,7 +35,7 @@ enyo.kind({
               { name:'comment_list', kind:'wp.CommentList', flex:1, onLoadMoreComments:'loadMoreComments', onSelectComment:'onSelectComment', onRefreshComment:'' },
               { name:'post_list', kind:'wp.PostList', flex:1, onSelectPost:'onSelectPost', onRefresh:'downloadPosts', onLoadMore:'loadMorePosts'},
               { name:'page_list', kind:'wp.PageList', flex:1, onSelectPost:'onSelectPage', onRefresh:'downloadPages', onLoadMore:'loadMorePages'},
-              { name:'draft_list', kind:'wp.DraftList', flex:1, onSelectPost:'onSelectPage' },
+              { name:'draft_list', kind:'wp.DraftList', flex:1, onSelectPost:'onSelectPage', lazy:false },
               { name:'stats', kind: 'wp.Stats', flex:1, lazy:true }
             ]}
           ]},
@@ -176,13 +176,11 @@ enyo.kind({
 	  enyo.application.launcher.sendEmailToSupport();
   },
   refreshClient:function(sender){
-    console.log("Refresh client");
     sender.downloadComments();
     sender.downloadPages();
     sender.downloadPosts();
   },
   refreshDrafts:function(){
-	this.log(">>>Refreshing drafts");  
     this.refreshDraftCount();
     this.$.draft_list.refresh();
   },
@@ -307,8 +305,9 @@ enyo.kind({
         }
         break;
      case this.$.draft_list:
+       console.log("Prepare draft list");
        if (view.getSelected()) {
-         view.fireSelected()
+         view.fireSelected();
        }else{
          this.$.content.selectView(this.$.blank);
        }
