@@ -28,7 +28,7 @@ enyo.kind({
     { kind:'Scroller', flex:1, components:[
       { name:'content', className:'wp-post-content', allowHtml: 'true' }
     ] },
-    { kind:'enyo.Toolbar', components:[
+    { kind:'enyo.Toolbar', className:'enyo-toolbar-light', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
       { flex:1 },
       { kind: 'Spinner', className: 'wp-compose-spinner' },

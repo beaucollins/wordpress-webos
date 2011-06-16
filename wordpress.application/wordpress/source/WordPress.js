@@ -53,7 +53,7 @@ enyo.kind({
       ]}
     ]},
     // main sliding pane interface
-    { name:'replyForm', scrim:true, onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
+    { name:'replyForm', scrim:true, onOpen:'focusReplyField', onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
     { kind:'AppMenu', onBeforeOpen: "beforeAppMenuOpen", automatic: false, components:[
       {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' },
     ]},
@@ -70,10 +70,10 @@ enyo.kind({
  	 ]},
 	//Global errors handling interface components
     {name: "globalErrorPopup", kind: "Popup",  lazy:false, showHideMode: "transition",  openClassName: "scaleFadeIn", scrim: true, 
-    	dismissWithClick:false, modal: true, className: "fastAnimate transitioner wp-blog-setup-dialog", width: "400px", components: [
+    	dismissWithClick:false, modal: true, className: "fastAnimate transitioner", width: "400px", components: [
 		{name: 'globalNeedHelpPane', kind: "wp.NeedHelpPrompt", onNeedHelp: "needHelp", onSubmit: "closeGlobalErrorPopup"}
 	]},
-    { name: 'globalHelpView', scrim:true, className:'wp-comment-reply-dialog', kind:'enyo.Toaster', components:[
+    { name: 'globalHelpView', scrim:true, lazy:false, openClassName: "scaleFadeIn", className:"fastAnimate transitioner", width:'400px', showHideMode:'transition', kind:'Popup', components:[
       {content: $L("Please visit the FAQ to get answers to common questions. If you're still having trouble, post in the forums.")},
       { kind: 'enyo.Button', onclick:"readTheFAQ", caption: $L('Read the FAQ') },
       { kind: 'enyo.Button', onclick:"sendEmail", caption: $L('Send Support E-mail')},
@@ -81,16 +81,12 @@ enyo.kind({
   ],
   create:function(){
     this.inherited(arguments);
-    // create a signing key
-    // should this only be done when needed or can it be called whenever?
-    // enyo.windowParamsChangeHandler = enyo.bind(this, 'windowParamsChangeHandler');
-    // this.runStats();
   },
   ready:function(){
     this.loadAccounts();
   },
   loadAccounts: function(){
-    this.log("Load accounts", enyo.application.accountManager.accounts);
+
     var client, clients = [];
     enyo.forEach(enyo.application.accountManager.accounts, function(account){
       client = this.createComponent({
@@ -123,9 +119,10 @@ enyo.kind({
       clients.push(client);
     }, this);
     this.setAccounts(clients);
-    this.accountChanged();
-    this.commentChanged();
     this.refreshDraftCount();
+    if (this.accounts.length > 0) {
+      this.selectFirstAccountSourceItem();      
+    };
   },
   connectionError:function(sender, response, request){
 	this.log("connectionError", response, request);
@@ -163,7 +160,7 @@ enyo.kind({
 	  this.$.globalErrorPopup.close();
   },
   needHelp: function(inSender) {
-	  this.$.globalErrorPopup.close();
+    this.$.globalErrorPopup.close();
 	  this.isOnErrorPopupShown = false;
 	  this.$.globalHelpView.openAtCenter();
   },
@@ -174,6 +171,12 @@ enyo.kind({
   sendEmail:function(){
 	  this.isOnErrorPopupShown = false;
 	  enyo.application.launcher.sendEmailToSupport();
+  },
+  // on first launch select the first item from the first account in the source list
+  selectFirstAccountSourceItem:function(){
+    this.log("Selecting the source list item");
+    this.$.sourceList.selectAccountItem(this.accounts[0].account, 'comments');
+    this.performAccountAction(this, 'comments', this.accounts[0])
   },
   refreshClient:function(sender){
     sender.downloadComments();
@@ -646,6 +649,10 @@ enyo.kind({
     }else if(post._type == 'Page'){
       this.account.deletePage(post);
     }
+  },
+  focusReplyField:function(sender){
+    this.log("Focus the reply field");
+    this.$.replyForm.focusField();
   }
   
 });

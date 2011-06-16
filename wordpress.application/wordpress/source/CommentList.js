@@ -107,7 +107,7 @@ enyo.kind({
         { name:'commentSubject', className: 'comment-subject', allowHtml: 'true' }
       ]}
     ] },
-    { kind: 'enyo.Toolbar', components:[
+    { kind: 'enyo.Toolbar', className:'enyo-toolbar-light', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
 	    { kind: 'Spinner', className: 'wp-list-spinner' },
       { kind:'Button', name: 'refreshButton', content:$L('Refresh'), onclick:'refreshComments', className:"enyo-button-blue" }

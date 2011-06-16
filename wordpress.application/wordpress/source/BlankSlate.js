@@ -11,7 +11,7 @@ enyo.kind({
       { name:'message', className:'blank-slate-message' }
 	]},
 	{ name:'list', kind: 'VFlexBox', flex:1 },
-	{ kind:'enyo.Toolbar', components:[
+	{ kind:'enyo.Toolbar', className:'enyo-toolbar-light', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'}
     ]}
   ],

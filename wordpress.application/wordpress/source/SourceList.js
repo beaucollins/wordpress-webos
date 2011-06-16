@@ -13,9 +13,9 @@ enyo.kind({
     { kind:'enyo.Scroller', flex:1, components:[
       { name:'list', kind:'enyo.Repeater', onSetupRow:'getAccountItem' }
     ]},
-    { kind:'enyo.Toolbar', className:'source-list-command', components:[
-      { kind:'Button', caption:$L('Open Menu'), onclick:'doAddBlog' },
-    ] }
+    // { kind:'enyo.Toolbar', className:'source-list-command', components:[
+    //   // { kind:'Button', caption:$L('Open Menu'), onclick:'doAddBlog' },
+    // ] }
   ],
   create:function(){
     this.inherited(arguments);
@@ -38,6 +38,22 @@ enyo.kind({
         }
       }
     };
+  },
+  getItems:function(){
+    var items = [];
+    this.forEachAccountControl(function(control){
+      items.push(control);
+    }, this);
+    return items;
+  },
+  getAccountItems:function(){
+    var items = [];
+    this.forEachAccountControl(function(control){
+      if (control != this.$.global) {
+        items.push(control);        
+      };
+    }, this);
+    return items;
   },
   selectAccountItem:function(account, action){
     this.forEachAccountControl(function(control){

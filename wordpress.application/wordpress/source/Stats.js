@@ -14,7 +14,7 @@ enyo.kind({
       { name:'statsWebView', allowHtml:'true' }
 	  ]},
     ]},
-	{ kind:'enyo.Toolbar', components:[
+	{ kind:'enyo.Toolbar', className:'enyo-toolbar-light', components:[
       { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},      
       { kind:'Button', name: 'refresh', content:'Refresh', onclick:'refreshStats'}
     ] }

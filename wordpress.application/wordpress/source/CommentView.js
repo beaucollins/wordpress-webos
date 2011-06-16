@@ -53,7 +53,7 @@ enyo.kind({
         //   ]}
         // ]}
       ] },
-      { kind: 'enyo.Toolbar', components:[
+      { kind: 'enyo.Toolbar', className:'enyo-toolbar-light', components:[
         { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
         { flex:1 },
         { kind: "Spinner", className: 'wp-list-spinner'},

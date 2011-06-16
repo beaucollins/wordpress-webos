@@ -493,11 +493,12 @@ img {
 
 /* Toolbar */
 
-.enyo-toolbar {
-	border-top: 1px solid #fff;
-	background: rgba(0,0,0,1) -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgba(255,255,255,.85)), to(rgba(255,255,255,1)));
+/*.enyo-toolbar {
+  border-top: 1px solid #fff;
+  background-color: #EEE;
+  background: rgba(0,0,0,1) -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgba(255,255,255,.85)), to(rgba(255,255,255,1)));
 }
-
+*/
 /* Comments detail view */
 
 /* Default with margin to avoid fat fingers */

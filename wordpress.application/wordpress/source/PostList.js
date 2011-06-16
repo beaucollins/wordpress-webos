@@ -37,12 +37,13 @@ enyo.kind({
 	       { name:'postExcerpt', content:'Excerpt', className:'list-excerpt', allowHtml: 'true' }
       ] }
     ] },
-    { kind:'enyo.Toolbar', components:[
+    { kind:'enyo.Toolbar', className:'enyo-toolbar-light', components:[
 	    { name: "slidingDrag", slidingHandler: true, kind:'GrabButton'},
 	    { flex:1 },
       { kind: 'Spinner', className: 'wp-list-spinner' },
       { kind:'Button', name: 'refresh', content:$L("Refresh"), onclick:'refreshList'},
-      { kind:'Button', name: 'newItem', content:$L("Add New"), onclick:'openNewItemEditor'}
+      { kind:'Button', name: 'newItem', content:$L("Add New"), onclick:'openNewItemEditor'},
+      { flex:1}
     ] }
   ],
   create:function(){
