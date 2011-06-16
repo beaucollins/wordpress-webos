@@ -10,7 +10,8 @@ enyo.kind({
   },
   published: {
     account:null,
-    selected:null
+    selected:null,
+    showBlogTitle:false
   },
   kPostStatus: {
     'publish' : 'Published',
@@ -29,7 +30,7 @@ enyo.kind({
 	              { name:'postDate', content:'Date', className:'post-list-timestamp' }
 	            ]},
 	            { kind:'HFlexBox', components:[
-	              { flex:1, kind:"Control" },
+	              { flex:1, name:'blogTitle', className:'post-list-blog-name wp-truncate', kind:"Control" },
 	              { name:'postStatus', content:'Status', className:'status-badge' }
 	            ]}
 	          ]}
@@ -132,6 +133,12 @@ enyo.kind({
         this.$.title.removeClass('untitled');
         this.$.title.setContent(post.title);
       };
+      if (this.showBlogTitle) {
+        console.log(post.account);
+        this.$.blogTitle.setContent(post.account.blogName);
+      }else{
+        this.$.blogTitle.setContent('');
+      }
       
       var postExcerpt;
       if (post.description.trim() != '') {

@@ -266,6 +266,10 @@ img {
   font-style: oblique;
 }
 
+.post-list-blog-name {
+  font-size:14px;
+}
+
 .comment-item.status-hold {
   background:-webkit-gradient(linear, left top, left bottom, from(#FCFEF2), to(#F6F9C6));
 }
