@@ -127,7 +127,11 @@ enyo.kind({
         };
       };    
       this.$.avatar.setEmail(comment.author_email, {size:30});
-      this.$.author.setContent(comment.author);
+      if (comment.author.trim() == '') {
+        this.$.author.setContent($L("Anonymous"));
+      }else{
+        this.$.author.setContent(comment.author);
+      }
       this.$.authorURL.setContent(comment.author_url);
       this.$.timestamp.setContent(FormatDateTimeForListView(comment.date_created_gmt));
       this.$.commentContent.setContent(TruncateText(StripHTML(comment.content)));

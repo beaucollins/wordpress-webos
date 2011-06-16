@@ -90,7 +90,12 @@ enyo.kind({
       return;
     };
         
-    this.$.authorName.setContent(this.comment.author);
+    if (this.comment.author.trim() == '') {
+      this.$.authorName.setContent($L("Anonymous"));
+    }else{
+      this.$.authorName.setContent(this.comment.author);
+    }
+    
     if (this.hasEmail()) {
       this.$.authorEmail.show();
     }else{
