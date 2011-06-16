@@ -396,13 +396,14 @@ enyo.kind({
 	  window.close();
   },
   saveDraftSuccess:function(sender, post, account){
+    this.log("Saved draft, close window");
 	  this.$.spinner.hide();
  	  this.$.draftButton.setDisabled(false);
    	  this.$.postButton.setDisabled(false);
     //sending a notification to the opener window
-	if (this.wasLaunchedBy) {
-		enyo.windows.setWindowParams(this.wasLaunchedBy, {action: "refreshDrafts"});
-	}
+  	if (this.wasLaunchedBy) {
+  		enyo.windows.setWindowParams(this.wasLaunchedBy, {action: "refreshDrafts"});
+  	}
       
     window.close(); //to close this window
   },

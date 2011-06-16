@@ -99,7 +99,7 @@ enyo.kind({
   reset: function(){
   	this.$.spinner.hide();
   	this.selectedRow = null;
-    this.$.list.punt();
+    // this.$.list.punt();
     this.$.dataPage.clear();
     this.$.list.reset();
     this.$.list.refresh();    

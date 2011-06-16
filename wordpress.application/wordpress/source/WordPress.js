@@ -121,7 +121,10 @@ enyo.kind({
     this.setAccounts(clients);
     this.refreshDraftCount();
     if (this.accounts.length > 0) {
-      this.selectFirstAccountSourceItem();      
+      var app = this;
+      enyo.nextTick(function(){
+        app.selectFirstAccountSourceItem();      
+      })
     };
   },
   connectionError:function(sender, response, request){
@@ -637,7 +640,7 @@ enyo.kind({
       enyo.application.persistence.flush(function(){
         //refresh the drafts
     	wp.refreshDraftCount();
-        wp.$.draft_list.refresh();
+        wp.$.draft_list.reset();
         if (wp.$.draft_list.selected == post) {
         	wp.$.draft_list.clearSelection();
             wp.$.content.selectView(wp.$.blank);

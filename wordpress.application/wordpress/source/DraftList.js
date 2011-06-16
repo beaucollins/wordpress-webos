@@ -3,16 +3,15 @@ enyo.kind({
   kind:'wp.PostList',
   create: function(){
 	  this.inherited(arguments);
-	  this.$.list.pageSize = 1000;
 	  this.hideNewButton();
   },
   acquirePosts:function(sender, page){
     if (page < 0) return;
     var that = this;
     var pageSize = this.$.list.pageSize;
-    enyo.application.models.Post.all().filter('local_modifications', '=', 'true').count(function(postCount){
-      enyo.application.models.Page.all().filter('local_modifications', '=', 'true').count(function(pageCount){
-        enyo.application.models.Post.all().filter('local_modifications', '=', 'true')
+    enyo.application.models.Post.all().filter('local_modifications', '=', true).count(function(postCount){
+      enyo.application.models.Page.all().filter('local_modifications', '=', true).count(function(pageCount){
+        enyo.application.models.Post.all().filter('local_modifications', '=', true)
           .prefetch('account')
           .limit(pageSize)
           .skip(page*pageSize)
@@ -23,13 +22,22 @@ enyo.kind({
               that.$.list.refresh();
             }else{
               //combine posts with pages query
+              // reset the page number by how many pages worth of Posts there are
+              var firstPageSize = pageSize - (postCount % pageSize);
+              page = page - Math.floor(postCount/pageSize);
               var limit = pageSize - posts.length;
-              var offset = (page * pageSize) + posts.length;
-              enyo.application.models.Page.all().filter('local_modifications', '=', 'true')
-                .limit(pageSize - offset)
+              if (page > 0) {
+                var offset = (page - 1) * pageSize + firstPageSize;
+              }else{
+                var offset = page * pageSize;                
+              }
+              enyo.application.models.Page.all().filter('local_modifications', '=', true)
+                .limit(limit)
                 .skip(offset)
+                .prefetch('account')
                 .order('date_created_gmt', false)
                 .list(function(pages){
+                  console.log("Any pages? ", pages);
                   var items = posts.concat(pages);
                   if (items.length > 0) {
                     that.setPage(page, posts.concat(pages));
