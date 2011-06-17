@@ -506,8 +506,11 @@ enyo.kind({
 	  console.log("Compose Client is ready");
   },
   cloneItem:function(item){
+
+	  this.log("type of "+ typeof item.local_modifications);
 	  
-	  if(item.local_modifications && item.local_modifications == 'true') {
+	  if(item.local_modifications != null)
+		if(item.local_modifications == true	|| item.local_modifications == 'true') {
 		  this.log("Item already modified");
 		  return item;
 	  } 
@@ -538,7 +541,7 @@ enyo.kind({
 		  p.wp_password = post.wp_password;
 		  p.wp_post_form = post.wp_post_form;
 		  p.wp_slug = post.wp_slug;
-		  p.local_modifications = 'true';
+		  p.local_modifications = true;
 		  return p;
 	  } else {
 		  this.log("new draft Page stored");
@@ -569,7 +572,7 @@ enyo.kind({
 		  p.wp_page_template = page.wp_page_template;
 		  p.wp_password = page.wp_password;
 		  p.wp_slug = page.wp_slug;
-		  p.local_modifications = 'true';
+		  p.local_modifications = true;
 		  return p;
 	  }
 

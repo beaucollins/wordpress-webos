@@ -11,9 +11,9 @@ enyo.kind({
     if (page < 0) return;
     var that = this;
     var pageSize = this.$.list.pageSize;
-    enyo.application.models.Post.all().filter('local_modifications', '=', true).count(function(postCount){
-      enyo.application.models.Page.all().filter('local_modifications', '=', true).count(function(pageCount){
-        enyo.application.models.Post.all().filter('local_modifications', '=', true)
+    enyo.application.models.Post.all().filter('local_modifications', '=', 'true').count(function(postCount){
+      enyo.application.models.Page.all().filter('local_modifications', '=', 'true').count(function(pageCount){
+        enyo.application.models.Post.all().filter('local_modifications', '=', 'true')
           .prefetch('account')
           .limit(pageSize)
           .skip(page*pageSize)
@@ -33,7 +33,7 @@ enyo.kind({
               }else{
                 var offset = page * pageSize;                
               }
-              enyo.application.models.Page.all().filter('local_modifications', '=', true)
+              enyo.application.models.Page.all().filter('local_modifications', '=', 'true')
                 .limit(limit)
                 .skip(offset)
                 .prefetch('account')

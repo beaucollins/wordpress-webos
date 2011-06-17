@@ -115,7 +115,6 @@ enyo.kind({
     this.$.list.reset();
     this.$.list.refresh();    
     this.$.spinner.hide();
-  	
   },
   setPage:function(pageNumber, items){
     this.$.empty.hide();
