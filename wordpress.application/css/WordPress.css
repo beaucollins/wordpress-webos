@@ -33,8 +33,6 @@ img {
   background: rgba(0,0,0,.25);
   border-radius: 11px;
   padding: 0 8px;
-  -webkit-text-shadow: 0 4px 20px #f6c;
-	text-shadow: 0 1px 20px #f6c;
 }
 
 #wordPress_middle_client {
@@ -62,10 +60,11 @@ img {
 
 /* nav item */
 .enyo-divider-caption {
-  font-size:14px;
+  font-size:16px;
   text-transform: uppercase;
   color: rgba(255,255,255,.8);
   font-weight: normal;
+  margin: 0 0 0 10px;
 }
 
 .account-drawer > .enyo-hflexbox {
@@ -94,6 +93,8 @@ img {
 	display: block;
 	height: 26px;
 	width: 26px;
+	/* Hide for now */
+	display: none;
 	/*
 	
 	
@@ -155,6 +156,7 @@ img {
   background:#FFF;
 }
 
+.post-date,
 .comment-timestamp,
 .post-list-timestamp {
   font-size: 14px;
@@ -224,6 +226,8 @@ img {
 .status-badge.status-publish,
 .comment-status-badge.status-approve {
   color:#006505;
+  /* should hide since this is default. thus: */
+  display: none;
 }
 
 .status-badge.status-draft,
@@ -546,6 +550,33 @@ img {
 	color: #21759B;
 	}
 
+/* Floating images */
+.wp-post-content .alignleft,
+#wordPress_comments_right .alignleft,
+#wordPress_posts_detail_content .alignleft,
+wordPress_post_view_content .alignleft,
+.wp-post-content .alignright,
+#wordPress_comments_right .alignright,
+#wordPress_posts_detail_content .alignright,
+wordPress_post_view_content .alignright {
+	float: right;
+	margin: 6px;
+}
+
+.wp-post-content .alignleft,
+wordPress_post_view_content .alignleft,
+#wordPress_comments_right .alignleft,
+#wordPress_posts_detail_content .alignleft {
+	float: left;
+}
+
+.wp-post-content .alignnone,
+#wordPress_comments_right .alignnone,
+#wordPress_posts_detail_content .alignnone {
+	float: none;
+	margin: 1em 0;
+}
+
 /* Head */
 #wordPress_comments_right .enyo-item.first {
 	padding: 10px; /* Default is 10px */
@@ -568,7 +599,8 @@ img {
   padding:10px;
   font-size:14px;
   border-bottom:1px solid #CCC;
-  background: -webkit-gradient(linear, left top, left bottom, from(#FFF), to(#EFEFEF));
+  background: none;
+  background: #dfdfdf url(../images/meta-bg.png) repeat-x;
 }
 
 .wp-item-meta-label {
@@ -595,7 +627,7 @@ img {
 .wp-comment-subject {
   background:url(../images/icons/post-tiny.png) no-repeat -3px 11px;
   color: #21759B;
-  padding: 10px 0 10px 20px;
+  padding: 8px 0 8px 20px;
   margin: -10px 0;
 }
 
@@ -664,11 +696,12 @@ img {
 }
 
 .blank-slate-graphic{
-	background:url(../images/logo-placeholder.png) no-repeat top center;
-	width: 140px;
-	height: 140px;
+	background:url(../images/icons/blank-slate.png) no-repeat top center;
+	width: 192px;
+	height: 130px;
 	margin: auto;
 	display: block;
+	margin: 0 auto 20px;
 }
 
 .blank-slate {
@@ -680,7 +713,7 @@ img {
 	display: block;
 	width: 200px;
 	margin: 10px auto 0 auto;
-	color: #464646;
+	color: #bbb;
 	text-align: center;
 }
 
