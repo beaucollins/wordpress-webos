@@ -322,10 +322,7 @@ enyo.kind({
 	  this.categoriesChanged = true;
   },
   savePost:function(inSender){
-    var spinner = this.$.spinner;
-    enyo.nextTick(function(){
-      this.$.spinner.show();
-    });
+   // this.$.spinner.show();
 	 this.$.draftButton.setDisabled(true);
 	 this.$.postButton.setDisabled(true);
 	  
