@@ -735,6 +735,6 @@ wordPress_post_view_content .alignleft,
   background:#FFF;
 }
 
-#wordPress_main {
+#wordPress_main, #wordPress_content {
   background:#FFF;
 }
