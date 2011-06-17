@@ -1,8 +1,8 @@
-body, .source-list {
+body {
 	background: url(../images/background.jpg) 0 0 no-repeat;
 }
 
-#postPreviewView, .wordpress-main-pane {
+#postPreviewView {
   background:#FFF;
 }
 
@@ -645,10 +645,10 @@ img {
   background:#FFF;
 }
 
-.main-pane, #wordPress_main_client {
+/*.main-pane, #wordPress_main_client {
   background:#FFF;
 }
-
+*/
 .wp-list-spinner{
 	margin-right: 4px;
 }
@@ -669,6 +669,10 @@ img {
 	height: 140px;
 	margin: auto;
 	display: block;
+}
+
+.blank-slate {
+  background:#FFF;
 }
 
 .blank-slate-message{
@@ -695,5 +699,9 @@ img {
 }
 
 .blank-view {
+  background:#FFF;
+}
+
+#wordPress_main {
   background:#FFF;
 }
