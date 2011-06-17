@@ -1,6 +1,7 @@
 enyo.kind({
   name:'wp.PageList',
   kind:'wp.PostList',
+  emptyMessage:'No Pages',
   acquirePosts:function(sender, page){
     if(!this.account) return;
     if (page < 0) return;

@@ -11,7 +11,8 @@ enyo.kind({
   published: {
     account:null,
     selected:null,
-    showBlogTitle:false
+    showBlogTitle:false,
+    emptyMessage:$L('No Posts')
   },
   kPostStatus: {
     'publish' : 'Published',
@@ -21,6 +22,7 @@ enyo.kind({
   },
   components: [
     { kind:'wp.DataPage' },
+    { name:'empty', kind:'EmptyMessage' },
     { name:'list', kind:'VirtualList', flex:1, onSetupRow:'setupPost', onAcquirePage:'acquirePosts', onDiscardPage:'discardPage', components:[
       { name:'item', kind:'Item', onclick:'selectPost', className:'post-item', components:[
 	      { name:'header', kind:'HFlexBox', components: [
@@ -49,6 +51,7 @@ enyo.kind({
   ],
   create:function(){
     this.inherited(arguments);
+    this.emptyMessageChanged();
   },
   refreshList:function(sender){
 	 this.$.spinner.show();
@@ -115,6 +118,7 @@ enyo.kind({
   	
   },
   setPage:function(pageNumber, items){
+    this.$.empty.hide();
     this.$.dataPage.storePage(pageNumber, items);
   },
   missingPage:function(pageNumber){
@@ -168,6 +172,7 @@ enyo.kind({
     };
   },
   accountChanged:function(){
+    this.$.empty.show();
     this.load_requests = {};
     this.setSelected(null);
     this.$.list.select(null);
@@ -192,9 +197,31 @@ enyo.kind({
   },
   openNewItemEditor:function(sender, post){
   	enyo.application.launcher.openComposerWithNewItem(this.account.account,"Post");    
+  },
+  emptyMessageChanged:function(){
+    this.$.empty.setMessage(this.emptyMessage);
   }
   
 });
+
+enyo.kind({
+  name:'EmptyMessage',
+  kind: 'Control',
+  style:'padding:10px',
+  published:{
+    message:'Message Here'
+  },
+  components:[
+    { name:'message', className:'emptyMessage', style:'text-align:center; background:rgba(0,0,0,0.8); color:#FFF; border-radius:5px; padding:10px;' }
+  ],
+  create:function(){
+    this.inherited(arguments);
+    this.messageChanged();
+  },
+  messageChanged:function(){
+    this.$.message.setContent(this.message);
+  }
+})
 
 
 

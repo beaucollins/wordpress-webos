@@ -85,6 +85,7 @@ enyo.kind({
   },
   components:[
     { kind:'wp.DataPage'},
+    { name:'empty', kind:'EmptyMessage', message:$L('No Comments') },
     { name:'list', kind: 'VirtualList', flex:1, onSetupRow:'setupComment', onAcquirePage:'acquireComments', onDiscardPage:'discardComments', components: [
       { name:'item', kind:'Item', tapHighlight:true, onclick:'selectComment', className:'comment-item', layoutKind:'VFlexLayout', components:[
         { name:'header', kind:'HFlexBox', components: [
@@ -154,6 +155,7 @@ enyo.kind({
         .limit(this.$.list.pageSize)
         .skip(page*this.$.list.pageSize)
         .list(function(comments){
+          that.$.empty.hide();
           that.$.dataPage.storePage(page, comments);
           that.$.list.refresh();
           // if we're out of comments try to download more comments
@@ -174,6 +176,7 @@ enyo.kind({
     this.$.list.refresh();
   },
   accountChanged:function(){
+    this.$.empty.show();
     this.setSelected(null);
     this.load_requests = {};
     this.$.list.punt();

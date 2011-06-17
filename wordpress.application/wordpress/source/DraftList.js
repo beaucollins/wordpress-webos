@@ -2,6 +2,7 @@ enyo.kind({
   name:'wp.DraftList',
   kind:'wp.PostList',
   showBlogTitle:true,
+  emptyMessage:$L('No Drafts'),
   create: function(){
 	  this.inherited(arguments);
 	  this.hideNewButton();
