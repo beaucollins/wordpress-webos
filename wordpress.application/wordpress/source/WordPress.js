@@ -14,7 +14,6 @@ enyo.kind({
   isOnErrorPopupShown : false,
   components: [
     { name: 'xmlrpc_client', kind:'XMLRPCService' },
-    { name: 'stats_api', kind: 'WebService', method: 'POST', url: 'https://api.wordpress.org/webosapp/update-check/1.0/' },
     {kind: "ApplicationEvents", onOpenAppMenu: "openAppMenuHandler", onCloseAppMenu: "closeAppMenuHandler", onWindowParamsChange:'windowParamsChangeHandler'},
     { kind:'Pane', flex:1, components:[
       { name:'blankSlate', flex:1, kind:'enyo.Control' },
@@ -503,28 +502,6 @@ enyo.kind({
   },
   closePasswordForm:function(){
     this.$.passwordForm.close();
-  },
-  runStats: function() {
-      var lastRun = Date.parse(enyo.getCookie('statsLastRun'));
-      var now = new Date();
-      var daysSinceLastRun = 100;
-      if (lastRun) {
-          console.log('Last time we sent stats: ' + lastRun);
-          daysSinceLastRun = (now.getTime() - lastRun) / (1000 * 86400);
-      }
-      if (daysSinceLastRun >= 7) {
-          var statsParams = {
-              appVersion: enyo.fetchAppInfo().version,
-          };
-          var deviceInfo = enyo.fetchDeviceInfo();
-          if (deviceInfo) {
-              statsParams.deviceInfo = deviceInfo;
-          }
-          console.log('Sending info to Stats API: ' + this.$.stats_api.url);
-          // console.log('data => ' + enyo.json.stringify(statsParams));
-          this.$.stats_api.call(statsParams);
-          enyo.setCookie('statsLastRun', new Date());          
-      }
   },
   replyToComment:function(sender){
     this.$.replyForm.setComment(sender.comment);
