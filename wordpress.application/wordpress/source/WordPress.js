@@ -187,7 +187,7 @@ enyo.kind({
   },
   refreshDrafts:function(){
     this.refreshDraftCount();
-    this.$.draft_list.refresh();
+    this.$.draft_list.reset();
   },
   refreshDraftCount:function(){
 	this.log("Refreshing the drafts count");  
