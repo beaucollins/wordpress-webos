@@ -65,7 +65,7 @@ enyo.kind({
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
-			{ name: 'contentField', kind: 'enyo.RichText', alwaysLooksFocused: true, changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange", onmouseup: "processButtonStates"},
+			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange", onmouseup: "processButtonStates"},
 			]},
 			{ name:'uploadTray', kind: "Control", layoutKind: "HFlexLayout" },
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:$L('Settings'), onclick:'toggleSettings' },
