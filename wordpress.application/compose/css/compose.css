@@ -207,7 +207,9 @@ body {
 }
 
 .btnActive {
-	background-color: #ccc;
+	background: url(../images/btn_bg_down.png) repeat-x;
+	border: 1px solid #999;
+	border-bottom-color: #777;
 }
 
 #compose_linkOKBtn{

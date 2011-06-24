@@ -65,7 +65,7 @@ enyo.kind({
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
-			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange"},
+			{ name: 'contentField', kind: 'enyo.RichText', alwaysLooksFocused: true, changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange", onmouseup: "processButtonStates"},
 			]},
 			{ name:'uploadTray', kind: "Control", layoutKind: "HFlexLayout" },
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:$L('Settings'), onclick:'toggleSettings' },
@@ -184,11 +184,66 @@ enyo.kind({
 		else {
 			document.execCommand('inserthtml', false, '<li>');
 		}
-		console.log(this.enterCtr);
 	}
-	else 
-	 this.setEnterCtr(0);
+	else {
+	  this.setEnterCtr(0);
+	}
+	
+	this.processButtonStates();
 },
+  processButtonStates:function(){
+	//might be sexier to loop through the elements here?
+	if (document.queryCommandState('bold')) {
+		if (document.getElementById("strongButton").className.indexOf("btnActive") == -1) {
+		  	document.getElementById("strongButton").className += " btnActive";
+		}
+	}
+	else {
+		document.getElementById("strongButton").className = document.getElementById("strongButton").className.replace(/\b[ ]+btnActive\b/g,'');
+	}
+	
+	if (document.queryCommandState('italic')) {
+		if (document.getElementById("emButton").className.indexOf("btnActive") == -1)
+			document.getElementById("emButton").className += " btnActive";
+	}
+	else {
+		document.getElementById("emButton").className = document.getElementById("emButton").className.replace(/\b[ ]+btnActive\b/g,'');
+	}
+	
+	if (document.queryCommandState('strikethrough')) {
+		if (document.getElementById("strikethroughButton").className.indexOf("btnActive") == -1) {
+			document.getElementById("strikethroughButton").className += " btnActive";
+		}
+	}
+	else {
+		document.getElementById("strikethroughButton").className = document.getElementById("strikethroughButton").className.replace(/\b[ ]+btnActive\b/g,'');
+	}
+	
+	if (document.queryCommandState('underline')) {
+		if (document.getElementById("uButton").className.indexOf("btnActive") == -1)
+			document.getElementById("uButton").className += " btnActive";
+	}
+	else {
+		document.getElementById("uButton").className = document.getElementById("uButton").className.replace(/\b[ ]+btnActive\b/g,'');
+	}
+	
+	if (document.queryCommandState('insertunorderedlist')) {
+		if (document.getElementById("ulButton").className.indexOf("btnActive") == -1)
+			document.getElementById("ulButton").className += " btnActive";
+	}
+	else {
+		document.getElementById("ulButton").className = document.getElementById("ulButton").className.replace(/\b[ ]+btnActive\b/g,'');
+	}
+	
+	if (document.queryCommandState('insertorderedlist')) {
+		if (document.getElementById("olButton").className.indexOf("btnActive") == -1)
+			document.getElementById("olButton").className += " btnActive";
+	}
+	else {
+		document.getElementById("olButton").className = document.getElementById("olButton").className.replace(/\b[ ]+btnActive\b/g,'');
+	}
+		
+  },
   toggleSettings:function(sender){
     this.$.composer.addRemoveClass('expanded-mode', sender.depressed);
     this.setShowSettings(sender.depressed);
@@ -197,7 +252,7 @@ enyo.kind({
     this.$.settings.setShowing(this.showSettings);
   },
   formatBtnClick:function(type){
-	
+	this.$.contentField.forceFocus();
 	if (type == 'insertorderedlist' || type == 'insertunorderedlist') {
 		console.log('list: ' + this.isInList);
 		this.setIsInList(!this.isInList);
@@ -219,9 +274,9 @@ enyo.kind({
 	}
 	else {
 		document.execCommand(type, false, null);
-	}
+	}	
 	
-	this.$.contentField.forceFocus();
+	this.processButtonStates();
   },
   linkHelper:function(){
 	//get the cursor position for l8r

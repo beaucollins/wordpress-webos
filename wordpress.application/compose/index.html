@@ -10,7 +10,6 @@
   <script src="/opt/PalmSDK/0.1/share/refcode/framework/enyo/1.0/framework/enyo.js" type="text/javascript" launch="nobridge"></script>
 <script type="text/javascript">
 function toggle(obj) {
-	console.log('time to toggle ' + obj.id);
 	var el = document.getElementById(obj.id);
 	var curClass = el.className;
 	
@@ -18,7 +17,6 @@ function toggle(obj) {
 		el.className = 'formatBtn';
 	else
 		el.className = 'formatBtn btnActive';
-
 }
 </script>
   <!--<script src="/usr/palm/frameworks/enyo/0.9/framework/enyo.js" type="text/javascript"></script>-->
@@ -37,15 +35,15 @@ function toggle(obj) {
 		<button class="formatBtn" type="button" id="strikethroughButton" onClick="formatBtnClickFunctionBind('strikethrough')">ABC</button>
 		<button class="formatBtn" type="button" id="uButton" onClick="formatBtnClickFunctionBind('underline')">U</button>
 		<div class="spacer"></div>
-		<button class="formatBtn" type="button" onClick="formatBtnClickFunctionBind('insertunorderedlist')"><img src="images/icon_ul.png" /></button>
-		<button class="formatBtn" type="button" onClick="formatBtnClickFunctionBind('insertorderedlist')"><img src="images/icon_ol.png" /></button>
+		<button class="formatBtn" type="button" id="ulButton" onClick="formatBtnClickFunctionBind('insertunorderedlist')"><img src="images/icon_ul.png" /></button>
+		<button class="formatBtn" type="button" id="olButton" onClick="formatBtnClickFunctionBind('insertorderedlist')"><img src="images/icon_ol.png" /></button>
 		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('indent');toggle(this)"><img src="images/icon_bquote.png" /></button>
 		<button class="formatBtn" type="button" id="linkButton" onClick="linkBtnClickFunctionBind()"><img src="images/icon_link.png" /></button>
 		<button class="formatBtn" type="button" id="moreButton" onClick="formatBtnClickFunctionBind('more')"><img src="images/icon_more.png" /></button>
 		<div class="spacer"></div>
 		<button class="formatBtn" type="button" id="leftButton" onClick="formatBtnClickFunctionBind('justifyleft')"><img src="images/icon_left.png" /></button>
-		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifycenter')"><img src="images/icon_center.png" /></button>
-		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('justifyright')"><img src="images/icon_right.png" /></button>
+		<button class="formatBtn" type="button" id="centerButton" onClick="formatBtnClickFunctionBind('justifycenter')"><img src="images/icon_center.png" /></button>
+		<button class="formatBtn" type="button" id="rightButton" onClick="formatBtnClickFunctionBind('justifyright')"><img src="images/icon_right.png" /></button>
 		<div class="spacer"></div>
 		<button class="formatBtn" type="button" id="imageButton" onClick="showWebOsImageFilePickerFunctionBind()"><img src="images/icon_camera.png" /></button>
 	</div>
