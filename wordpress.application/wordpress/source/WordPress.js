@@ -186,8 +186,13 @@ enyo.kind({
     sender.downloadPosts();
   },
   refreshDrafts:function(){
+	this.log("RefreshDrafts");
     this.refreshDraftCount();
     this.$.draft_list.reset();
+	if (this.$.middlePane.getView() == this.$.draft_list) {
+		this.$.draft_list.clearSelection();
+		this.$.content.selectView(this.$.blank);
+	};
   },
   refreshDraftCount:function(){
 	this.log("Refreshing the drafts count");  
@@ -529,27 +534,21 @@ enyo.kind({
 	var params = event.params;
 	
 	if (params.action == 'refreshPages') {
-		this.refreshDraftCount();
-		//this call arrives from the compose view. make sure we are not publishing a draft post
+		//this call arrives from the compose view. 
 		if(this.$.draft_list) {
-			if (this.$.middlePane.getView() == this.$.draft_list) {
-				this.$.draft_list.refresh();	
-				this.$.draft_list.clearSelection();
-				this.$.content.selectView(this.$.blank);
-			};
+			this.refreshDrafts();
+		} else {
+			this.refreshDraftCount();
 		}
 		if(this.$.page_list)
 			this.$.page_list.refresh();
 	};
 	if (params.action == 'refreshPosts') {
-		this.refreshDraftCount();
-		//this call arrives from the compose view. make sure we are not publishing a draft post
+		//this call arrives from the compose view. 
 		if(this.$.draft_list) {
-			if (this.$.middlePane.getView() == this.$.draft_list) {
-				this.$.draft_list.refresh();	
-				this.$.draft_list.clearSelection();
-				this.$.content.selectView(this.$.blank);
-			};
+			this.refreshDrafts();
+		} else {
+			this.refreshDraftCount();
 		}
 		if(this.$.post_list)
 			this.$.post_list.refresh();

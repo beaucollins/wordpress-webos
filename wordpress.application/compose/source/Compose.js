@@ -440,7 +440,8 @@ enyo.kind({
 	  else
 		  enyo.windows.addBannerMessage($L("Post saved successfully"), "{}");
 	 
-	  this.log("Item saved", post, account);
+	  this.log("Item saved");
+	  
 	  //sending a notification to the opener window
 	  if (this.wasLaunchedBy) { 
 		  if(this.isAPost())
