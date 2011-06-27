@@ -35,8 +35,8 @@ enyo.kind({
 	{kind: "Dialog", components: [
 		{content: "Insert a Link"},
 		{kind: "VFlexBox", components: [
-			{ kind:'Input', name:'linkURL', hint: $L('Link URL'), onfocus: 'addHTTPToLink', inputType:'text' },
-        	{ kind:'Input', name:'linkName', hint: $L('Link name (optional)'), inputType:'text' },
+			{ kind:'Input', name:'linkURL', hint: $L('Link URL'), onfocus: 'addHTTPToLink', inputType:'text', onfocus:'showKeyboard' },
+        	{ kind:'Input', name:'linkName', hint: $L('Link name (optional)'), inputType:'text', onfocus:'showKeyboard' },
 			{kind: "Button", name: 'linkOKBtn', caption: $L("OK"), onclick: "linkOKClick"}
 		]}
 	]},	
@@ -55,7 +55,6 @@ enyo.kind({
       { name:'composer', className:'composer', kind:'VFlexBox', components:[
         { kind:'enyo.Header', components:[
           { name:'headerLabelField', content:$L('New Post'), flex:1 },
-          // { name:'attachButton', kind:'enyo.Button', caption:$L('Upload Test'), onclick:'uploadTest' },
           { name:'previewButton', kind:'enyo.Button', caption:$L('Preview'), onclick:'showPreview' },
           { name:'draftButton', kind:'enyo.Button', caption:$L('Save Draft'), onclick:'savePost' },
 		  { kind: 'Spinner', className: 'wp-compose-spinner' },
@@ -259,10 +258,8 @@ enyo.kind({
     enyo.keyboard.show();
   },
   formatBtnClick:function(type){
-  // this.$.contentField.forceFocusEnableKeyboard();
-  console.log("Clicked format button", type);
+
 	if (type == 'insertorderedlist' || type == 'insertunorderedlist') {
-		console.log('list: ' + this.isInList);
 		this.setIsInList(!this.isInList);
 	}
 	
@@ -281,7 +278,6 @@ enyo.kind({
 		document.execCommand('inserthtml', false, '<!--more--><div class="more"></div><br>');
 	}
 	else {
-		console.log("document.execCommand "+ type);
 		document.execCommand(type, false, null);
 	}	
 	
@@ -303,7 +299,6 @@ enyo.kind({
 	startNode = selRange.startContainer;
 	endNode = selRange.endContainer;
 	
-	console.log('start: ' + selectionStart + ' selection end: ' + selectionEnd);
 	
 	this.$.dialog.open();
 
@@ -485,19 +480,16 @@ enyo.kind({
 	  var itemIDName = this.isAPost() ? 'postid' : 'page_id';
 
 	  if(typeof (this.post[itemIDName]) == undefined || this.post[itemIDName] == '') {
-		  console.log("this is a new post/page");
 		  isChangedOrFreshlyCreatedDraft = true;
 	  }
 	  	  
 	  if(this.postChangedByUser()) {
-		  console.log("this post/page changed");
 		  isChangedOrFreshlyCreatedDraft = true;
 	  }
 	  
 	  //we can starts the classic preview
 	  if(isChangedOrFreshlyCreatedDraft == false) {
 		  //launches a new window with the preview view
-		  console.log("Launching Preview");
 		  params = {'account': this.account, 'post': this.post};
 		  enyo.windows.activate("../wordpress/postPreview.html", "Post Preview", params);
 		  return;
@@ -531,7 +523,6 @@ enyo.kind({
   },
   // this is where fields should be populated with data from the post to be edited
   postChanged:function(){
-	  console.log("Post Changed", this.post);
 	  if (this.post) {
 		  // set up the post object
 		  this.$.titleField.setValue(this.post.title);
@@ -665,7 +656,6 @@ enyo.kind({
         
     if (post_id) {
       enyo.application.models.Post.load(post_id, function(post){
-        console.log("Found a post? ", post);
         if (post) {
           var p = composer.cloneItem(post); //clone the post obj
           composer.setPost(p);
@@ -681,13 +671,10 @@ enyo.kind({
       });
       
     } else {
-      console.log("new item on compose view");
       load_account();
       if(itemType == 'Post') {
-    	  console.log("Creating a new Post");
     	  composer.setPost(new enyo.application.models.Post({mt_allow_pings:null,mt_allow_comments:null}));
       } else {
-    	  console.log("Creating a new Page");
     	  composer.setPost(new enyo.application.models.Page({mt_allow_pings:null,mt_allow_comments:null}));
       }
     
@@ -755,15 +742,6 @@ enyo.kind({
 		  if(this.uploadThumbnailArray[i].file.fullPath == response.deviceFilePath)
 			  this.uploadThumbnailArray[i].setUploading(false);
 	  }
-  },
-  uploadTest:function(sender){
-	  // we're just going to use one of the wallpapers
-	  console.log("upload test");
-	  this.uploadPickedFile(sender, [{
-		  fullPath: "/media/internal/wallpapers/03.jpg",
-		  iconPath: "/media/",
-		  attachmentType: 'image'
-	  }]);
   },
   connectionError:function(sender, response, request){
 	  this.log("connectionError", response, request);
