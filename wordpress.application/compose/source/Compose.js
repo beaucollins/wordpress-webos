@@ -16,6 +16,8 @@ enyo.kind({
   accountCategories : null,
   categoriesChanged : false, //true when the user click on categories
   uploadThumbnailArray : new Array(),
+  underlineBtnPressed :false, //used to fix #69. please remove this variable when a properly fix will be found
+  strikeBtnPressed :false, //used to fix #69. please remove this variable when a properly fix will be found
   components:[
   { kind:'FilePicker', fileType:'image', onPickFile:'uploadPickedFile' },
   { name:'wpclient', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onUploadComplete:'uploadComplete', onUploadFailed:'uploadFailed',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
@@ -209,17 +211,16 @@ enyo.kind({
 	else {
 		document.getElementById("emButton").className = document.getElementById("emButton").className.replace(/\b[ ]+btnActive\b/g,'');
 	}
-	
-	if (document.queryCommandState('strikethrough')) {
+	if (/*document.queryCommandState('strikethrough')*/ this.strinkeBtnPressed) { //kludge fix for #69
 		if (document.getElementById("strikethroughButton").className.indexOf("btnActive") == -1) {
 			document.getElementById("strikethroughButton").className += " btnActive";
-		}
+		} 
 	}
 	else {
 		document.getElementById("strikethroughButton").className = document.getElementById("strikethroughButton").className.replace(/\b[ ]+btnActive\b/g,'');
 	}
 	
-	if (document.queryCommandState('underline')) {
+	if (/*document.queryCommandState('underline')*/ this.underlineBtnPressed) { //kludge fix for #69
 		if (document.getElementById("uButton").className.indexOf("btnActive") == -1)
 			document.getElementById("uButton").className += " btnActive";
 	}
@@ -242,7 +243,6 @@ enyo.kind({
 	else {
 		document.getElementById("olButton").className = document.getElementById("olButton").className.replace(/\b[ ]+btnActive\b/g,'');
 	}
-		
   },
   toggleSettings:function(sender){
     this.$.composer.addRemoveClass('expanded-mode', sender.depressed);
@@ -273,8 +273,16 @@ enyo.kind({
 		document.execCommand('inserthtml', false, '<!--more--><div class="more"></div><br>');
 	}
 	else {
+		console.log("document.execCommand "+ type);
 		document.execCommand(type, false, null);
 	}	
+	
+	//kludge fix for #69- https://webos.trac.wordpress.org/ticket/69
+	if (type == 'underline') {
+		this.underlineBtnPressed = !this.underlineBtnPressed;			
+	} else if(type == 'strikethrough') {
+		this.strinkeBtnPressed = !this.strinkeBtnPressed;
+	}
 	
 	this.processButtonStates();
   },
