@@ -30,20 +30,20 @@ function toggle(obj) {
 	    </form>
 	</div>
 	<div id="toolbarButtons">
-		<button class="formatBtn" id="strongButton" onClick="formatBtnClickFunctionBind('bold')">B</button>
-		<button class="formatBtn" type="button" id="emButton" onClick="formatBtnClickFunctionBind('italic')">I</button>
-		<button class="formatBtn" type="button" id="strikethroughButton" onClick="formatBtnClickFunctionBind('strikethrough')">ABC</button>
-		<button class="formatBtn" type="button" id="uButton" onClick="formatBtnClickFunctionBind('underline')">U</button>
+		<button class="formatBtn" id="strongButton" onClick="formatBtnClickFunctionBind('bold');return false;">B</button>
+		<button class="formatBtn" type="button" id="emButton" onClick="formatBtnClickFunctionBind('italic');return false;">I</button>
+		<button class="formatBtn" type="button" id="strikethroughButton" onClick="formatBtnClickFunctionBind('strikethrough');return false;">ABC</button>
+		<button class="formatBtn" type="button" id="uButton" onClick="formatBtnClickFunctionBind('underline');return false;">U</button>
 		<div class="spacer"></div>
-		<button class="formatBtn" type="button" id="ulButton" onClick="formatBtnClickFunctionBind('insertunorderedlist')"><img src="images/icon_ul.png" /></button>
-		<button class="formatBtn" type="button" id="olButton" onClick="formatBtnClickFunctionBind('insertorderedlist')"><img src="images/icon_ol.png" /></button>
-		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('indent');toggle(this)"><img src="images/icon_bquote.png" /></button>
+		<button class="formatBtn" type="button" id="ulButton" onClick="formatBtnClickFunctionBind('insertunorderedlist');return false;"><img src="images/icon_ul.png" /></button>
+		<button class="formatBtn" type="button" id="olButton" onClick="formatBtnClickFunctionBind('insertorderedlist');return false;"><img src="images/icon_ol.png" /></button>
+		<button class="formatBtn" type="button" id="blockquoteButton" onClick="formatBtnClickFunctionBind('indent');toggle(this);return false;"><img src="images/icon_bquote.png" /></button>
 		<button class="formatBtn" type="button" id="linkButton" onClick="linkBtnClickFunctionBind()"><img src="images/icon_link.png" /></button>
-		<button class="formatBtn" type="button" id="moreButton" onClick="formatBtnClickFunctionBind('more')"><img src="images/icon_more.png" /></button>
+		<button class="formatBtn" type="button" id="moreButton" onClick="formatBtnClickFunctionBind('more');return false;"><img src="images/icon_more.png" /></button>
 		<div class="spacer"></div>
-		<button class="formatBtn" type="button" id="leftButton" onClick="formatBtnClickFunctionBind('justifyleft')"><img src="images/icon_left.png" /></button>
-		<button class="formatBtn" type="button" id="centerButton" onClick="formatBtnClickFunctionBind('justifycenter')"><img src="images/icon_center.png" /></button>
-		<button class="formatBtn" type="button" id="rightButton" onClick="formatBtnClickFunctionBind('justifyright')"><img src="images/icon_right.png" /></button>
+		<button class="formatBtn" type="button" id="leftButton" onClick="formatBtnClickFunctionBind('justifyleft');return false;"><img src="images/icon_left.png" /></button>
+		<button class="formatBtn" type="button" id="centerButton" onClick="formatBtnClickFunctionBind('justifycenter');return false;"><img src="images/icon_center.png" /></button>
+		<button class="formatBtn" type="button" id="rightButton" onClick="formatBtnClickFunctionBind('justifyright');return false;"><img src="images/icon_right.png" /></button>
 		<div class="spacer"></div>
 		<button class="formatBtn" type="button" id="imageButton" onClick="showWebOsImageFilePickerFunctionBind()"><img src="images/icon_camera.png" /></button>
 	</div>

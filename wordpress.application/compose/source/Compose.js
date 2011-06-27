@@ -67,7 +67,7 @@ enyo.kind({
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
-			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange", onmouseup: "processButtonStates"},
+			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange", onmouseup: "processButtonStates", onfocus: "showKeyboard"},
 			]},
 			{ name:'uploadTray', kind: "Control", layoutKind: "HFlexLayout" },
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:$L('Settings'), onclick:'toggleSettings' },
@@ -93,12 +93,12 @@ enyo.kind({
 	    	  ]},
 			{ kind:'Item', components:[
                 { name:'tagsFieldDrawer', kind:'Drawer', open:true, canChangeOpen:false, caption:$L('Tags'), onclick: 'tagsClick', components:[
-                  { kind:'Input', name:'tagsField', hint:$L('Separate tags with commas'), inputType:'text' }
+                  { kind:'Input', name:'tagsField', onfocus:'showKeyboard', hint:$L('Separate tags with commas'), inputType:'text' }
                 ] }
               ] },
 			{ kind:'Item', components:[
                 { kind:'Drawer', open:true, canChangeOpen:false, caption:$L('Password'), onclick: 'passwordClick', components:[
-                  { name: 'passwordField', kind:'Input', hint:$L('Password'), inputType:'password' }
+                  { name: 'passwordField', kind:'Input', hint:$L('Password'), inputType:'password', onfocus:'showKeyboard' }
                 ] }
               ] },
 			{ kind:'Item', components:[
@@ -122,6 +122,10 @@ enyo.kind({
 	showWebOsImageFilePickerFunctionBind = enyo.bind(this, "showImageFilePicker");
 	formatBtnClickFunctionBind = enyo.bind(this, "formatBtnClick");
 	linkBtnClickFunctionBind = enyo.bind(this, "linkHelper");
+  },
+  ready:function(){
+    // set keyboard to manual mode so it doesn't hide
+    enyo.keyboard.setManualMode(true);
   },
   isAPost:function() {
 		/*  console.log("is a Post type", this.post._type instanceof enyo.application.models.Post );
@@ -251,8 +255,12 @@ enyo.kind({
   showSettingsChanged:function(){
     this.$.settings.setShowing(this.showSettings);
   },
+  showKeyboard:function(sender, event){
+    enyo.keyboard.show();
+  },
   formatBtnClick:function(type){
-	this.$.contentField.forceFocus();
+  // this.$.contentField.forceFocusEnableKeyboard();
+  console.log("Clicked format button", type);
 	if (type == 'insertorderedlist' || type == 'insertunorderedlist') {
 		console.log('list: ' + this.isInList);
 		this.setIsInList(!this.isInList);
