@@ -1,23 +1,20 @@
 
 enyo.depends(
   "source/WordPress.js",
+  "source/PreferencesDialog.js",
   "source/Gravatar.js",
   "source/ReplyForm.js",
   "source/PasswordReset.js",
   "source/SourceList.js",
   "source/AccountListItem.js",
   "source/GlobalListItem.js",
-  // "source/Comments.js",
   "source/CommentList.js",
   "source/CommentView.js",
-  // "source/Posts.js",
-  // "source/Pages.js",
   "source/PostList.js",
   "source/PageList.js",
   "source/DraftList.js",
   "source/PostView.js",
   "source/PostPreviewView.js",
-  // "source/Drafts.js",
   "source/Stats.js",
   "source/BlankSlate.js",
   "../source/WordPressClient.js",
@@ -29,7 +26,6 @@ enyo.depends(
   "../source/SimpleHtmlParser.js",
   "../source/datetime.js",
   "source/DashboardView.js",
-  // "Canvas.js",
   "../lib/jquery.min.js",
   "../lib/jquery.flot.js"
 );

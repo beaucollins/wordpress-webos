@@ -38,7 +38,6 @@ enyo.kind({
     }
   },
   loadDefaultImage:function(sender, event){
-    console.log("Load the default image farters!");
     if (this.errored) return;
     this.errored = true;
     this.setSrc(this.defaultImage);

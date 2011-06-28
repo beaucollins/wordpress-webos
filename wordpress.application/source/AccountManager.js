@@ -25,5 +25,18 @@ enyo.kind({
 			break;
 		}
 	}
+  },
+  // check if a blog with the same id and xmlrpc endpoint already exists
+  blogExists:function(blog){
+    var existing;
+    for (var i=0; i < this.accounts.length; i++) {
+      existing = this.accounts[i];
+      console.log("Checking");
+      console.log(existing.xmlrpc, blog.xmlrpc, existing.blogid.toString(), blog.blogid);
+      if (existing.xmlrpc == blog.xmlrpc && existing.blogid.toString() == blog.blogid) {
+        return true;
+      };
+    };
+    return false;
   }
 })

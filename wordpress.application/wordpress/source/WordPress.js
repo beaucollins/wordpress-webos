@@ -14,7 +14,7 @@ enyo.kind({
   isOnErrorPopupShown : false,
   components: [
     { name: 'xmlrpc_client', kind:'XMLRPCService' },
-    {kind: "ApplicationEvents", onOpenAppMenu: "openAppMenuHandler", onCloseAppMenu: "closeAppMenuHandler", onWindowParamsChange:'windowParamsChangeHandler'},
+    { kind: "ApplicationEvents", onOpenAppMenu: "openAppMenuHandler", onCloseAppMenu: "closeAppMenuHandler", onWindowParamsChange:'windowParamsChangeHandler' },
     { kind:'Pane', flex:1, components:[
       { name:'blankSlate', flex:1, kind:'enyo.Control' },
       {
@@ -43,18 +43,15 @@ enyo.kind({
                 { name:'blank', kind:'BlankSlate', clasName:'blank-view', flex:1 },
                 { name:'comment_view', kind:'wp.CommentView', onReply:'replyToComment', flex:1, lazy:false },
                 { name:'post_view', kind:'wp.PostView', onEdit:'openPostEditor', onDelete:'onDeletePost', flex:1 },
-                // { name:'comments', kind: 'wp.Comments', flex:1, lazy:false, onReply:'replyToComment', onLoadMoreComments:'loadMoreComments' },
-                // { name:'posts', kind: 'wp.Posts', onLoadMore:'loadMorePosts', flex:1, lazy:true },
-                // { name:'pages', kind: 'wp.Pages', onLoadMore:'loadMorePages', flex:1, lazy:true },
-                //{ name:'drafts', kind: 'wp.Drafts', flex:1, lazy:true },
               ]}
           ]}
       ]}
     ]},
     // main sliding pane interface
     { name:'replyForm', scrim:true, onOpen:'focusReplyField', onPublish:'publishCommentReply', className:'wp-comment-reply-dialog', kind:'wp.ReplyForm'},
-    { kind:'AppMenu', onBeforeOpen: "beforeAppMenuOpen", automatic: false, components:[
-      {name: 'setupMenuItem', caption: $L('Setup Blog'), onclick:'addNewBlog' },
+    { name: 'preferences', kind:'wp.PreferencesDialog', className:'wp-preferences-dialog', onDone:'dismissPreferences', onAddBlog:'addNewBlog', onDeleteBlog:'confirmRemoveBlog', onClose:'resetPreferences', onUpdateBlog:'updateBlog' },
+    { kind:'AppMenu', automatic: false, components:[
+      { name:'preferenesMenuItem', caption: $L('Preferences'), onclick:'openPreferences' }
     ]},
     { name:'passwordForm', kind:'PasswordReset', onSavePassword:'saveAccountPassword', onCancel:'closePasswordForm' },
     { name:'setupForm', scrim:true, lazy:false, kind:'enyo.Toaster', className:'wp-blog-setup-dialog',  onBeforeOpen:'beforeNewBlogDialogOpen', components:[
@@ -64,7 +61,7 @@ enyo.kind({
 	{name: "removeBlogDialog", kind: "Dialog", components: [
  		{className: "enyo-item enyo-first", style: "padding: 12px", content: $L('Are You Sure?')},
  		{className: "enyo-item enyo-last", style: "padding: 12px; font-size: 14px", content: $L('Deleting an Item cannot be undone')},
- 		{kind: "Button", caption: $L('Cancel'), onclick:'toggleBlogDeleteDialog'},
+ 		{kind: "Button", caption: $L('Cancel'), onclick:'cancelDeleteBlogDialog'},
  		{kind: "Button", caption: $L('Delete'), className:'enyo-red-button', onclick:'removeBlog'}
  	 ]},
 	//Global errors handling interface components
@@ -83,6 +80,14 @@ enyo.kind({
   },
   ready:function(){
     this.loadAccounts();
+    var app = this;
+    if (!window.PalmSystem) {
+      window.parent.document.addEventListener('keypress', function(e){
+        if (e.ctrlKey && e.which == 96) {
+          app.openAppMenuHandler(app.applicationEvents);
+        };
+      });
+    };
   },
   loadAccounts: function(){
 
@@ -359,6 +364,7 @@ enyo.kind({
 		  this.$.setupForm.setDismissWithClick(false);
 		  this.$.setup.setCancelable(false);
 	  }else{
+		  this.$.setup.setCancelable(true);
 		  this.$.setupForm.setScrim(true);
 		  this.$.setupForm.setModal(false);
 		  this.$.setupForm.setDismissWithClick(true);
@@ -427,8 +433,22 @@ enyo.kind({
 	  m.render();
   },
   addNewBlog:function(sender){
-	this.$.setup.reset();
+    if (sender == this.$.preferences) {
+      this.$.preferences.close();
+    };
+	  this.$.setup.reset();
     this.$.setupForm.open();
+  },
+  openPreferences:function(sender){
+    console.log("Opening preferences", this.$);
+    this.$.preferences.open();
+    this.$.preferences.setAccounts(this.accounts);
+  },
+  resetPreferences:function(){
+    this.$.preferences.reset();
+  },
+  dismissPreferences:function(sender){
+    this.$.preferences.close();
   },
   setupBlogs:function(sender, blogs, username, password){
     var that = this;
@@ -446,33 +466,43 @@ enyo.kind({
       wp.loadAccounts();      
     });
   },
-  toggleBlogDeleteDialog:function(sender) {
-	  if(this.account == null) return;
-	  this.$.removeBlogDialog.toggleOpen();
+  confirmRemoveBlog:function(sender, account){
+    this.$.removeBlogDialog.open();
+    this.$.removeBlogDialog.account = account;
+  },
+  cancelDeleteBlogDialog:function(sender){
+    this.$.removeBlogDialog.close();
   },
   removeBlog:function(sender){
-	  this.log("Remove blog clicked - Active account :", this.account);
-	  this.$.removeBlogDialog.toggleOpen();
-	  if(this.account == null) return;
-
-	  var account = this.account.account;
+    console.log("REMOVE THE BLOG!", sender);
+    this.$.removeBlogDialog.close();
+    var client = this.$.removeBlogDialog.account;
+	  if( client == null) return;
+    if (client == this.account) {
+  	  this.$.middlePane.selectViewByName('middle_blank');
+  	  this.$.content.selectView(this.$.blank);
+    };
+    this.$.preferences.close();
+    this.$.preferences.reset();
+    var account = client.account;
 	  enyo.application.persistence.remove(account);
 	  enyo.application.accountManager.removeAccount(account);
 	  account.posts.destroyAll();
 	  account.pages.destroyAll();
 	  account.comments.destroyAll();
 	  account.categories.destroyAll();
-	  
+    
 	  var wp = this;
-//     this.$.sourceList.setAccounts(this.accounts);
 	  enyo.application.persistence.flush(function(){
-		  wp.loadAccounts();      
-		  wp.$.sourceList.setAccounts(wp.accounts);
+	    wp.loadAccounts();
 	  });
-	  
-	  this.$.middlePane.selectViewByName('middle_blank');
-	  this.$.content.selectView(this.$.blank);
-	  
+	  	  
+  },
+  updateBlog:function(sender, wordpress_client){
+    enyo.application.persistence.flush(function(){
+      wordpress_client.savePassword();
+    });
+    sender.close();
   },
   showPanes:function(){
     // this.$.pane.selectView(this.$.panes);

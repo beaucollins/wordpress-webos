@@ -84,8 +84,12 @@ enyo.kind({
     }else{
       // this.$.scrim.hide();
       this.$.finishSetup.setShowing(true);
-      this.$.blogList.setBlogs(blogs);
-      // this.$.blogsPopup.openAtCenter();//selectViewByName('blogList');
+      //filter out existing blogs
+      var filtered = new Array;
+      for (var i=0; i < blogs.length; i++) {
+        if(!enyo.application.accountManager.blogExists(blogs[i])) filtered.push(blogs[i])
+      };
+      this.$.blogList.setBlogs(filtered);
       this.$.pane.selectView(this.$.blogList);
     }
   },
@@ -260,15 +264,17 @@ enyo.kind({
   kind:'Control',
   events: {
     onCancel:'',
-    onSetup:''
+    onSetup:'',
+    onDelete:''
   },
   published: {
     url:null,
     username:null,
     password:null,
-    cancelLabel: 'Cancel',
-    confirmLabel: 'Sign In',
-    selfHosted:false
+    cancelLabel: $L('Cancel'),
+    confirmLabel: $L('Sign Up'),
+    selfHosted:false,
+    allowDelete:false
   },
   components: [
     { kind:'Control', className:'setup-screen', components:[
@@ -280,7 +286,10 @@ enyo.kind({
         { name:'password', kind:'Input', hint:$L('Password'), changeOnInput:true, onchange:'updatePassword', inputType:'password' }
       ]},
       { name:'signup', kind:'enyo.ActivityButton', className:'enyo-gemstone', caption:$L('Sign Up'), onclick:'setupClicked', disabled:true },
-      { name:'cancel', kind:'enyo.Button', caption:$L('Cancel'), onclick:'cleanup' }
+      { name:'cancel', kind:'enyo.Button', caption:$L('Cancel'), onclick:'cleanup' },
+      { name:'deleteControl', className:'wp-account-delete-control', components:[
+        { kind:'Button', className:'enyo-red-button', caption:$L('Remove Blog'), onclick:'doDelete' }
+      ]}
     ]}
   ],
   create:function(){
@@ -291,6 +300,7 @@ enyo.kind({
     this.selfHostedChanged();
     this.cancelLabelChanged();
     this.confirmLabelChanged();
+    this.allowDeleteChanged();
   },
   reset:function(){
     this.setUrl('');
@@ -346,6 +356,9 @@ enyo.kind({
   confirmLabelChanged:function(){
     this.$.cancel.setCaption(this.cancelLabel);
   },
+  allowDeleteChanged:function(){
+    this.$.deleteControl[this.allowDelete ? 'show' : 'hide' ]();
+  },
   isEmpty:function(value){
     return !value || value && value.trim() == "";
   },
@@ -361,3 +374,4 @@ enyo.kind({
 	    this.$.signup.setDisabled(a);
 	}
 });
+
