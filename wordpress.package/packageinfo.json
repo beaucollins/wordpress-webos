@@ -2,7 +2,7 @@
   "id": "org.wordpress.webos",
   "package_format_version": 2,
   "loc_name": "WordPress for webOS",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "icon": "icon.png",
   "miniicon": "icon.png",
   "vendor": "WordPress",
