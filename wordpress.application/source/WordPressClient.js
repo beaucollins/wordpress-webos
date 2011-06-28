@@ -344,9 +344,8 @@ enyo.kind({
 
 	  //if this post is a local draft of a previous published post we should remove it from the local storage and update the 'original' version of the post   
 	  if(post.local_modifications == null || post.local_modifications == 'false') {
-		  this.log("this is NOT a local draft page");
+
 	  } else {
-		  this.log("this IS a local draft page");
 		  //find and update the original version
 		  account.pages.filter('page_id', '=', post.page_id)  
 		  .filter('local_modifications', '=', null) //we must filter the local drafts here
