@@ -80,7 +80,10 @@ enyo.kind({
   // choose which blog(s) to set up.
   showBlogList:function(sender, blogs){
     if (blogs.length == 1) {
-      this.doSelectBlogs(blogs, this.$.setupForm.username, this.$.setupForm.password);
+     if(!enyo.application.accountManager.blogExists(blogs[0]))
+    	 this.doSelectBlogs(blogs, this.$.setupForm.username, this.$.setupForm.password);
+     else
+    	 this.doSelectBlogs(new Array(), this.$.setupForm.username, this.$.setupForm.password);
     }else{
       // this.$.scrim.hide();
       this.$.finishSetup.setShowing(true);
