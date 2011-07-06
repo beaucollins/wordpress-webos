@@ -1,19 +1,32 @@
-WordPress for webOS
-===================
+# WordPress for webOS #
 
-Create and manage posts and pages. Moderate and respond to comments. Get
-notified when new comments arrive. This app is built on the new webOS
-framework that is optimized for the TouchPad.
+http://webos.wordpress.org
 
-Development
------------
+Create and manage posts and pages. Moderate and respond to comments. Get notified when new comments
+arrive. This app is built on the new webOS framework that is optimized for the [TouchPad][].
 
-In order to run the app you must download the currently private/NDA framework
-from the [Palm Developer Network][palm]. You must register in the prerelease
-program to receive access to the framework.
+[TouchPad]: http://hp.com/touchpad
 
-Once downloaded you must update `index.html` to have the `<script>` element
-point to the downloaded framework. Once the path is corrected, open
-`index.html` in your favorite WebKit browser to run the application.
+## Development ##
+
+Instructions on how to get your development environment started are located on the [WordPress for
+webOS development site][getting-started].
 
 [palm]: http://developer.palm.com
+[getting-started]: https://webos.trac.wordpress.org/wiki/Developing
+
+## Contributing ##
+
+### Via Subversion ###
+
+The source code is available via Subversion (SVN). You can browse the files in [Trac] or point your SVN client to [webos.svn.wordpress.org][svn], where you’ll find the latest development build.
+
+[trac]: http://webos.trac.wordpress.org
+[svn]: http://webos.svn.wordpress.org
+
+### Via Git ###
+
+A clone of the _WordPress for webOS_ source code lives on [GitHub][]. Fork away and send a pull
+request when you've made something!
+
+[GitHub]: https://github.com/beaucollins/wordpress-webos/
