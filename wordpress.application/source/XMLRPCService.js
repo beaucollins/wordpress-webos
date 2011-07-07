@@ -341,7 +341,8 @@ XMLRPCParser.prototype.parse = function(node){
       
     case 'string':
       var s = node.firstChild ? node.firstChild.nodeValue : '';
-      return s.replace(/&amp;([a-z]+|\#[\d]+);/ig, '&$1;').replace(/&gt;/gi,'>').replace(/&lt;/gi,'<').replace(/&quot;/gi,'"');
+      s = s.replace(/&amp;([a-z]+|\#[\d]+);/ig, '&$1;').replace(/&gt;/gi,'>').replace(/&lt;/gi,'<').replace(/&quot;/gi,'"');
+      return s.split('&#039;').join("'");
       break;
       
     case 'boolean':
