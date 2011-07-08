@@ -94,13 +94,12 @@ enyo.kind({
           ] },
           { kind:'VFlexBox', flex:1, components:[
             { kind:'HFlexBox', components:[
-              { name:'author', flex:1, className:'comment-author', allowHtml: 'true' },
+              { name:'author', flex:1, className:'comment-author wp-truncate', allowHtml: 'true' },
               { name:'timestamp', className:'comment-timestamp' }
             ]},
-            { kind:'VFlexBox', components:[
-              	{ name:'authorURL', className:'comment-author-url', allowHtml: 'true' },
-              	{ flex:1, kind:"Control" },
-              { name:'status', className:'comment-status-badge', content:"Status" }
+            { kind:'HFlexBox', components:[
+              	{ name:'authorURL', className:'comment-author-url wp-truncate', allowHtml: 'true', flex:1 },
+                { name:'status', className:'comment-status-badge', content:"Status" }
             ]}
           ]}
         ]},
