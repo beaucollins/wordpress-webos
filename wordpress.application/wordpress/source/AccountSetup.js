@@ -114,8 +114,8 @@ enyo.kind({
   	this.$.needHelpPane.setErrorMessage(errorTitle, errorMessage);
   	this.$.errorPopup.openAtCenter();
   },
-  apiFailure:function(sender, response, success){
-    this.log('API Failure', response);
+  apiFailure:function(sender, request, response){
+    this.log('API Failure', request, response);
     // this.$.scrim.hide();
     this.$.setupForm.toggleSignUpActivity();
     

@@ -39,11 +39,11 @@ enyo.kind({
     this.$.xmlrpc_service.callMethod({ methodParams:[username, password] }, { url:normalized_url, onFailure:'initialEndpointFailure'});
   },
   // apiFault, either bad username/pass or API disabled, we're done here
-  apiFault:function(sender, request, response){
+  apiFault:function(sender, response, request){
 	if(this.cancelled == true) return;
-    this.doFailure(request, response)
+     this.doFailure(request, response);
   },
-  _badURL:function(sender, request, response){
+  _badURL:function(sender, response, request){
 	  if(this.cancelled == true) return;
 	  this.doBadURL(request, response)
   },
