@@ -15,6 +15,7 @@ enyo.depends(
   "source/DraftList.js",
   "source/PostView.js",
   "source/PostPreviewView.js",
+  "source/ReaderView.js",
   "source/Stats.js",
   "source/BlankSlate.js",
   "../source/WordPressClient.js",

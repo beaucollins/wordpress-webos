@@ -38,5 +38,16 @@ enyo.kind({
       };
     };
     return false;
+  },
+  getFirstWPCOMaccount: function(){
+	  var existing;
+	    for (var i=0; i < this.accounts.length; i++) {
+	      existing = this.accounts[i];
+	      console.log("Checking");
+	      console.log(existing.xmlrpc);
+	      if ((/wordpress\.com\/xmlrpc\.php$/i).test(existing.xmlrpc))
+	    	  return existing;
+	    };
+	    return false;
   }
 })

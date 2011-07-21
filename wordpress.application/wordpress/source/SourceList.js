@@ -7,15 +7,17 @@ enyo.kind({
   events: {
     onSelectAccountAction:"",
     onSelectAction:"",
-    onAddBlog:""  	
+    onAddBlog:"",
+    onOpenReader:"",
   },
   components: [
     { kind:'enyo.Scroller', flex:1, components:[
       { name:'list', kind:'enyo.Repeater', onSetupRow:'getAccountItem' }
     ]},
-    // { kind:'enyo.Toolbar', className:'source-list-command', components:[
+     { kind:'enyo.Toolbar', className:'source-list-command', components:[
+        { kind:'Button', name:'readerButton', caption:$L('Reader'), onclick:'doOpenReader' },
     //   // { kind:'Button', caption:$L('Open Menu'), onclick:'doAddBlog' },
-    // ] }
+     ] }
   ],
   create:function(){
     this.inherited(arguments);
@@ -73,6 +75,13 @@ enyo.kind({
     if(this.$.list.hasNode()){
       this.$.list.render();
     }
+    this.$.toolbar.hide();
+    
+    /*if(enyo.application.accountManager.getFirstWPCOMaccount() !== false) {
+    	this.$.toolbar.show();
+    } else {
+    	this.$.toolbar.hide();
+    }*/
   },
   setDraftCount:function(count){
     if (this.$.global) {

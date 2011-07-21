@@ -25,7 +25,11 @@ enyo.kind({
         multiViewMinWidth:500,
         components: [
           { name:'left', className:'source-list', width:'225px', components:[
-            { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', /*onCreateDraft:'composeDraft',*/ onAddBlog:'openAppMenuHandler' }
+            { name:'sourceList', kind:'wp.SourceList', flex:1, onSelectAccountAction:'performAccountAction', 
+            	/*onCreateDraft:'composeDraft',*/ 
+            	onAddBlog:'openAppMenuHandler',
+            	onOpenReader:'openReader',
+            }
           ]},
           // column for showing what is selected from the source list
           { name:'middle', width:'350px', fixedWidth:true, peekWidth:42, components:[
@@ -524,6 +528,13 @@ enyo.kind({
   },
   closeAppMenuHandler: function() {
     this.$.appMenu.close();
+  },
+ openReader:function(sender, inEvent){ 
+	 var firstWPCOMaccount = enyo.application.accountManager.getFirstWPCOMaccount();
+	 console.log("Launching Reader");
+	 params = {'account': firstWPCOMaccount};
+	 enyo.windows.activate("./readerView.html", "Reader", params);
+	 return;
   },
   displayPasswordForm:function(sender){
     this.$.passwordForm.setAccount(sender);
