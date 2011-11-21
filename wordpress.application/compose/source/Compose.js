@@ -62,11 +62,11 @@ enyo.kind({
         ] },		
         { kind:'HFlexBox', flex:1, components:[
           { name:'main', kind:'VFlexBox', flex:1, components:[
-            { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:$L('Title') },
+            { name: 'titleField', kind:'enyo.Input', className:'enyo-item', hint:$L('Title'), onfocus: "showKeyboard" },
 			{ name: 'contentWrapper', kind:'VFlexBox', flex:1, components:[
 			{ kind: "HtmlContent", srcId: "toolbarButtons", onLinkClick: "htmlContentLinkClick"},
 			{ name: 'contentScroller', kind:'Scroller', autoHorizontal: false, horizontal: false, flex:1, components:[
-			{ name: 'contentField', kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange", onmouseup: "processButtonStates", onfocus: "showKeyboard"},
+			{ name: 'contentField', hint:"", kind: 'enyo.RichText', changeOnInput: true, onkeypress: 'keyTapped', onchange: "contentFieldTextChange", onmouseup: "processButtonStates", onfocus: "showKeyboard"},
 			]},
 			{ name:'uploadTray', kind: "Control", layoutKind: "HFlexLayout" },
 	        { name:'advanced', kind:'enyo.Button', toggling:true, caption:$L('Settings'), onclick:'toggleSettings' },
