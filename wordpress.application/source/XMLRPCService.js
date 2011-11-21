@@ -89,8 +89,6 @@ enyo.kind({
   call: function(){
     // turn this.params into XML string
     this.params = XMLRPCBuilder.marshal(this.methodName, this.methodParams);
-    console.log("Sending XML");
-    console.log(this.params);
     this.inherited(arguments);
   },
   setResponse: function(inXHR){
