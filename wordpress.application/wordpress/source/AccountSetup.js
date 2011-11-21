@@ -191,7 +191,11 @@ enyo.kind({
     // index = index % this.blogs.length;
     if (blog = this.blogs[index]) {
       this.count ++;
-      this.$.blogName.setContent(blog.blogName);
+      var label = blog.blogName;
+      if(label == ""){
+        label = blog.url.replace(/^[^:]+:\/\//,'').replace(/\/$/,'')
+      }
+      this.$.blogName.setContent(label);
       return true; //this.count < 50 ? true : false;
     }
   },

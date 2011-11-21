@@ -152,7 +152,7 @@ enyo.kind({
     this.accountChanged();
   },
   accountChanged:function(){
-    this.$.blogTitle.setContent(this.account.account.blogName);
+    this.$.blogTitle.setContent(this.account.account.displayName());
   }
 })
 

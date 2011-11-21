@@ -24,6 +24,14 @@
     username: 'TEXT',
     xmlrpc: 'TEXT'
   });
+
+	Account.prototype.displayName = function(){
+		if(this.blogName == ""){
+			return this.url.replace(/^[^:]+:\/\//,'').replace(/\/$/,"");
+		} else {
+			return this.blogName;
+		}
+	}
   
   var Comment = enyo.application.models.Comment = persistence.define('Comment', {
     author: 'TEXT',

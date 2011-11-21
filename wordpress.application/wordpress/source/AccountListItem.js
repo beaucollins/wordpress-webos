@@ -45,7 +45,8 @@ enyo.kind({
   accountChanged:function(){
     if(!this.account) return;
     var account = this.account.account;
-    this.$.header.setCaption(this.decodeHtml(account.blogName));
+    var label = this.decodeHtml(account.displayName());
+    this.$.header.setCaption(label);
     
     // attempt to setup the blavatar if there is a valid one
     var blavatar = new Image();
@@ -75,7 +76,11 @@ enyo.kind({
   decodeHtml:function(input){
     var e = document.createElement('div');
     e.innerHTML = input;
-    return e.childNodes[0].nodeValue;
+    if (e.childNodes.length > 0) {
+      return e.childNodes[0].nodeValue;      
+    } else {
+      return "";
+    }
   }
   /*openDashBoard:function(item, inEvent){
 	  if(!this.account) return;
