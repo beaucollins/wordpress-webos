@@ -89,6 +89,8 @@ enyo.kind({
   call: function(){
     // turn this.params into XML string
     this.params = XMLRPCBuilder.marshal(this.methodName, this.methodParams);
+    console.log("Sending XML");
+    console.log(this.params);
     this.inherited(arguments);
   },
   setResponse: function(inXHR){
@@ -169,7 +171,6 @@ XMLRPCBuilder.prototype.encode = function(param){
       struct += key;
       struct += "</name>";
       struct += "<value>";
-      console.log("Encoding", param[key]);
       struct += this.encode(param[key]);
       struct += "</value>";
       struct += "</member>";
@@ -180,7 +181,6 @@ XMLRPCBuilder.prototype.encode = function(param){
 }
 
 XMLRPCBuilder.dateToIso8601 = function(date){
-  console.log("Encoding date", date, date.getUTCFullYear);
   year = date.getUTCFullYear();
   month = date.getUTCMonth() + 1;
   if (month < 10) month = "0" + month;     
@@ -193,7 +193,7 @@ XMLRPCBuilder.dateToIso8601 = function(date){
   var hrs = date.getUTCHours()
   if (hrs < 10) hrs = "0" + hrs;
   time = hrs + ':' + minutes + ':' + seconds;
-  return year + month + day + "T" + time;
+  return " " + year + month + day + "T" + time;
 }
 
 XMLRPCBuilder.isNumber = function(param){
