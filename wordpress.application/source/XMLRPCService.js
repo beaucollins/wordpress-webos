@@ -89,6 +89,7 @@ enyo.kind({
   call: function(){
     // turn this.params into XML string
     this.params = XMLRPCBuilder.marshal(this.methodName, this.methodParams);
+    this.headers['X-User-Agent'] = "wpwebos/" + enyo.fetchAppInfo().version;
     this.inherited(arguments);
   },
   setResponse: function(inXHR){
