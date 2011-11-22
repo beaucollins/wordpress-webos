@@ -136,7 +136,7 @@ enyo.kind({
     };
   },
   connectionError:function(sender, response, request){
-	this.log("connectionError", response, request);
+	  this.log("connectionError", response, request);
     if(this.isOnErrorPopupShown == true) return;
     
     this.isOnErrorPopupShown == true;
@@ -160,10 +160,14 @@ enyo.kind({
         
     //stop the loading spinners and reset the UI
 	  if (this.account == sender) {
-		  this.$.content.selectView(this.$.blank)
 		  if(this.$.post_list) this.$.post_list.stopSpinner();
 		  if(this.$.page_list) this.$.page_list.stopSpinner();
-		  if(this.$.draft_list) this.$.draft_list.stopSpinner();
+		  if(this.$.draft_list) this.$.draft_list.stopSpinner();    
+		  if (this.$.content.getView() == this.$.comment_view) {
+  		  this.$.comment_view.apiError(sender, response, request);
+		  } else {
+        this.$.content.selectView(this.$.blank)
+		  }
 	  }
   },
   closeGlobalErrorPopup: function(inSender) {

@@ -81,7 +81,7 @@ enyo.kind({
     }*/
   },
   commentChanged:function(){
-	this.setToolbarButtonsDisabled(false);
+	  this.setToolbarButtonsDisabled(false);
 	
     this.replies = [];
     // this.$.conversationHeader.hide();
@@ -201,7 +201,7 @@ enyo.kind({
     this.$.palmService.call({target:this.comment.author_url}); 
   },
   markComment:function(sender){
-	this.setToolbarButtonsDisabled(true);
+	  this.setToolbarButtonsDisabled(true);
     this.comment.status = sender.name;
     if(this.comment.status =='unapprove')
     	 this.comment.status = 'hold';
@@ -214,20 +214,23 @@ enyo.kind({
 	  this.account.deleteComment(this.comment);
   },
   cancelButtonClick: function() {
-	this.$.twoDialog.toggleOpen();
+  	this.$.twoDialog.toggleOpen();
   }, 
   askBeforeDelete:function(sender) {
-	this.$.twoDialog.toggleOpen();
+  	this.$.twoDialog.toggleOpen();
   },
   setToolbarButtonsDisabled: function(flag) {
-	if(flag) 
-		this.$.spinner.show();
-	else
-		this.$.spinner.hide();
-	this.$.approve.setDisabled(flag);
-	this.$.trash.setDisabled(flag);
-	this.$.spam.setDisabled(flag);
-	this.$.unapprove.setDisabled(flag);
-	this.$.reply.setDisabled(flag);
+  	if(flag) 
+  		this.$.spinner.show();
+  	else
+  		this.$.spinner.hide();
+  	this.$.approve.setDisabled(flag);
+  	this.$.trash.setDisabled(flag);
+  	this.$.spam.setDisabled(flag);
+  	this.$.unapprove.setDisabled(flag);
+  	this.$.reply.setDisabled(flag);
+  },
+  apiError: function(sender, response, request){
+    this.setToolbarButtonsDisabled(false);
   }
 })
