@@ -19,7 +19,7 @@ enyo.kind({
   underlineBtnPressed :false, //used to fix #69. please remove this variable when a properly fix will be found
   strikeBtnPressed :false, //used to fix #69. please remove this variable when a properly fix will be found
   components:[
-  { kind:'FilePicker', fileType:'image', onPickFile:'uploadPickedFile' },
+  { kind:'FilePicker', fileType:'image', onPickFile:'uploadPickedFile', dismissWithClick:true },
   { name:'wpclient', kind:'wp.WordPressClient', onPasswordReady:'clientReady', onUploadComplete:'uploadComplete', onUploadFailed:'uploadFailed',   onNewPost:'savePostSuccess', onUpdatePost:'savePostSuccess',
 	  onNewPage:'savePostSuccess', onUpdatePage:'savePostSuccess', onSaveDraft:'saveDraftSuccess', onSaveDraftPage:'saveDraftSuccess',
       onFailure:'connectionError', onBadURL:'connectionError',},
@@ -695,6 +695,7 @@ enyo.kind({
   uploadPickedFile:function(sender, files){
 	  this.log("Time to upload the file");
 	  var file = files[0]; // files is an array but there's currently only ever one file picked
+	  if (!file) { return };
 	  this.log(enyo.json.stringify(file));
 
 	  /*
