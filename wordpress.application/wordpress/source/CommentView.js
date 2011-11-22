@@ -221,7 +221,9 @@ enyo.kind({
   },
   setToolbarButtonsDisabled: function(flag) {
   	if(flag) 
-  		this.$.spinner.show();
+  	  enyo.nextTick(enyo.bind(this, function(){
+    		this.$.spinner.show();
+  	  }));
   	else
   		this.$.spinner.hide();
   	this.$.approve.setDisabled(flag);

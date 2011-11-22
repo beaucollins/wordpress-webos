@@ -116,7 +116,9 @@ enyo.kind({
   },
   deletePost:function(sender) {
 	  this.$.twoDialog.toggleOpen();
-	  this.$.spinner.show();
+	  enyo.nextTick(enyo.bind(this, function(){
+	    this.$.spinner.show();
+	  }));
 	  this.$.editBtn.setDisabled(true);
 	  this.$.previewBtn.setDisabled(true);
 	  this.$.trashBtn.setDisabled(true);
