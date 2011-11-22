@@ -57,7 +57,7 @@ enyo.kind({
       { name: 'storeKey', method:'store', onSuccess:'doPasswordReady' },
       { name: 'removeKey', method:'remove', onSuccess:'doInvalidPassword', onFailure:'doInvalidPassword' }
     ] },
-    { name:'uploader', kind:'PalmService', service:'palm://org.wordpress.webos.uploader/', method:'upload', onSuccess:'uploadCompleted', onFailure:'uploadFailed'}
+    { name:'uploader', kind:'PalmService', service:'palm://org.wordpress.webos.uploader.service/', method:'upload', onSuccess:'uploadCompleted', onFailure:'uploadFailed'}
   ],
   create:function(){
     this.inherited(arguments);
@@ -107,7 +107,7 @@ enyo.kind({
   },
   // apiFault, either bad username/pass or API disabled
   apiFault:function(sender, response, request){
-	this.log("apiFault", response, request);
+	  this.log("apiFault", response, request);
 	//if the response is null we can read the error status and the error message within the XHR obj. see WordPress.js
 	  //if(this.cancelled == true) return;
     this.doFailure(response, request);

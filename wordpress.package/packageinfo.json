@@ -8,5 +8,5 @@
   "vendor": "WordPress",
   "vendorurl": "wordpress.org",
   "app": "org.wordpress.webos",
-  "services": ["org.wordpress.webos.uploader"]
+  "services": ["org.wordpress.webos.uploader.service"]
 }

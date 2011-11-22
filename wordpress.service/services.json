@@ -1,9 +1,9 @@
 {
-"id": "org.wordpress.webos.uploader",
+"id": "org.wordpress.webos.uploader.service",
 "description": "Base64 Upload Service",
 "activityTimeout" : 30,
 "services": [{
-    "name": "org.wordpress.webos.uploader",
+    "name": "org.wordpress.webos.uploader.service",
     "description": "base64 uploader",
     "assistant" : "ServiceAssistant",
     "commands": [{
