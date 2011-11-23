@@ -1,11 +1,11 @@
 {
   "id": "org.wordpress.webos",
   "package_format_version": 2,
-  "loc_name": "WordPress for webOS",
-  "version": "1.0.1",
+  "loc_name": "WordPress for webOS Beta",
+  "version": "1.1.0",
   "icon": "icon.png",
   "miniicon": "icon.png",
-  "vendor": "WordPress",
+  "vendor": "WordPress Beta",
   "vendorurl": "wordpress.org",
   "app": "org.wordpress.webos",
   "services": ["org.wordpress.webos.uploader.service"]
