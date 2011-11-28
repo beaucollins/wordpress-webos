@@ -26,10 +26,12 @@ enyo.kind({
   accountChanged:function(){
     if (this.account == null) {
       return;
-    };
-    
-    this.$.statsPane.selectView(this.$.statsSpinner);
-    this.$.statsPasswordManager.setAccount(this.account);
+    }; 
+    console.log("Account changed for stats");
+    console.log(this.account.password);
+    this.openPostURL(this.account.password);
+    // this.$.statsPane.selectView(this.$.statsSpinner);
+    // this.$.statsPasswordManager.setAccount(this.account);
   },
   passwordReady:function(sender){
      if (this.account == null) {
