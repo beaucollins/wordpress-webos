@@ -564,9 +564,10 @@ enyo.kind({
     var client = this.activeAccount;
     var reply = sender.getValue();
     var comment = new enyo.application.models.Comment();
+
     comment.content = reply;
     comment.status = 'approve';
-    comment.comment_parent = sender.comment.comment_id;
+    comment.parent = sender.comment.comment_id;
     comment.post_id = sender.comment.post_id;
         
     client.newComment(comment);

@@ -544,8 +544,9 @@ enyo.kind({
     this.$.removeKey.call({keyname:this.passwordKeyName()});
   },
   newComment:function(comment){
-    console.log("Publishing new comment", comment);
     this.account.comments.add(comment);
+    var struct = comment._data;
+    struct.comment_parent = struct.parent;
     return this.$.http.callMethod({
       methodName:'wp.newComment',
       methodParams:[
