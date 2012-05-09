@@ -315,13 +315,13 @@ enyo.kind({
 	  if (post.page_id) {
 		  return http.callMethod({
 			  methodName:'wp.editPage',
-			  methodParams:[account.blogid, post.page_id, account.username, account.password, post._data, false]
+			  methodParams:[account.blogid, post.page_id, account.username, account.password, post.serialize(), false]
 		  }, {onSuccess:'savePageSuccess', post:post, update:true, onRequestFault:'apiFault', onFailure:'badURL'});
 	  }else{
 		  this.log("sending the new page to the server");
 		  return http.callMethod({
 			  methodName:'wp.newPage',
-			  methodParams:[account.blogid, account.username, client.password, post._data, false]
+			  methodParams:[account.blogid, account.username, client.password, post.serialize(), false]
 		  }, {onSuccess:'savePageSuccess', post:post, update:false, onRequestFault:'apiFault', onFailure:'badURL'});
 	  };
   },
@@ -415,14 +415,14 @@ enyo.kind({
 		  // mw.method('editPost', 'post_id', 'username', 'password', 'content', 'publish');
 		  return http.callMethod({
 			  methodName:'metaWeblog.editPost',
-			  methodParams:[post.postid, account.username, account.password, post._data, false]
+			  methodParams:[post.postid, account.username, account.password, post.serialize(), false]
 		  }, {onSuccess:'savePostSuccess', post:post, update:true, onRequestFault:'apiFault', onFailure:'badURL'});
 	  }else{
 		  this.log("sending the new post to the server");
 		  return http.callMethod({
 			  //     mw.method('newPost', 'blog_id', 'username', 'password', 'content', 'publish');
 			  methodName:'metaWeblog.newPost',
-			  methodParams:[account.blogid, account.username, client.password, post._data, false]
+			  methodParams:[account.blogid, account.username, client.password, post.serialize(), false]
 		  }, {onSuccess:'savePostSuccess', post:post, update:false, onRequestFault:'apiFault', onFailure:'badURL'});
 	  };
   },
@@ -545,7 +545,7 @@ enyo.kind({
   },
   newComment:function(comment){
     this.account.comments.add(comment);
-    var struct = comment._data;
+    var struct = comment.serialize();
     struct.comment_parent = struct.parent;
     return this.$.http.callMethod({
       methodName:'wp.newComment',
@@ -554,7 +554,7 @@ enyo.kind({
         this.account.username,
         this.password,
         comment.post_id,
-        comment._data
+        struct
       ] // methodParams
     }, { url:this.account.xmlrpc, onSuccess:'publishCommentSuccess', comment:comment, onRequestFault:'apiFault', onFailure:'badURL' }); 
   },

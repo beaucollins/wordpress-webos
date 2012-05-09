@@ -106,6 +106,7 @@
     local_modifications: 'BOOLEAN'
   });
   
+  
   Account.hasMany('pages', Page, 'account');
 
   var Category = enyo.application.models.Category = persistence.define('Category', {
@@ -120,6 +121,22 @@
   
   Account.hasMany('categories', Category, 'account');
   
+  // Serialization for all persistence schema entities
+  Post.prototype.constructor.prototype.serialize = function(){
+    return enyo.clone(this._data);
+  }; 
+  
+  // override for Posts
+  var postSerializer = function(){
+    var data = enyo.clone(this._data);
+    delete data['account'];
+    if (data.wp_author_id == "")
+      delete data['wp_author_id'];
+    return data;
+  }
+  
+  Post.prototype.serialize = postSerializer;
+  Page.prototype.serialize = postSerializer;
   
   var global_accounts;
   
