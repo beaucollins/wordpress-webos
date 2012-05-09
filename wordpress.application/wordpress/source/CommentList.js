@@ -17,6 +17,8 @@ enyo.kind({
     this.pages = {};
   },
   storePage:function(page, itemArray){
+    if (!enyo.isArray(itemArray)) return;
+    if (itemArray.length == 0) return;
     this.pages[page] = enyo.clone(itemArray);
     for (var i=0; i < itemArray.length; i++) {
       this.page_index[itemArray.id] = page;
@@ -30,10 +32,11 @@ enyo.kind({
     return this.pages[page];
   },
   itemAtIndex:function(index){
-    var pagesize = this.pageSize;
-    var page = Math.floor(index/pagesize);
-    var offset = index % pagesize;
-    var items, item;
+    var pagesize = this.pageSize,
+        page = Math.floor(index/pagesize),
+        offset = index % pagesize,
+        items,
+        item;
     if(!(items = this.pages[page])){
       return;
     }
@@ -59,6 +62,9 @@ enyo.kind({
   },
   havePage:function(page){
     return this.pages[page];
+  },
+  isEmpty:function(){
+    return !this.pages[0];
   }
   
 });
@@ -156,6 +162,7 @@ enyo.kind({
         .list(function(comments){
           that.$.empty.hide();
           that.$.dataPage.storePage(page, comments);
+          if (that.$.dataPage.isEmpty()) that.$.empty.show();
           that.$.list.refresh();
           // if we're out of comments try to download more comments
           // we need to let our owner know that we'd like more comments
@@ -168,11 +175,7 @@ enyo.kind({
             });
           };
         });
-    };
-  },
-  gotComments:function(sender, response, request){
-    this.$.dataPage.storePage(request.page, response);
-    this.$.list.refresh();
+    }
   },
   accountChanged:function(){
     this.$.empty.show();
@@ -198,14 +201,12 @@ enyo.kind({
     this.doSelectComment(comment, this.account);
   },
   refreshed:function(){
-    this.log("REMOVE");
     this.refresh();
   },
   refresh:function(){
-    this.log("Refreshed the list");
     this.$.list.reset();
     this.$.list.refresh();
-	this.$.spinner.hide();
+    this.$.spinner.hide();
   },
   stopSpinner:function() {
 	this.$.spinner.hide();
@@ -215,7 +216,6 @@ enyo.kind({
     this.$.list.select(null);
     this.refresh();
     // this.$.list.select(comment.id);
-    // this.log("Selected", this.$.list);
     // this.refresh();
   },
   showFilterOptions:function(sender){
