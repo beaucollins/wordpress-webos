@@ -58,7 +58,7 @@ enyo.kind({
           { name:'previewButton', kind:'enyo.Button', caption:$L('Preview'), onclick:'showPreview' },
           { name:'draftButton', kind:'enyo.Button', caption:$L('Save Draft'), onclick:'savePost' },
 		  { kind: 'Spinner', className: 'wp-compose-spinner' },
-		  { name:'postButton', kind:'enyo.Button', caption:$L('Publish'), onclick:'savePost' }
+		  { name:'postButton', kind:'enyo.Button', caption:$L('Publish'), onclick:'savePost', disabled:true }
         ] },		
         { kind:'HFlexBox', flex:1, components:[
           { name:'main', kind:'VFlexBox', flex:1, components:[
@@ -517,8 +517,10 @@ enyo.kind({
 		  .list(function(categories){
 			  that.updateCategoriesField(categories);
 		  });
+      this.$.postButton.setDisabled(false);
 	  } else {
 		  that.updateCategoriesField(null); 
+      this.$.postButton.setDisabled(true);
 	  }
   },
   // this is where fields should be populated with data from the post to be edited
